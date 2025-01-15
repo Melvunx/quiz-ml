@@ -22,7 +22,7 @@ export default function Page() {
       <Navbar />
       <Card className="flex flex-col w-4/5 mx-auto">
         <CardHeader>
-          <CardTitle>Create question</CardTitle>
+          <CardTitle>Create</CardTitle>
         </CardHeader>
         <CardContent className="w-3/5 mx-auto">
           <Form

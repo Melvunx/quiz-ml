@@ -12,6 +12,7 @@ export default {
     extend: {
       fontFamily: {
         playwrite: ["Playwrite AU SA", "serif"],
+        ubuntu: ["Ubuntu", "serif"],
       },
       colors: {
         background: "hsl(var(--background))",

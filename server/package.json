@@ -15,8 +15,10 @@
   "dependencies": {
     "@colors/colors": "^1.6.0",
     "@prisma/client": "6.2.1",
+    "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/jsonwebtoken": "^9.0.7",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

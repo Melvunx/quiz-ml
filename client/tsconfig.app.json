@@ -20,9 +20,12 @@
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@layout/*": ["./src/components/layout/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@ui/*": ["./src/components/ui/*"],
       "@pages/*": ["./src/pages/*"],
       "@server/*": ["../server/src/*"],
-      "@schema/*": ["../server/src/schema/*"]
+      "@schema/*": ["../server/src/schema/*"],
+      "@prisma/*": ["../server/prisma/*"]
     },
 
     /* Linting */

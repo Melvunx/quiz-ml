@@ -1,9 +1,10 @@
+import { ApiResponseError, ApiResponseSuccess } from "@/schema/api.schema";
 import colors from "@/schema/colors.schma";
 
 export function HandleResponseSuccess(
   data?: any,
   message = "Request succeded !"
-) {
+): ApiResponseSuccess {
   return {
     success: true,
     message,
@@ -11,7 +12,7 @@ export function HandleResponseSuccess(
   };
 }
 
-export function HandleResponseError(error?: any) {
+export function HandleResponseError(error?: any): ApiResponseError {
   const isErrorObject = error instanceof Error;
   return {
     success: false,

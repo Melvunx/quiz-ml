@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 
 const { SECRETKEY, EXPIREDATE } = process.env;
 
-export function generareToken(username: string) {
-  return jwt.sign({ username }, SECRETKEY || "MelvunxKey", {
+export function generateToken(id: string) {
+  return jwt.sign({ id }, SECRETKEY || "MelvunxKey", {
     expiresIn: Number(EXPIREDATE) || 3600,
   });
 }

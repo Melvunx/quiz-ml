@@ -6,8 +6,26 @@ import {
 } from "@services/handleResponse";
 import { RequestHandler } from "express";
 
-export const addAnswers: RequestHandler = async (req, res) => {
+export const addAnswers: RequestHandler<{}, {}, { answers: Answer[] }> = async (
+  req,
+  res
+) => {
   try {
+    const { answers } = req.body;
+
+    if (!Array.isArray(answers) || answers.length === 0) {
+      res
+        .status(400)
+        .json(HandleResponseError(new Error("Answer is empty or invalid")));
+      return;
+    }
+
+    const answer = await prisma.answer.createMany({
+      data: answers,
+      skipDuplicates: true,
+    });
+
+    res.status(201).json(HandleResponseSuccess(answer));
   } catch (error) {
     res.status(500).json(HandleResponseError(error));
     return;

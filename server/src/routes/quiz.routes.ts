@@ -1,11 +1,13 @@
 import authenticate from "@/middleware/authentification";
 import {
+  addQuestions,
   createQuiz,
   deleteQuiz,
   editQuiz,
   getAllQuiz,
   getQuiz,
   getSearchedQuiz,
+  removeQuestions,
 } from "@controller/quiz.controller";
 import {
   getAllQuizRestults,
@@ -25,10 +27,16 @@ router.get("/", authenticate, getSearchedQuiz);
 // Voir le quiz avec le nombre de questions
 router.get("/:quizId", authenticate, getQuiz);
 
+// Créer un quiz
 router.post("/create", authenticate, createQuiz);
 
+// Ajouter des questions dans un quiz
+router.patch("/:quizId/questions/add", authenticate, addQuestions);
+
+// Suppression de question dans un quiz
+router.patch("/:quizId/questions/remove", authenticate, removeQuestions);
 // Modifier quelques variables du quiz (titre et description)
-router.put("/", authenticate, editQuiz);
+router.put("/:quizId", authenticate, editQuiz);
 
 router.delete("/:quizId", authenticate, deleteQuiz);
 

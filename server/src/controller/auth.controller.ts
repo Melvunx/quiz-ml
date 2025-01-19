@@ -5,7 +5,7 @@ import {
   HandleResponseSuccess,
   LoggedResponseSuccess,
 } from "@/services/handleResponse";
-import { Role, User } from "@prisma/client";
+import { Role, Session, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
 
@@ -54,6 +54,13 @@ export const regesterNewAccount: RequestHandler<{}, {}, User> = async (
 export const login: RequestHandler<{}, {}, User> = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      res
+        .status(400)
+        .json(HandleResponseError(new Error("Please fill the credentials")));
+      return;
+    }
 
     const user = await prisma.user.findUnique({ where: { email } });
 
@@ -107,10 +114,14 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
       },
     });
 
-    res.cookie("jwt", session.token, {
-      httpOnly: true,
-      maxAge: Number(EXPIREDATE),
-    });
+    res.cookie(
+      "jwt",
+      { id: session.id, token: session.token },
+      {
+        httpOnly: true,
+        maxAge: Number(EXPIREDATE),
+      }
+    );
 
     res.cookie(
       "info",
@@ -121,7 +132,7 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
       }
     );
 
-    LoggedResponseSuccess({ user }, `user ${user.username} log in !`);
+    LoggedResponseSuccess(user, `user ${user.username} log in !`);
 
     res.status(200).json(HandleResponseSuccess(user));
   } catch (error) {
@@ -132,16 +143,23 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
 
 export const logout: RequestHandler = async (req, res) => {
   try {
-    const token: string | null = req.cookies["jwt"];
-    const user: User | null = req.cookies["info"];
-    if (!token || !user) {
+    const session: Session | undefined = req.cookies["jwt"];
+    const user: User | undefined = req.cookies["info"];
+    if (!session || !user) {
       res.status(401).json(HandleResponseError(new Error("Unauthorized")));
       return;
     }
-    const session = await prisma.session.delete({ where: user });
-    LoggedResponseSuccess(session);
+
+    await prisma.session.delete({
+      where: {
+        id: session.id,
+        userId: user.id,
+      },
+    });
+
     res.clearCookie("jwt");
     res.clearCookie("info");
+
     res
       .status(200)
       .json(HandleResponseSuccess(null, `User ${user.username} loggout`));

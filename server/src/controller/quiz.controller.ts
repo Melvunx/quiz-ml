@@ -112,7 +112,7 @@ export const createQuiz: RequestHandler<{}, {}, Quiz> = async (req, res) => {
     const quiz = await prisma.quiz.create({
       data: {
         title,
-        description: description ? description : null,
+        description: description ?? null,
       },
     });
 

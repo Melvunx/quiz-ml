@@ -12,6 +12,9 @@ export function generateToken(id: string) {
 export async function verifyToken(token: string) {
   try {
     const decoded = await jwt.verify(token, SECRETKEY || "MelvunxKey");
+
+    console.log(colors.info("Decoded value : ", decoded));
+
     return decoded;
   } catch (error) {
     console.log(colors.error(error));

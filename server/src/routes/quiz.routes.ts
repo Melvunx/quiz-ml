@@ -1,7 +1,8 @@
+import authenticate from "@/middleware/authentification";
 import {
   createQuiz,
   deleteQuiz,
-  EditQuiz,
+  editQuiz,
   getAllQuiz,
   getQuiz,
   getSearchedQuiz,
@@ -16,28 +17,28 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/all", getAllQuiz);
+router.get("/all", authenticate, getAllQuiz);
 
 // Rechercher un quiz
-router.get("/", getSearchedQuiz);
+router.get("/", authenticate, getSearchedQuiz);
 
 // Voir le quiz avec le nombre de questions
-router.get("/:quizId", getQuiz);
+router.get("/:quizId", authenticate, getQuiz);
 
-router.post("/create", createQuiz);
+router.post("/create", authenticate, createQuiz);
 
 // Modifier quelques variables du quiz (titre et description)
-router.put("/", EditQuiz);
+router.put("/", authenticate, editQuiz);
 
-router.delete("/:quizId", deleteQuiz);
+router.delete("/:quizId", authenticate, deleteQuiz);
 
 // Avoir le resultat de tous les quiz
-router.get("/results", getAllQuizRestults);
+router.get("/results", authenticate, getAllQuizRestults);
 
-router.get("/results/:resultsId", getQuizResults);
+router.get("/results/:resultsId", authenticate, getQuizResults);
 
-router.post("/results/save", saveQuizResults);
+router.post("/results/save", authenticate, saveQuizResults);
 
-router.delete("/results/:resultId", removeQuizResults);
+router.delete("/results/:resultId", authenticate, removeQuizResults);
 
 module.exports = router;

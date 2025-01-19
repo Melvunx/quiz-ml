@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export default class ApiError extends Error {
+  constructor(public status: number, public data: Record<string, unknown>) {
+    super();
+  }
+}
+
 export const ApiResponseSuccessSchema = z.object({
   success: z.literal(true),
   message: z.string(),

@@ -1,3 +1,4 @@
+import authenticate from "@/middleware/authentification";
 import {
   addAnswers,
   editAnswers,
@@ -20,33 +21,33 @@ const router = Router();
 // -----QUESTIONS-----
 
 // Rechercher une question
-router.get("/", searchQuestion);
+router.get("/", authenticate, searchQuestion);
 
 // Avoir toutes les questions avec leurs réponses
-router.get("/answers", getQuestionsWithAnswers);
+router.get("/answers", authenticate, getQuestionsWithAnswers);
 
 // Avoir une questions avec leurs réponses
-router.get("/:questionId/answers", getQuestionWithAnswers);
+router.get("/:questionId/answers", authenticate, getQuestionWithAnswers);
 
 // creéer une question
-router.post("/create", createNewQuestion);
+router.post("/create", authenticate, createNewQuestion);
 
-router.put("/", editQuestion);
+router.put("/", authenticate, editQuestion);
 
-router.delete("/:questionId", deleteQuestion);
+router.delete("/:questionId", authenticate, deleteQuestion);
 
 // Supprime toutes les questions où les id sont stockés dans un tableau
-router.delete("/many", deleteManyQuestions);
+router.delete("/many", authenticate, deleteManyQuestions);
 
 // -----ANSWERS-----
 
 // ajouter une ou des réponses
-router.post("/:questionId/answers/add", addAnswers);
+router.post("/:questionId/answers/add", authenticate, addAnswers);
 
-router.put("/answers", editAnswers);
+router.put("/answers", authenticate, editAnswers);
 
-router.delete("/answer/:answerId", removeAnswer);
+router.delete("/answer/:answerId", authenticate, removeAnswer);
 
-router.delete("/answer/many", removeAnswers);
+router.delete("/answer/many", authenticate, removeAnswers);
 
 module.exports = router;

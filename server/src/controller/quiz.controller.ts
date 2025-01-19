@@ -104,7 +104,7 @@ export const createQuiz: RequestHandler<{}, {}, Quiz> = async (req, res) => {
   }
 };
 
-export const EditQuiz: RequestHandler = async (req, res) => {
+export const editQuiz: RequestHandler = async (req, res) => {
   try {
   } catch (error) {
     res.status(500).json(HandleResponseError(error));

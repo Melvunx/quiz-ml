@@ -132,8 +132,8 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
 
 export const logout: RequestHandler = async (req, res) => {
   try {
-    const token: string = req.cookies["jwt"];
-    const user: User = req.cookies["info"];
+    const token: string | null = req.cookies["jwt"];
+    const user: User | null = req.cookies["info"];
     if (!token || !user) {
       res.status(401).json(HandleResponseError(new Error("Unauthorized")));
       return;

@@ -62,32 +62,89 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
       return;
     }
 
-    const isValidePassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
-    if (!isValidePassword) {
+    if (!isValidPassword) {
       res.status(400).json(HandleResponseError(new Error("Bad credentials")));
       return;
     }
 
-    const token = generateToken(user.id);
+    console.log("Checking token...");
 
-    const session = await prisma.token.create({
+    let session = await prisma.session.findFirst({
+      where: { userId: user.id },
+    });
+
+    if (!session) {
+      console.log("Token not found");
+      const token = generateToken(user.id);
+
+      session = await prisma.session.create({
+        data: {
+          token,
+          userId: user.id,
+        },
+      });
+
+      console.log("New token created");
+    }
+
+    console.log("Token updating...");
+
+    session = await prisma.session.update({
+      where: { id: session.id },
       data: {
-        token,
-        userId: user.id,
+        token: generateToken(user.id),
       },
     });
 
-    res.cookie("jwt", token, { httpOnly: true, maxAge: Number(EXPIREDATE) });
+    console.log("Update lastlogin");
 
-    res.cookie("connexion", user, {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        lastlogin: new Date(),
+      },
+    });
+
+    res.cookie("jwt", session.token, {
       httpOnly: true,
       maxAge: Number(EXPIREDATE),
     });
 
-    LoggedResponseSuccess({ user, session }, `user ${user.username} log in !`);
+    res.cookie(
+      "info",
+      { username: user.username, email },
+      {
+        httpOnly: true,
+        maxAge: Number(EXPIREDATE),
+      }
+    );
+
+    LoggedResponseSuccess({ user }, `user ${user.username} log in !`);
 
     res.status(200).json(HandleResponseSuccess(user));
+  } catch (error) {
+    res.status(500).json(HandleResponseError(error));
+    return;
+  }
+};
+
+export const logout: RequestHandler = async (req, res) => {
+  try {
+    const token: string = req.cookies["jwt"];
+    const user: User = req.cookies["info"];
+    if (!token || !user) {
+      res.status(401).json(HandleResponseError(new Error("Unauthorized")));
+      return;
+    }
+    const session = await prisma.session.delete({ where: user });
+    LoggedResponseSuccess(session);
+    res.clearCookie("jwt");
+    res.clearCookie("info");
+    res
+      .status(200)
+      .json(HandleResponseSuccess(null, `User ${user.username} loggout`));
   } catch (error) {
     res.status(500).json(HandleResponseError(error));
     return;

@@ -19,14 +19,14 @@ model User {
   username  String    @unique
   password  String
   Result    Result[]
-  tokens    Token[]
+  sessions  Session[]
   role      Role      @default(USER)
   lastlogin DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
-model Token {
+model Session {
   id        String   @id @default(cuid())
   token     String
   user      User     @relation(fields: [userId], references: [id])
@@ -50,8 +50,8 @@ model Question {
   content   String
   type      QuestionType
   createdAt DateTime     @default(now())
-  quiz      Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  quizId    String
+  quiz      Quiz?        @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId    String?
   answers   Answer[]
 }
 

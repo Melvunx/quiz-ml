@@ -114,7 +114,7 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
 
     res.cookie(
       "info",
-      { username: user.username, email },
+      { id: user.id, username: user.username, email },
       {
         httpOnly: true,
         maxAge: Number(EXPIREDATE),

@@ -6,6 +6,12 @@ import {
   getQuiz,
   getSearchedQuiz,
 } from "@controller/quiz.controller";
+import {
+  getAllQuizRestults,
+  getQuizResults,
+  removeQuizResults,
+  saveQuizResults,
+} from "@controller/results.controller";
 import { Router } from "express";
 
 const router = Router();
@@ -24,5 +30,14 @@ router.post("/create", createQuiz);
 router.put("/", EditQuiz);
 
 router.delete("/:quizId", deleteQuiz);
+
+// Avoir le resultat de tous les quiz
+router.get("/results", getAllQuizRestults);
+
+router.get("/results/:resultsId", getQuizResults);
+
+router.post("/results/save", saveQuizResults);
+
+router.delete("/results/:resultId", removeQuizResults);
 
 module.exports = router;

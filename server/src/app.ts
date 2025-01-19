@@ -22,12 +22,10 @@ app.use(
 const authRoutes = require("@routes/auth.routes");
 const questionsRoutes = require("@routes/questions.routes");
 const quizRoutes = require("@routes/quiz.routes");
-const resultsRoutes = require("@routes/results.routes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/questions", questionsRoutes);
 app.use("/api/quiz", quizRoutes);
-app.use("/api/results", resultsRoutes);
 
 app.listen(PORT, () => {
   console.log(

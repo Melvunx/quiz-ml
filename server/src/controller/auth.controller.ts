@@ -1,4 +1,4 @@
-import { generateToken } from "@/config/jsonwebtoken";
+import { generateRefreshToken } from "@/config/jsonwebtoken";
 import { prisma } from "@/config/prisma";
 import {
   HandleResponseError,
@@ -84,11 +84,11 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
 
     if (!session) {
       console.log("Token not found");
-      const token = generateToken(user.id);
+      const refreshToken = generateRefreshToken(user.id);
 
       session = await prisma.session.create({
         data: {
-          token,
+          token: refreshToken,
           userId: user.id,
         },
       });
@@ -101,7 +101,7 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
     session = await prisma.session.update({
       where: { id: session.id },
       data: {
-        token: generateToken(user.id),
+        token: generateRefreshToken(user.id),
       },
     });
 

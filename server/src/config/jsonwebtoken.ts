@@ -1,23 +1,42 @@
-import colors from "@/schema/colors.schma";
-import jwt from "jsonwebtoken";
+import colors from "@/schema/colors.schema";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-const { SECRETKEY, EXPIREDATE } = process.env;
+const { PUBLICKEY, SECRETKEY } = process.env;
 
-export function generateToken(id: string) {
-  return jwt.sign({ id }, SECRETKEY || "MelvunxKey", {
-    expiresIn: Number(EXPIREDATE) || 3600,
-  });
+if (!PUBLICKEY || !SECRETKEY) {
+  throw new Error("PUBLIC and SECRET Key not defined");
 }
 
-export async function verifyToken(token: string) {
+export const generateAccessToken = (userId: string) => {
+  return jwt.sign({ userId }, PUBLICKEY, {
+    expiresIn: "30m",
+  });
+};
+
+export const generateRefreshToken = (userId: string) => {
+  return jwt.sign({ userId }, SECRETKEY, {
+    expiresIn: "14d",
+  });
+};
+
+export const verifyRefreshToken = async <T>(token: string) => {
   try {
-    const decoded = await jwt.verify(token, SECRETKEY || "MelvunxKey");
+    const decoded = await jwt.verify(token, SECRETKEY);
 
-    console.log(colors.info("Decoded value : ", decoded));
-
-    return decoded;
+    return decoded as JwtPayload & T;
   } catch (error) {
     console.log(colors.error(error));
     return null;
   }
-}
+};
+
+export const verifyAccessToken = async <T>(token: string) => {
+  try {
+    const decoded = await jwt.verify(token, PUBLICKEY);
+
+    return decoded as JwtPayload & T;
+  } catch (error) {
+    console.log(colors.error(error));
+    return null;
+  }
+};

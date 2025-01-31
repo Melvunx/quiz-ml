@@ -18,7 +18,7 @@ import { Router } from "express";
 
 const router = Router();
 
-// -----QUESTIONS-----
+// -----QUESTIONS----- //
 
 // Rechercher une question
 router.get("/", authenticate, searchQuestion);
@@ -39,7 +39,7 @@ router.delete("/:questionId", authenticate, deleteQuestion);
 // Supprime toutes les questions où les id sont stockés dans un tableau
 router.delete("/many", authenticate, deleteManyQuestions);
 
-// -----ANSWERS-----
+// -----ANSWERS----- //
 
 // ajouter une ou des réponses
 router.post("/:questionId/answers/add", authenticate, addAnswers);

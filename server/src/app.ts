@@ -1,7 +1,7 @@
 require("dotenv").config();
 import cookieParser from "cookie-parser";
 import express from "express";
-import colors from "./schema/colors.schma";
+import colors from "./schema/colors.schema";
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();

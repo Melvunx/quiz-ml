@@ -97,7 +97,9 @@ export const removeAnswers: RequestHandler<{}, {}, { ids: string[] }> = async (
       where: { id: { in: ids } },
     });
 
-    res.status(200).json(HandleResponseSuccess(answers));
+    res
+      .status(200)
+      .json(HandleResponseSuccess(null, `Deleted answers ${answers.count}`));
   } catch (error) {
     res.status(500).json(HandleResponseError(error));
     return;

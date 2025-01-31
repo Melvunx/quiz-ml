@@ -1,5 +1,5 @@
 import { ApiResponseError, ApiResponseSuccess } from "@/schema/api.schema";
-import colors from "@/schema/colors.schma";
+import colors from "@/schema/colors.schema";
 
 export function HandleResponseSuccess(
   data?: any,
@@ -29,4 +29,4 @@ export const LoggedResponseSuccess = (data?: any, message?: string) =>
   console.log(colors.success(HandleResponseSuccess(data, message)));
 
 export const LoggedResponseError = (error?: any) =>
-  console.log(colors.success(HandleResponseError(error)));
+  console.log(colors.error(HandleResponseError(error)));

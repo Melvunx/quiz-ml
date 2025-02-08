@@ -1,9 +1,9 @@
 import { prisma } from "@/config/prisma";
-import { Result, User } from "@prisma/client";
 import {
   HandleResponseError,
   HandleResponseSuccess,
-} from "@services/handleResponse";
+} from "@/utils/handleResponse";
+import { Result, User } from "@prisma/client";
 import { RequestHandler } from "express";
 
 export const getAllQuizRestults: RequestHandler = async (req, res) => {

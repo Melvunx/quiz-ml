@@ -1,5 +1,5 @@
-import { HandleResponseError } from "@/services/handleResponse";
-import { verifyToken } from "@config/jsonwebtoken";
+import { HandleResponseError } from "@/utils/handleResponse";
+import { verifyRefreshToken } from "@config/jsonwebtoken";
 import { User } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 
@@ -11,8 +11,8 @@ export default async function authenticate(
   try {
     console.log("Authentification in progress ...");
 
-    const token: string | undefined = req.cookies.jwt;
-    const user: User | undefined = req.cookies.info;
+    const token: string = req.cookies.refreshJwt;
+    const user: User = req.cookies.info;
 
     if (!user) {
       res.status(401).json(HandleResponseError(new Error("User not found")));
@@ -22,8 +22,8 @@ export default async function authenticate(
       return;
     }
 
-    const verification = await verifyToken(token);
-    if (!verification) {
+    const isVerified = await verifyRefreshToken(token);
+    if (!isVerified) {
       res.status(401).json(HandleResponseError(new Error("Invalid token")));
       return;
     }

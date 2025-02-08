@@ -1,10 +1,10 @@
+import apiResponse from "@/services/api.response";
+import { handleError } from "@/utils/handleResponse";
+import isArrayOrIsEmpty from "@/utils/isArrayOrEmpty";
 import { prisma } from "@config/prisma";
 import { Question } from "@prisma/client";
-import {
-  HandleResponseError,
-  HandleResponseSuccess,
-} from "@services/handleResponse";
 import { RequestHandler } from "express";
+
 export const searchQuestion: RequestHandler<
   {},
   {},
@@ -14,12 +14,8 @@ export const searchQuestion: RequestHandler<
   try {
     const { search } = req.query;
 
-    if (!search) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Query parameter is required")));
-      return;
-    }
+    if (!search)
+      return handleError(res, "NOT_FOUND", "Query element not found");
 
     const questions = await prisma.question.findMany({
       where: {
@@ -30,10 +26,9 @@ export const searchQuestion: RequestHandler<
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(questions));
+    return apiResponse.success(res, "OK", questions);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -45,10 +40,9 @@ export const getQuestionsWithAnswers: RequestHandler = async (req, res) => {
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(questionsWithAnswers));
+    return apiResponse.success(res, "OK", questionsWithAnswers);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -58,10 +52,7 @@ export const getQuestionWithAnswers: RequestHandler<{
   try {
     const { questionId } = req.params;
 
-    if (!questionId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    }
+    if (!questionId) return handleError(res, "NOT_FOUND", "Id not found");
 
     const questionWithAnswers = await prisma.question.findUniqueOrThrow({
       where: { id: questionId },
@@ -70,10 +61,9 @@ export const getQuestionWithAnswers: RequestHandler<{
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(questionWithAnswers));
+    return apiResponse.success(res, "OK", questionWithAnswers);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -84,6 +74,9 @@ export const createNewQuestion: RequestHandler<{}, {}, Question> = async (
   try {
     const { content, type } = req.body;
 
+    if (!content || !type)
+      return handleError(res, "NOT_FOUND", "Missing credentials");
+
     const question = await prisma.question.create({
       data: {
         content,
@@ -91,10 +84,9 @@ export const createNewQuestion: RequestHandler<{}, {}, Question> = async (
       },
     });
 
-    res.status(201).json(HandleResponseSuccess(question));
+    return apiResponse.success(res, "OK", question);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -107,15 +99,10 @@ export const editQuestion: RequestHandler<
     const { questionId } = req.params;
     const { content, type } = req.body;
 
-    if (!questionId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    } else if (!content || !type) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Content and type are required")));
-      return;
-    }
+    if (!questionId) return handleError(res, "NOT_FOUND", "Id not found");
+
+    if (!content || !type)
+      return handleError(res, "NOT_FOUND", "Missing credentials");
 
     const question = await prisma.question.update({
       where: { id: questionId },
@@ -125,32 +112,24 @@ export const editQuestion: RequestHandler<
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(question));
+    return apiResponse.success(res, "OK", question);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
-export const deleteQuestion: RequestHandler<{ questionId: string }> = async (
-  req,
-  res
-) => {
+export const deleteQuestion: RequestHandler = async (req, res) => {
   try {
     const { questionId } = req.params;
 
-    if (!questionId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    }
+    if (!questionId) return handleError(res, "NOT_FOUND", "Id not found");
 
     const question = await prisma.question.delete({
       where: { id: questionId },
     });
 
-    res.status(200).json(HandleResponseSuccess(question));
+    return apiResponse.success(res, "OK", question);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -161,10 +140,9 @@ export const deleteManyQuestions: RequestHandler<
 > = async (req, res) => {
   try {
     const { ids } = req.body;
-    if (!Array.isArray(ids) || ids.length === 0) {
-      res.status(400).json(HandleResponseError(new Error("Ids are required")));
-      return;
-    }
+
+    if (!isArrayOrIsEmpty(ids))
+      return handleError(res, "NOT_FOUND", "Invalid or not found ids");
 
     const questions = await prisma.question.deleteMany({
       where: {
@@ -174,9 +152,8 @@ export const deleteManyQuestions: RequestHandler<
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(questions));
+    return apiResponse.success(res, "OK", questions);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };

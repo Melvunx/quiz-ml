@@ -27,7 +27,7 @@ colors.setTheme({
   info: "cyan",
   data: ["gray", "italic"],
   warn: "brightYellow",
-  error: ["red", "bgWhite"],
+  error: ["red", "italic"],
 });
 
 export default colors;

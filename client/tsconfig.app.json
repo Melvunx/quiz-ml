@@ -26,7 +26,6 @@
       "@pages/*": ["./src/pages/*"],
       "@server/*": ["../server/src/*"],
       "@schema/*": ["../server/src/schema/*"],
-      "@prisma/*": ["../server/prisma/*"]
     },
 
     /* Linting */

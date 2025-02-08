@@ -1,9 +1,9 @@
 import { prisma } from "@/config/prisma";
+import apiResponse from "@/services/api.response";
+import { handleError } from "@/utils/handleResponse";
+import isArrayOrIsEmpty from "@/utils/isArrayOrEmpty";
+
 import { Answer } from "@prisma/client";
-import {
-  HandleResponseError,
-  HandleResponseSuccess,
-} from "@services/handleResponse";
 import { RequestHandler } from "express";
 
 export const addAnswers: RequestHandler<{}, {}, { answers: Answer[] }> = async (
@@ -13,22 +13,17 @@ export const addAnswers: RequestHandler<{}, {}, { answers: Answer[] }> = async (
   try {
     const { answers } = req.body;
 
-    if (!Array.isArray(answers) || answers.length === 0) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Answer is empty or invalid")));
-      return;
-    }
+    if (!isArrayOrIsEmpty(answers))
+      return handleError(res, "NOT_FOUND", "Invalid or not found answers");
 
     const answer = await prisma.answer.createMany({
       data: answers,
       skipDuplicates: true,
     });
 
-    res.status(201).json(HandleResponseSuccess(answer));
+    return apiResponse.success(res, "CREATED", { answer_number: answer.count });
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -40,10 +35,8 @@ export const editAnswers: RequestHandler<
   try {
     const { answers } = req.body;
 
-    if (!Array.isArray(answers) || answers.length === 0) {
-      res.status(400).json(HandleResponseError(new Error("Answers required")));
-      return;
-    }
+    if (!isArrayOrIsEmpty(answers))
+      return handleError(res, "NOT_FOUND", "Invalid or not found answer");
 
     const updatedAnswers = await Promise.all(
       answers.map(
@@ -55,31 +48,23 @@ export const editAnswers: RequestHandler<
       )
     );
 
-    res.status(200).json(HandleResponseSuccess(updatedAnswers));
+    return apiResponse.success(res, "OK", updatedAnswers);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
-export const removeAnswer: RequestHandler<{ answerId: string }> = async (
-  req,
-  res
-) => {
+export const removeAnswer: RequestHandler = async (req, res) => {
   try {
     const { answerId } = req.params;
 
-    if (!answerId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    }
+    if (!answerId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    const answer = await prisma.answer.delete({ where: { id: answerId } });
+    await prisma.answer.delete({ where: { id: answerId } });
 
-    res.status(200).json(HandleResponseSuccess(answer));
+    return apiResponse.success(res, "OK", null, "Answer deleted successfullt");
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 export const removeAnswers: RequestHandler<{}, {}, { ids: string[] }> = async (
@@ -88,20 +73,20 @@ export const removeAnswers: RequestHandler<{}, {}, { ids: string[] }> = async (
 ) => {
   try {
     const { ids } = req.body;
-    if (!Array.isArray(ids) || ids.length === 0) {
-      res.status(400).json(HandleResponseError(new Error("Ids required")));
-      return;
-    }
+    if (!isArrayOrIsEmpty(ids))
+      return handleError(res, "NOT_FOUND", "Invalid or not found ids");
 
     const answers = await prisma.answer.deleteMany({
       where: { id: { in: ids } },
     });
 
-    res
-      .status(200)
-      .json(HandleResponseSuccess(null, `Deleted answers ${answers.count}`));
+    return apiResponse.success(
+      res,
+      "OK",
+      null,
+      `Deleted answers : ${answers.count}`
+    );
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };

@@ -52,6 +52,7 @@ Error details: ${JSON.stringify(data.error, null, 2)}`;
     }
   }
 }
+
 const fetchApi = async <T>(
   url: string,
   {

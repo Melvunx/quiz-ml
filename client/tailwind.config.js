@@ -1,10 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     darkMode: ["class"],
-    content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+    content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
   		borderRadius: {
@@ -58,5 +55,4 @@ export default {
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
-}
-
+};

@@ -7,6 +7,18 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@layout/*": ["./src/components/layout/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@server/*": ["../server/src/*"],
+      "@schema/*": ["../server/src/schema/*"]
+    },
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -14,19 +26,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@layout/*": ["./src/components/layout/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@ui/*": ["./src/components/ui/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@server/*": ["../server/src/*"],
-      "@schema/*": ["../server/src/schema/*"],
-    },
 
     /* Linting */
     "strict": true,

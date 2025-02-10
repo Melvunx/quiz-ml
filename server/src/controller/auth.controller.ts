@@ -4,32 +4,37 @@ import {
   verifyRefreshToken,
 } from "@/config/jsonwebtoken";
 import { prisma } from "@/config/prisma";
+import colors from "@/schema/colors.schema";
+import { UserCookie } from "@/schema/user.schema";
+import apiResponse from "@/services/api.response";
 import { handleError } from "@/utils/handleResponse";
-
-import { Role, Session, User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
 
-const { USER_ADMIN, SALT_ROUNDS, EXPIREDATE } = process.env;
+const { USER_ADMIN, SALT_ROUNDS } = process.env;
 
-export const regesterNewAccount: RequestHandler<{}, {}, User> = async (
-  req,
-  res
-) => {
+if (!USER_ADMIN || !SALT_ROUNDS) {
+  throw new Error("Id or salt rounds not found");
+}
+
+export const regester: RequestHandler<{}, {}, User> = async (req, res) => {
   try {
     const { email, username, password } = req.body;
 
-    if (!email || !username || !password) return handleError(res, "NOT_FOUND")
+    if (!email || !username || !password)
+      return handleError(res, "NOT_FOUND", "Missing credentials");
 
     let role: Role;
 
-    if (username === USER_ADMIN) {
-      role = "ADMIN";
-    }
+    if (username === USER_ADMIN) role = "ADMIN";
+
     role = "USER";
 
     const salt = await bcrypt.genSalt(Number(SALT_ROUNDS));
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    console.log(colors.info("Creating user..."));
 
     const user = await prisma.user.create({
       data: {
@@ -40,59 +45,55 @@ export const regesterNewAccount: RequestHandler<{}, {}, User> = async (
       },
     });
 
-    res.status(201).json(HandleResponseSuccess(user, "New account created !"));
+    console.log(colors.info("User created successfully!"));
+
+    return apiResponse.success(res, "OK", { id: user.id, email, username });
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
-export const login: RequestHandler<{}, {}, User> = async (req, res) => {
+export const login: RequestHandler<
+  {},
+  {},
+  { email: string; password: string }
+> = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const now = new Date();
 
-    if (!email || !password) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Please fill the credentials")));
-      return;
-    }
+    if (!email || !password)
+      return handleError(res, "NOT_FOUND", "Missing credentials");
 
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      res.status(404).json(HandleResponseError("User not found"));
-      return;
-    }
+    if (!user) return handleError(res, "BAD_REQUEST", "Invalid email");
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
-    if (!isValidPassword) {
-      res.status(400).json(HandleResponseError(new Error("Bad credentials")));
-      return;
-    }
+    if (!isValidPassword)
+      return handleError(res, "BAD_REQUEST", "Invalid password");
 
-    console.log("Checking token...");
+    console.log(colors.info("Checking token..."));
 
     let session = await prisma.session.findFirst({
       where: { userId: user.id },
     });
 
-    const now = new Date();
-
     const refreshToken = generateRefreshToken(user.id);
 
-    if (session && new Date(session.expireDate) < now) {
-      console.log("Token expire, deleting session...");
+    if (session && new Date(session.expireDate) > now) {
+      console.log(colors.info("Token expire, deleting session..."));
 
       await prisma.session.delete({ where: { id: session.id } });
-      console.log("Session deleted");
+
+      console.log(colors.info("Session deleted"));
 
       session = null;
     }
 
     if (!session) {
-      console.log("Token not found");
+      console.log(colors.info("Token not found"));
 
       session = await prisma.session.create({
         data: {
@@ -102,10 +103,8 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
         },
       });
 
-      console.log("New token created");
+      console.log(colors.info("New token created"));
     }
-
-    console.log("Update lastlogin");
 
     await prisma.user.update({
       where: { id: user.id },
@@ -130,52 +129,66 @@ export const login: RequestHandler<{}, {}, User> = async (req, res) => {
       }
     );
 
-    const accessToken = generateAccessToken(user.id);
+    if (process.env.NODE_ENV !== "production")
+      console.log(colors.success(`User ${user.username} logged in`));
 
-    LoggedResponseSuccess(user, `user ${user.username} log in !`);
-
-    res.status(200).json(HandleResponseSuccess({ accessToken }));
+    return apiResponse.success(res, "OK", {
+      id: user.id,
+      username: user.username,
+      email,
+      role: user.role,
+    });
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
 export const refreshToken: RequestHandler = async (req, res) => {
   try {
-    const token = req.cookies.refreshJwt;
+    const token: string | undefined = req.cookies.refreshJwt;
 
-    if (!token) {
-      res.status(403).json(HandleResponseError(new Error("Forbidden")));
-      return;
-    }
+    if (!token)
+      return handleError(res, "FORBIDDEN", "You don't have the rights");
 
     const decoded = await verifyRefreshToken<{ userId: string }>(token);
 
-    if (!decoded) {
-      res.status(403).json(HandleResponseError(new Error("Invalid token")));
-      return;
-    }
+    if (!decoded) return handleError(res, "UNAUTHORIZED", "Invalid token");
 
     const newAccessToken = generateAccessToken(decoded.userId);
 
-    res
-      .status(200)
-      .json(HandleResponseSuccess({ accessToken: newAccessToken }));
+    return apiResponse.success(res, "CREATED", { accessToken: newAccessToken });
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
+  }
+};
+
+export const auth: RequestHandler = async (req, res) => {
+  try {
+    const user: UserCookie | undefined = req.cookies.info;
+
+    if (!user) return handleError(res, "UNAUTHORIZED", "User not found");
+
+    return apiResponse.success(res, "OK", user, "User is authenticated");
+  } catch (error) {
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
 export const logout: RequestHandler = async (req, res) => {
   try {
-    const session: Session = req.cookies["refreshJwt"];
-    const user: User = req.cookies["info"];
-    if (!session || !user) {
-      res.status(401).json(HandleResponseError(new Error("Unauthorized")));
-      return;
-    }
+    const token: string | undefined = req.cookies["refreshJwt"];
+    const user: UserCookie | undefined = req.cookies["info"];
+
+    if (!user || !token)
+      return handleError(res, "UNAUTHORIZED", "Token or user not found");
+
+    console.log(colors.info("Deconnecting user..."));
+
+    const session = await prisma.session.findFirstOrThrow({
+      where: {
+        userId: user.id,
+      },
+    });
 
     await prisma.session.delete({
       where: {
@@ -187,11 +200,10 @@ export const logout: RequestHandler = async (req, res) => {
     res.clearCookie("refreshJwt");
     res.clearCookie("info");
 
-    res
-      .status(200)
-      .json(HandleResponseSuccess(null, `User ${user.username} loggout`));
+    console.log(colors.success("User loggout success"));
+
+    return apiResponse.success(res, "OK", null, "User loggout successfully");
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };

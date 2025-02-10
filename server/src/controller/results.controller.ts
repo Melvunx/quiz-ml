@@ -1,23 +1,32 @@
 import { prisma } from "@/config/prisma";
-import {
-  HandleResponseError,
-  HandleResponseSuccess,
-} from "@/utils/handleResponse";
-import { Result, User } from "@prisma/client";
+import colors from "@/schema/colors.schema";
+import { UserCookie } from "@/schema/user.schema";
+import apiResponse from "@/services/api.response";
+import { handleError } from "@/utils/handleResponse";
+import { Result } from "@prisma/client";
 import { RequestHandler } from "express";
 
 export const getAllQuizRestults: RequestHandler = async (req, res) => {
   try {
+    console.log(colors.info("Getting all quizzes results..."));
+
     const results = await prisma.result.findMany({
       include: {
         quiz: true,
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(results));
+    console.log(colors.success("Quizzes results found : ", results.length));
+
+    results.map((result, index) =>
+      console.log(
+        colors.success(`\nQuiz n°${index + 1} \nResults : ${result.score} `)
+      )
+    );
+
+    return apiResponse.success(res, "OK", results);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -28,10 +37,9 @@ export const getQuizResults: RequestHandler<{ quizId: string }> = async (
   try {
     const { quizId } = req.params;
 
-    if (!quizId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    }
+    if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
+
+    console.log(colors.info("Getting quiz results..."));
 
     const results = await prisma.result.findFirstOrThrow({
       where: {
@@ -50,10 +58,16 @@ export const getQuizResults: RequestHandler<{ quizId: string }> = async (
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(results));
+    console.log(
+      colors.success(
+        "Result found successfully with quiz : ",
+        results.quiz.title
+      )
+    );
+
+    return apiResponse.success(res, "OK", results);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -63,15 +77,12 @@ export const saveQuizResults: RequestHandler<{}, {}, Result> = async (
 ) => {
   try {
     const { score, quizId } = req.body;
+    const user: UserCookie | undefined = req.cookies["info"];
 
-    if (!score || !quizId) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Score and quizId are required")));
-      return;
-    }
+    if (!score || !quizId)
+      return handleError(res, "NOT_FOUND", "Score or quizId not found");
 
-    const user: User | null = req.cookies["info"];
+    console.log(colors.info("Saving result..."));
 
     const result = await prisma.result.create({
       data: {
@@ -82,10 +93,11 @@ export const saveQuizResults: RequestHandler<{}, {}, Result> = async (
       },
     });
 
-    res.status(201).json(HandleResponseSuccess(result));
+    console.log(colors.success("Result saved successfully"));
+
+    return apiResponse.success(res, "CREATED", result);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -96,20 +108,20 @@ export const removeQuizResults: RequestHandler<{ resultId: string }> = async (
   try {
     const { resultId } = req.params;
 
-    if (!resultId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    }
+    if (!resultId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    const result = await prisma.result.delete({
+    console.log(colors.info("Removing result..."));
+
+    await prisma.result.delete({
       where: {
         id: resultId,
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(result));
+    console.log(colors.success("Result removed successfully"));
+
+    return apiResponse.success(res, "OK", null, "Results removed successfully");
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };

@@ -1,13 +1,14 @@
-import {
-  HandleResponseError,
-  HandleResponseSuccess,
-} from "@/utils/handleResponse";
+import colors from "@/schema/colors.schema";
+import apiResponse from "@/services/api.response";
+import { handleError } from "@/utils/handleResponse";
 import { prisma } from "@config/prisma";
 import { Question, Quiz } from "@prisma/client";
 import { RequestHandler } from "express";
 
 export const getAllQuiz: RequestHandler = async (req, res) => {
   try {
+    console.log(colors.info("Getting all quizzes..."));
+
     const quizs = await prisma.quiz.findMany({
       include: {
         _count: {
@@ -18,10 +19,19 @@ export const getAllQuiz: RequestHandler = async (req, res) => {
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(quizs));
+    console.log(colors.success("Quizzes retrieved successfully. \n"));
+
+    quizs.map((quiz, index) =>
+      console.log(
+        colors.success(
+          `Quiz n°${index + 1} \nQuestions found : ${quiz._count.questions} \n`
+        )
+      )
+    );
+
+    return apiResponse.success(res, "OK", quizs);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -34,12 +44,10 @@ export const getSearchedQuiz: RequestHandler<
   try {
     const { search } = req.query;
 
-    if (!search) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Query parameter is required")));
-      return;
-    }
+    if (!search)
+      return handleError(res, "NOT_FOUND", "Query element not found");
+
+    console.log(colors.info(`Searching ${search} in quizzes...`));
 
     const quizs = await prisma.quiz.findMany({
       where: {
@@ -50,21 +58,21 @@ export const getSearchedQuiz: RequestHandler<
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(quizs));
+    console.log(colors.success("Quizzes found : ", quizs.length));
+
+    return apiResponse.success(res, "OK", quizs);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
-export const getQuiz: RequestHandler<{ quizId: string }> = async (req, res) => {
+export const getQuiz: RequestHandler = async (req, res) => {
   try {
     const { quizId } = req.params;
 
-    if (!quizId) {
-      res.status(400).json(HandleResponseError(new Error("Id is required")));
-      return;
-    }
+    if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
+
+    console.log(colors.info("Getting quiz..."));
 
     const quiz = await prisma.quiz.findUniqueOrThrow({
       where: {
@@ -89,10 +97,13 @@ export const getQuiz: RequestHandler<{ quizId: string }> = async (req, res) => {
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(quiz));
+    console.log(
+      colors.success(`Quiz found with ${quiz._count.questions} questions`)
+    );
+
+    return apiResponse.success(res, "OK", quiz);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -100,14 +111,9 @@ export const createQuiz: RequestHandler<{}, {}, Quiz> = async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    if (!title) {
-      res
-        .status(400)
-        .json(
-          HandleResponseError(new Error("Title and description are required"))
-        );
-      return;
-    }
+    if (!title) return handleError(res, "NOT_FOUND", "Missing credentials");
+
+    console.log(colors.info("Creating quiz..."));
 
     const quiz = await prisma.quiz.create({
       data: {
@@ -115,11 +121,11 @@ export const createQuiz: RequestHandler<{}, {}, Quiz> = async (req, res) => {
         description: description ?? null,
       },
     });
+    console.log(colors.success(`Quiz created successfully`));
 
-    res.status(201).json(HandleResponseSuccess(quiz));
+    return apiResponse.success(res, "CREATED", quiz);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -132,19 +138,12 @@ export const addQuestions: RequestHandler<
     const { quizId } = req.params;
     const { questions } = req.body;
 
-    if (!quizId) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Quiz ID is required")));
-      return;
-    }
+    if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    if (!Array.isArray(questions) || questions.length === 0) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Questions are required")));
-      return;
-    }
+    if (!Array.isArray(questions) || questions.length === 0)
+      return handleError(res, "NOT_FOUND", "Invalid or not found ids");
+
+    console.log(colors.info("Adding questions to quiz..."));
 
     const questionIds = questions.map((q) => q.id);
 
@@ -157,12 +156,17 @@ export const addQuestions: RequestHandler<
       },
     });
 
-    res
-      .status(200)
-      .json(HandleResponseSuccess({ addedQuestion: addingQuestions.count }));
+    console.log(
+      colors.success(
+        `${addingQuestions.count} questions added to quiz successfully`
+      )
+    );
+
+    return apiResponse.success(res, "OK", {
+      addedQuestion: addingQuestions.count,
+    });
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -175,19 +179,12 @@ export const removeQuestions: RequestHandler<
     const { quizId } = req.params;
     const { questions } = req.body;
 
-    if (!quizId) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Quiz ID is required")));
-      return;
-    }
+    if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    if (!Array.isArray(questions) || questions.length === 0) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Questions are required")));
-      return;
-    }
+    if (!Array.isArray(questions) || questions.length === 0)
+      return handleError(res, "NOT_FOUND", "Invalid or not found ids");
+
+    console.log(colors.info("Removing questions to quiz..."));
 
     const questionIds = questions.map((q) => q.id);
 
@@ -200,14 +197,17 @@ export const removeQuestions: RequestHandler<
       },
     });
 
-    res
-      .status(200)
-      .json(
-        HandleResponseSuccess({ removedQuestions: removingQuestions.count })
-      );
+    console.log(
+      colors.success(
+        `${removingQuestions.count} questions removed to quiz successfully`
+      )
+    );
+
+    return apiResponse.success(res, "OK", {
+      removingQuestions: removingQuestions.count,
+    });
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -219,21 +219,12 @@ export const editQuiz: RequestHandler<{ quizId: string }, {}, Quiz> = async (
     const { quizId } = req.params;
     const { title, description } = req.body;
 
-    if (!quizId) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Quiz ID is required")));
-      return;
-    }
+    if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    if (!title || !description) {
-      res
-        .status(400)
-        .json(
-          HandleResponseError(new Error("Title and description are required"))
-        );
-      return;
-    }
+    if (!title || !description)
+      return handleError(res, "NOT_FOUND", "Missing credentials");
+
+    console.log(colors.info("Editing quiz..."));
 
     const quiz = await prisma.quiz.update({
       where: {
@@ -245,10 +236,11 @@ export const editQuiz: RequestHandler<{ quizId: string }, {}, Quiz> = async (
       },
     });
 
-    res.status(200).json(HandleResponseSuccess(quiz));
+    console.log(colors.success("Quiz updated successfully"));
+
+    return apiResponse.success(res, "OK", quiz);
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };
 
@@ -259,18 +251,16 @@ export const deleteQuiz: RequestHandler<{ quizId: string }> = async (
   try {
     const { quizId } = req.params;
 
-    if (!quizId) {
-      res
-        .status(400)
-        .json(HandleResponseError(new Error("Quiz ID is required")));
-      return;
-    }
+    if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    const quiz = await prisma.quiz.delete({ where: { id: quizId } });
+    console.log(colors.info("Deleting quiz..."));
 
-    res.status(200).json(HandleResponseSuccess(quiz));
+    await prisma.quiz.delete({ where: { id: quizId } });
+
+    console.log(colors.info("Quiz deleted successfully"));
+
+    return apiResponse.success(res, "OK", null, "Quiz deleted successfully");
   } catch (error) {
-    res.status(500).json(HandleResponseError(error));
-    return;
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
 };

@@ -1,21 +1,26 @@
-import { ApiResponseError, ApiResponseSuccess } from "@/schema/api.schema";
-import colors from "@/schema/colors.schema";
-import apiResponse from "@/services/api.response";
+import {
+  ApiData,
+  ApiResponseError,
+  ApiResponseSuccess,
+  ErrorStatus,
+} from "@schema/api.schema";
+import colors from "@schema/colors.schema";
+import apiResponse from "@services/api.response";
 import { Response } from "express";
 
 export function handleResponseSuccess(
-  data?: any,
+  data: ApiData,
   message = "Request succeded"
 ): ApiResponseSuccess {
   return {
     success: true,
     message,
-    data: data ?? null,
+    data,
   };
 }
 
 export function handleResponseError(
-  error?: any,
+  error?: unknown,
   message = "Request failed"
 ): ApiResponseError {
   const isErrorObject = error instanceof Error;
@@ -31,20 +36,17 @@ export function handleResponseError(
   };
 }
 
-export const loggedResponseSuccess = (data?: any, message?: string) =>
-  console.log(colors.success(handleResponseSuccess(data, message)));
+export const loggedResponseSuccess = (
+  data: Record<string, unknown> | null,
+  message?: string
+) => console.log(colors.success(handleResponseSuccess(data, message)));
 
-export const loggedResponseError = (error?: any) =>
+export const loggedResponseError = (error?: unknown) =>
   console.log(colors.error(handleResponseError(error)));
 
 export function handleError(
   response: Response,
-  status:
-    | "BAD_REQUEST"
-    | "UNAUTHORIZED"
-    | "FORBIDDEN"
-    | "NOT_FOUND"
-    | "INTERNAL_SERVER_ERROR",
+  status: ErrorStatus,
   message = `Request failed with the status${response.status}`
 ) {
   const errorMessage = new Error(message);

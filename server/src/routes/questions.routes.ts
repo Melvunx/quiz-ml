@@ -1,4 +1,4 @@
-import authenticate from "@/middleware/authentification";
+import { authenticate } from "@/middleware/authentification";
 import {
   addAnswers,
   editAnswers,

@@ -42,12 +42,12 @@ router.delete("/many", authenticate, deleteManyQuestions);
 // -----ANSWERS----- //
 
 // ajouter une ou des réponses
-router.post("/:questionId/answers/add", authenticate, addAnswers);
+router.post("/:questionId/answers", authenticate, addAnswers);
 
 router.put("/answers", authenticate, editAnswers);
 
 router.delete("/answer/:answerId", authenticate, removeAnswer);
 
-router.delete("/answer/many", authenticate, removeAnswers);
+router.delete("/answers", authenticate, removeAnswers);
 
 module.exports = router;

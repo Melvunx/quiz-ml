@@ -5,9 +5,9 @@ export const QuestionTypeSchema = z.enum(["SINGLE", "MULTIPLE"]);
 
 // Answer schema
 export const AnswerSchema = z.object({
+  id: z.string().cuid(),
   content: z.string(),
   isCorrect: z.boolean(),
-
   createdAt: z.date(),
   updatedAt: z.date(),
   questionId: z.string().cuid(),

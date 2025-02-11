@@ -7,29 +7,41 @@ import isArrayOrIsEmpty from "@/utils/isArrayOrEmpty";
 import { Answer } from "@prisma/client";
 import { RequestHandler } from "express";
 
-export const addAnswers: RequestHandler<{}, {}, { answers: Answer[] }> = async (
-  req,
-  res
-) => {
+export const addAnswers: RequestHandler<
+  { questionId: string },
+  {},
+  { answers: Answer[] }
+> = async (req, res) => {
   try {
+    const { questionId } = req.params;
     const { answers } = req.body;
+
+    if (!questionId) return handleError(res, "NOT_FOUND", "Id not found");
 
     if (!isArrayOrIsEmpty(answers))
       return handleError(res, "NOT_FOUND", "Invalid or not found answers");
 
     console.log(colors.info("Creating answers..."));
 
-    const createdAnswers = await prisma.answer.createMany({
-      data: answers,
-      skipDuplicates: true,
-    });
+    const createdAnswers = await Promise.all(
+      answers.map(
+        async (answer) =>
+          await prisma.answer.create({
+            data: {
+              content: answer.content,
+              isCorrect: answer.isCorrect,
+              questionId,
+            },
+          })
+      )
+    );
 
     console.log(
-      colors.success(`Number of answers created : ${createdAnswers.count}`)
+      colors.success(`Number of answers created : ${createdAnswers.length}`)
     );
 
     return apiResponse.success(res, "CREATED", {
-      answer_number: createdAnswers.count,
+      answer_number: createdAnswers.length,
     });
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);

@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import ErrorInputMessage from "./ui/error-input-message";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import LoadingString from "./ui/loading-string";
@@ -66,7 +67,7 @@ export default function Login() {
             <Input id="email" type="email" name="email" />
             {error ? (
               error.includes("email") ? (
-                <p className="italic text-red-500">{error}</p>
+                <ErrorInputMessage error={error} />
               ) : null
             ) : null}
           </div>
@@ -75,14 +76,12 @@ export default function Login() {
             <Input id="password" type="password" name="password" />
             {error ? (
               error.includes("password") ? (
-                <p className="italic text-red-500">{error}</p>
+                <ErrorInputMessage error={error} />
               ) : null
             ) : null}
           </div>
           {isError && (
-            <p className="font-semibold tracking-wide text-red-500">
-              Erreur de connexion. Veuillez réessayer.
-            </p>
+            <ErrorInputMessage error="Erreur de connexion. Veuillez réessayer." />
           )}
         </form>
       </CardContent>

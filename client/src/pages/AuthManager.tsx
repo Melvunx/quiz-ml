@@ -1,3 +1,4 @@
+import LoadingString from "@/components/ui/loading-string";
 import useAuth from "@/hooks/use-auth";
 import userAuthStore from "@/store/auth";
 import { useEffect, useState } from "react";
@@ -29,7 +30,7 @@ export default function AuthManager() {
   }, [checkAuth, isAuthenticated]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingString />;
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;

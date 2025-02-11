@@ -1,6 +1,6 @@
 import useAuth from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { dateFormater, toastParams } from "@/lib/utils";
+import { dateFormater, showError, toastParams } from "@/lib/utils";
 import { RegisterUser, RegisterUserSchema } from "@/schema/auth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import ErrorInputMessage from "./ui/error-input-message";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import LoadingString from "./ui/loading-string";
@@ -21,7 +22,7 @@ import LoadingString from "./ui/loading-string";
 export default function Register() {
   const { register } = useAuth();
   const { toast } = useToast();
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const {
     mutate: registerMutation,
@@ -45,15 +46,14 @@ export default function Register() {
 
     try {
       const validData = RegisterUserSchema.parse(formData);
-      setValidationErrors([]);
+      setErrors([]);
 
       await registerMutation(validData);
-    } catch (errors) {
-      if (errors instanceof z.ZodError) {
-        setValidationErrors(errors.errors.map((error) => error.message));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setErrors(error.errors.map((error) => error.message));
       }
-
-      console.error("Unexpected error : ", errors);
+      if (process.env.NODE_ENV === "development") console.error(error);
     }
   };
 
@@ -70,24 +70,24 @@ export default function Register() {
           <div className="space-y-1">
             <Label htmlFor="username">Username</Label>
             <Input id="username" name="username" />
+            {errors.length > 0 ? (
+              <ErrorInputMessage error={showError(errors, "4")} />
+            ) : null}
           </div>
           <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" name="email" />
+            {errors.length > 0 ? (
+              <ErrorInputMessage error={showError(errors, "Email")} />
+            ) : null}
           </div>
           <div className="space-y-1">
             <Label htmlFor="password">Mot de passe</Label>
             <Input id="password" type="password" name="password" />
+            {errors.length > 0 ? (
+              <ErrorInputMessage error={showError(errors, "6")} />
+            ) : null}
           </div>
-          {validationErrors.length > 0 && (
-            <div className="mx-auto flex w-1/2 flex-col items-center justify-center">
-              {validationErrors.map((error, index) => (
-                <p key={index} className="italic text-red-500">
-                  {error}
-                </p>
-              ))}
-            </div>
-          )}
         </form>
       </CardContent>
       <CardFooter>

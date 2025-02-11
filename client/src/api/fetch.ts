@@ -28,15 +28,17 @@ const refreshToken = async (): Promise<string | null> => {
   }
 };
 
+type ApiDataError = {
+  success: false;
+  message: string;
+  error: Error | string;
+  stack?: string;
+};
+
 export class ApiError extends Error {
   constructor(
     public status: number,
-    public data: {
-      success: false;
-      message: string;
-      error: Error | string;
-      stack?: string;
-    },
+    public data: ApiDataError,
     message?: string
   ) {
     super(message || data.message);

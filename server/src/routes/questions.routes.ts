@@ -26,13 +26,13 @@ router.get("/", authenticate, searchQuestion);
 // Avoir toutes les questions avec leurs réponses
 router.get("/answers", authenticate, getQuestionsWithAnswers);
 
-// Avoir une questions avec leurs réponses
+// Avoir une question avec leurs réponses
 router.get("/:questionId/answers", authenticate, getQuestionWithAnswers);
 
 // creéer une question
-router.post("/create", authenticate, createNewQuestion);
+router.post("/", authenticate, createNewQuestion);
 
-router.put("/", authenticate, editQuestion);
+router.put("/:questionId", authenticate, editQuestion);
 
 router.delete("/:questionId", authenticate, deleteQuestion);
 

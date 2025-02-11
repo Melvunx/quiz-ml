@@ -1,4 +1,4 @@
-import fetchApi, { ApiError } from "@/api/fetch";
+import fetchApi from "@/api/fetch";
 import { User, UserSchema } from "@/schema/user";
 import userAuthStore from "@/store/auth";
 import { useCallback } from "react";
@@ -15,9 +15,11 @@ export default function useAuth() {
     setAccessToken,
   } = userAuthStore();
 
+  const url = "/auth";
+
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetchApi<User>("/auth/check-auth", {
+      const response = await fetchApi<User>(`${url}/check-auth`, {
         navigate,
         requiresToken: true,
         accessToken,
@@ -27,25 +29,25 @@ export default function useAuth() {
 
       setUser(user);
       setIsAuthenticated(true);
-
-      console.log("Check successfull");
+      if (process.env.NODE_ENV === "development")
+        console.log("Check successfull");
     } catch (error) {
-      console.error("Check auth failed : ", error);
       setIsAuthenticated(false);
+      if (process.env.NODE_ENV === "development") console.error(error);
     }
   }, [setUser, setIsAuthenticated, navigate, accessToken, setAccessToken]);
 
   const register = useCallback(
     async (username: string, email: string, password: string) => {
       try {
-        const r = await fetchApi<User>("/auth/register", {
+        const r = await fetchApi<User>(`${url}/register`, {
           payload: { username, email, password },
         });
         const user = UserSchema.parse(r);
         setUser(user);
       } catch (error) {
         setUser(null);
-        console.error("Check auth failed : ", error);
+        if (process.env.NODE_ENV === "development") console.error(error);
       }
     },
     [setUser]
@@ -54,7 +56,7 @@ export default function useAuth() {
   const login = useCallback(
     async (email: string, password: string) => {
       try {
-        const response = await fetchApi<User>("/auth/login", {
+        const response = await fetchApi<User>(`${url}/login`, {
           payload: { email, password },
           navigate,
         });
@@ -64,16 +66,12 @@ export default function useAuth() {
         setUser(user);
         setIsAuthenticated(true);
         setAuthError(null);
-
-        console.log("Login successful");
+        if (process.env.NODE_ENV === "development")
+          console.log("Login successful");
       } catch (error) {
-        if (error instanceof ApiError) {
-          setAuthError(error.data.error as string);
-        }
-
-        console.error(error);
         setIsAuthenticated(false);
         setUser(null);
+        if (process.env.NODE_ENV === "development") console.error(error);
       }
     },
     [navigate, setUser, setIsAuthenticated, setAuthError]
@@ -81,7 +79,7 @@ export default function useAuth() {
 
   const logout = useCallback(async () => {
     try {
-      await fetchApi<string>("/auth/logout", {
+      await fetchApi<string>(`${url}/logout`, {
         method: "POST",
         navigate,
         requiresToken: true,
@@ -90,10 +88,10 @@ export default function useAuth() {
       });
 
       clearAuth();
-
-      console.log("Logout successful");
+      if (process.env.NODE_ENV === "development")
+        console.log("Logout successful");
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV === "development") console.error(error);
     }
   }, [accessToken, clearAuth, navigate, setAccessToken]);
 

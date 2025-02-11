@@ -1,6 +1,7 @@
 import useAuth from "@/hooks/use-auth";
-import userAuthStore from "@/store/auth";
+import { apiErrorHandler } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import {
@@ -17,8 +18,8 @@ import LoadingString from "./ui/loading-string";
 
 export default function Login() {
   const { login } = useAuth();
-  const { authError } = userAuthStore();
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   const {
     mutate: loginMutation,
@@ -40,10 +41,13 @@ export default function Login() {
       password: String(data.get("password")),
     };
 
+    setError(null);
+
     try {
       await loginMutation(formData);
     } catch (error) {
-      console.error("Unexpected error : ", error);
+      const errorResponse = apiErrorHandler(error);
+      setError(errorResponse.error as string);
     }
   };
 
@@ -60,18 +64,18 @@ export default function Login() {
           <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" name="email" />
-            {authError ? (
-              authError.includes("email") ? (
-                <p className="italic text-red-500">{authError}</p>
+            {error ? (
+              error.includes("email") ? (
+                <p className="italic text-red-500">{error}</p>
               ) : null
             ) : null}
           </div>
           <div className="space-y-1">
             <Label htmlFor="password">Mot de passe</Label>
             <Input id="password" type="password" name="password" />
-            {authError ? (
-              authError.includes("password") ? (
-                <p className="italic text-red-500">{authError}</p>
+            {error ? (
+              error.includes("password") ? (
+                <p className="italic text-red-500">{error}</p>
               ) : null
             ) : null}
           </div>

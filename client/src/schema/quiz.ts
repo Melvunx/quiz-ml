@@ -25,8 +25,11 @@ export const QuestionSchema = z.object({
     })
     .optional(),
   quizId: z.string().cuid().optional(),
-  answers: z.array(AnswerSchema),
+  answers: z.array(AnswerSchema).optional(),
 });
+
+// Question array schema
+export const QuestionsSchema = z.array(QuestionSchema);
 
 // Quiz schema
 export const QuizSchema = z.object({

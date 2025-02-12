@@ -43,7 +43,7 @@ model Quiz {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   questions   Question[]
-  Result      Result[]
+  results     Result[]
 }
 
 model Question {

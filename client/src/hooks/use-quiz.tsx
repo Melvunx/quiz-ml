@@ -6,7 +6,10 @@ import {
   QuestionsSchema,
   QuestionType,
   Quiz,
+  QuizSchema,
   QuizzesSchema,
+  Result,
+  ResultSchema,
 } from "@/schema/quiz";
 import userAuthStore from "@/store/auth";
 import { useCallback } from "react";
@@ -117,14 +120,63 @@ export default function useQuiz() {
 
   const allResults = useCallback(async () => {
     try {
+      const response = await fetchApi<Result>(BASE_URL.RESULTS_ENDPOINT, {
+        requiresToken: true,
+        navigate,
+        accessToken,
+        setAccessToken,
+      });
+
+      const results = ResultSchema.parse(response);
+
+      return results;
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
     }
-  }, []);
+  }, [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]);
 
-  const quizDetail = useCallback(async () => {}, []);
+  const quizDetail = useCallback(
+    async (quizId: string) => {
+      try {
+        const response = await fetchApi<Quiz>(`${BASE_URL.QUIZ}/${quizId}`, {
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        });
 
-  const resultDetail = useCallback(async () => {}, []);
+        const quiz = QuizSchema.parse(response);
+
+        return quiz;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
+
+  const resultDetail = useCallback(
+    async (restultId: string) => {
+      try {
+        const response = await fetchApi<Result>(
+          `${BASE_URL.RESULTS_ENDPOINT}/${restultId}`,
+          {
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
+
+        const results = ResultSchema.parse(response);
+
+        return results;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
+  );
 
   const createQuestion = useCallback(
     async (content: string, type: QuestionType) => {
@@ -147,9 +199,47 @@ export default function useQuiz() {
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
   );
 
-  const createQuiz = useCallback(async () => {}, []);
+  const createQuiz = useCallback(
+    async (title: string, description: string) => {
+      try {
+        const response = await fetchApi<Result>(BASE_URL.QUIZ, {
+          payload: { title, description },
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        });
 
-  const saveQuizResults = useCallback(async () => {}, []);
+        const quiz = QuizSchema.parse(response);
+
+        return quiz;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
+
+  const saveQuizResults = useCallback(
+    async (score: number, quizId: string) => {
+      try {
+        const response = await fetchApi<Result>(BASE_URL.RESULTS_ENDPOINT, {
+          payload: { score, quizId },
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        });
+
+        const results = ResultSchema.parse(response);
+
+        return results;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
+  );
 
   const addAnswers = useCallback(
     async (questionsId: string, answers: Answer[]) => {
@@ -173,7 +263,28 @@ export default function useQuiz() {
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
   );
 
-  const addQuestionsToQuiz = useCallback(async () => {}, []);
+  const addQuestionsToQuiz = useCallback(
+    async (quizId: string, questions: Question[]) => {
+      try {
+        const addedQuestions = await fetchApi<{ addedQuestions: number }>(
+          `${BASE_URL.QUIZ}/${quizId}${BASE_URL.QUESTION}/add`,
+          {
+            method: "PATCH",
+            payload: { questions },
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
+
+        return addedQuestions;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.QUESTION, BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
 
   const updateQuestion = useCallback(
     async (questionId: string, content: string, type: QuestionType) => {
@@ -200,7 +311,27 @@ export default function useQuiz() {
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
   );
 
-  const modifyQuiz = useCallback(async () => {}, []);
+  const modifyQuiz = useCallback(
+    async (quizId: string, title: string, description: string) => {
+      try {
+        const response = await fetchApi<Quiz>(`${BASE_URL.QUIZ}/${quizId}`, {
+          method: "PUT",
+          payload: { title, description },
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        });
+
+        const quiz = QuizSchema.parse(response);
+
+        return quiz;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
 
   const updateAnswers = useCallback(
     async (answers: Answer[]) => {
@@ -247,11 +378,72 @@ export default function useQuiz() {
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
   );
 
-  const removeQuestionsToQuiz = useCallback(async () => {}, []);
+  const removeQuestionsToQuiz = useCallback(
+    async (quizId: string, questions: Question[]) => {
+      try {
+        const removedQuestions = await fetchApi<{ removedQuestions: number }>(
+          `${BASE_URL.QUIZ}/${quizId}${BASE_URL.QUESTION}/remove`,
+          {
+            method: "PATCH",
+            payload: { questions },
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
 
-  const deleteQuiz = useCallback(async () => {}, []);
+        return removedQuestions;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.QUESTION, BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
 
-  const deleteQuizResults = useCallback(async () => {}, []);
+  const deleteQuiz = useCallback(
+    async (quizId: string) => {
+      try {
+        const successMessage = await fetchApi<string>(
+          `${BASE_URL.QUIZ}/${quizId}`,
+          {
+            method: "DELETE",
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
+
+        return successMessage;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
+
+  const deleteQuizResults = useCallback(
+    async (resultId: string) => {
+      try {
+        const successMessage = await fetchApi<string>(
+          `${BASE_URL.RESULTS_ENDPOINT}/${resultId}`,
+          {
+            method: "DELETE",
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
+
+        return successMessage;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+      }
+    },
+    [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
+  );
 
   const removeAnswer = useCallback(
     async (answerId: string) => {

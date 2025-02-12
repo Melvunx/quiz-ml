@@ -15,6 +15,7 @@ export const AnswerSchema = z.object({
 
 // Question schema
 export const QuestionSchema = z.object({
+  id: z.string().cuid(),
   content: z.string(),
   type: QuestionTypeSchema,
   createdAt: z.date(),
@@ -33,6 +34,7 @@ export const QuestionsSchema = z.array(QuestionSchema);
 
 // Quiz schema
 export const QuizSchema = z.object({
+  id: z.string().cuid(),
   title: z.string(),
   description: z.string().optional(),
   _count: z
@@ -43,17 +45,18 @@ export const QuizSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   questions: z.array(QuestionSchema).optional(),
-  Result: z.array(z.lazy(() => ResultSchema)).optional(),
 });
 
 export const QuizzesSchema = z.array(QuizSchema);
 
 // Result schema
 export const ResultSchema = z.object({
+  id: z.string().cuid(),
   score: z.number().int(),
   completedAt: z.date(),
   quizId: z.string().cuid(),
   userId: z.string().cuid().optional(),
+  quiz: QuizSchema,
 });
 
 // Create schemas
@@ -63,6 +66,7 @@ export const CreateAnswerSchema = AnswerSchema.omit({
 });
 
 export const CreateQuestionSchema = QuestionSchema.omit({
+  id: true,
   createdAt: true,
   updatedAt: true,
   answers: true,
@@ -71,11 +75,16 @@ export const CreateQuestionSchema = QuestionSchema.omit({
 });
 
 export const CreateQuizSchema = QuizSchema.omit({
+  id: true,
   createdAt: true,
   updatedAt: true,
-  Result: true,
 }).extend({
   questions: z.array(CreateQuestionSchema),
+});
+
+export const saveQuizResults = ResultSchema.omit({
+  id: true,
+  completedAt: true,
 });
 
 // Types

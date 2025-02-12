@@ -41,7 +41,7 @@ export const getQuizResults: RequestHandler<{ quizId: string }> = async (
 
     console.log(colors.info("Getting quiz results..."));
 
-    const results = await prisma.result.findFirstOrThrow({
+    const result = await prisma.result.findFirstOrThrow({
       where: {
         quizId,
       },
@@ -61,11 +61,11 @@ export const getQuizResults: RequestHandler<{ quizId: string }> = async (
     console.log(
       colors.success(
         "Result found successfully with quiz : ",
-        results.quiz.title
+        result.quiz.title
       )
     );
 
-    return apiResponse.success(res, "OK", results);
+    return apiResponse.success(res, "OK", result);
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }

@@ -163,7 +163,7 @@ export const addQuestions: RequestHandler<
     );
 
     return apiResponse.success(res, "OK", {
-      addedQuestion: addingQuestions.count,
+      addedQuestions: addingQuestions.count,
     });
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
@@ -204,7 +204,7 @@ export const removeQuestions: RequestHandler<
     );
 
     return apiResponse.success(res, "OK", {
-      removingQuestions: removingQuestions.count,
+      removedQuestions: removingQuestions.count,
     });
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);

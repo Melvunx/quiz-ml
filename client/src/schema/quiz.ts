@@ -42,9 +42,11 @@ export const QuizSchema = z.object({
     .optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  questions: z.array(QuestionSchema),
-  Result: z.array(z.lazy(() => ResultSchema)),
+  questions: z.array(QuestionSchema).optional(),
+  Result: z.array(z.lazy(() => ResultSchema)).optional(),
 });
+
+export const QuizzesSchema = z.array(QuizSchema);
 
 // Result schema
 export const ResultSchema = z.object({

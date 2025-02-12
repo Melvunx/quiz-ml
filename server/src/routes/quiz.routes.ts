@@ -28,13 +28,14 @@ router.get("/", authenticate, getSearchedQuiz);
 router.get("/:quizId", authenticate, getQuiz);
 
 // Créer un quiz
-router.post("/create", authenticate, createQuiz);
+router.post("/", authenticate, createQuiz);
 
 // Ajouter des questions dans un quiz
 router.patch("/:quizId/questions/add", authenticate, addQuestions);
 
 // Suppression de question dans un quiz
 router.patch("/:quizId/questions/remove", authenticate, removeQuestions);
+
 // Modifier quelques variables du quiz (titre et description)
 router.put("/:quizId", authenticate, editQuiz);
 
@@ -45,7 +46,7 @@ router.get("/results", authenticate, getAllQuizRestults);
 
 router.get("/results/:resultsId", authenticate, getQuizResults);
 
-router.post("/results/save", authenticate, saveQuizResults);
+router.post("/results", authenticate, saveQuizResults);
 
 router.delete("/results/:resultId", authenticate, removeQuizResults);
 

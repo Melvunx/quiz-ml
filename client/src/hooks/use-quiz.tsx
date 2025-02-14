@@ -1,6 +1,7 @@
 import fetchApi from "@/api/fetch";
 import {
   Answer,
+  CreateAnswer,
   Question,
   QuestionSchema,
   QuestionsSchema,
@@ -243,7 +244,7 @@ export default function useQuiz() {
   );
 
   const addAnswers = useCallback(
-    async (questionsId: string, answers: Answer[]) => {
+    async (questionsId: string, answers: CreateAnswer[]) => {
       try {
         const newAnswers = await fetchApi<Answer[]>(
           `${BASE_URL.QUESTION}/${questionsId}/answers`,

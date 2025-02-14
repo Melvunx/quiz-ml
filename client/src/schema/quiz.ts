@@ -63,8 +63,10 @@ export const ResultsSchema = z.array(ResultSchema);
 
 // Create schemas
 export const CreateAnswerSchema = AnswerSchema.omit({
+  id: true,
   createdAt: true,
   updatedAt: true,
+  questionId: true,
 });
 
 export const CreateQuestionSchema = QuestionSchema.omit({
@@ -72,6 +74,8 @@ export const CreateQuestionSchema = QuestionSchema.omit({
   createdAt: true,
   updatedAt: true,
   answers: true,
+}).extend({
+  answers: z.array(CreateAnswerSchema),
 });
 
 export const CreateQuizSchema = QuizSchema.omit({
@@ -88,6 +92,7 @@ export const saveQuizResults = ResultSchema.omit({
 // Types
 export type QuestionType = z.infer<typeof QuestionTypeSchema>;
 export type Answer = z.infer<typeof AnswerSchema>;
+export type CreateAnswer = z.infer<typeof CreateAnswerSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
 export type Result = z.infer<typeof ResultSchema>;

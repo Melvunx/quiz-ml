@@ -113,8 +113,10 @@ export const createNewQuestion: RequestHandler<{}, {}, Question> = async (
   try {
     const { content, type } = req.body;
 
-    if (!content || !type)
-      return handleError(res, "NOT_FOUND", "Missing credentials");
+    if (!content)
+      return handleError(res, "NOT_FOUND", "Le contenu ne peut être vide !");
+
+    if (!type) return handleError(res, "NOT_FOUND", "Sélectionnez un type !");
 
     console.log(colors.info("Creating new question..."));
 

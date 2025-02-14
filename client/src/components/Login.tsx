@@ -57,7 +57,7 @@ export default function Login() {
       <CardHeader>
         <CardTitle>Connexion</CardTitle>
       </CardHeader>
-      <CardDescription>
+      <CardDescription className="my-2 text-center leading-6">
         Connectez vous afin de tester des quizs et les créer vous même !
       </CardDescription>
       <CardContent className="space-y-2">
@@ -85,7 +85,7 @@ export default function Login() {
           )}
         </form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex justify-end">
         <Button type="submit" form="loginForm">
           {isLoging ? <LoadingString word="Connexion..." /> : "Se connecter"}
         </Button>

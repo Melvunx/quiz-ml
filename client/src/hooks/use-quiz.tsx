@@ -10,6 +10,7 @@ import {
   QuizzesSchema,
   Result,
   ResultSchema,
+  ResultsSchema,
 } from "@/schema/quiz";
 import userAuthStore from "@/store/auth";
 import { useCallback } from "react";
@@ -120,14 +121,14 @@ export default function useQuiz() {
 
   const allResults = useCallback(async () => {
     try {
-      const response = await fetchApi<Result>(BASE_URL.RESULTS_ENDPOINT, {
+      const response = await fetchApi<Result[]>(BASE_URL.RESULTS_ENDPOINT, {
         requiresToken: true,
         navigate,
         accessToken,
         setAccessToken,
       });
 
-      const results = ResultSchema.parse(response);
+      const results = ResultsSchema.parse(response);
 
       return results;
     } catch (error) {

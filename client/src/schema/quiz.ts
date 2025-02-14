@@ -36,7 +36,7 @@ export const QuestionsSchema = z.array(QuestionSchema);
 export const QuizSchema = z.object({
   id: z.string().cuid(),
   title: z.string(),
-  description: z.string().optional(),
+  description: z.string(),
   _count: z
     .object({
       questions: z.number().int().optional(),
@@ -59,6 +59,8 @@ export const ResultSchema = z.object({
   quiz: QuizSchema,
 });
 
+export const ResultsSchema = z.array(ResultSchema);
+
 // Create schemas
 export const CreateAnswerSchema = AnswerSchema.omit({
   createdAt: true,
@@ -70,16 +72,12 @@ export const CreateQuestionSchema = QuestionSchema.omit({
   createdAt: true,
   updatedAt: true,
   answers: true,
-}).extend({
-  answers: z.array(CreateAnswerSchema),
 });
 
 export const CreateQuizSchema = QuizSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-}).extend({
-  questions: z.array(CreateQuestionSchema),
 });
 
 export const saveQuizResults = ResultSchema.omit({

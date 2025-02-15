@@ -31,7 +31,7 @@ const refreshToken = async (): Promise<string | null> => {
 type ApiDataError = {
   success: false;
   message: string;
-  error: Error | string;
+  error: string;
   stack?: string;
 };
 

@@ -12,9 +12,9 @@ import { Role, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
 
-const { USER_ADMIN, SALT_ROUNDS } = process.env;
+const { USER_ADMIN, SALT_ROUNDS, USER_ADMIN_BACKUP } = process.env;
 
-if (!USER_ADMIN || !SALT_ROUNDS) {
+if (!USER_ADMIN || !SALT_ROUNDS || !USER_ADMIN_BACKUP) {
   throw new Error("Id or salt rounds not found");
 }
 
@@ -27,9 +27,9 @@ export const regester: RequestHandler<{}, {}, User> = async (req, res) => {
 
     let role: Role;
 
-    if (username === USER_ADMIN) role = "ADMIN";
-
-    role = "USER";
+    if (username === USER_ADMIN || username === USER_ADMIN_BACKUP)
+      role = "ADMIN";
+    else role = "USER";
 
     const salt = await bcrypt.genSalt(Number(SALT_ROUNDS));
     const hashedPassword = await bcrypt.hash(password, salt);

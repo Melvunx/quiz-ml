@@ -1,3 +1,4 @@
+import Navbar from "@/components/layout/Navbar";
 import Quiz from "@/components/Quiz";
 import LoadingString from "@/components/ui/loading-string";
 import useQuiz from "@/hooks/use-quiz";
@@ -22,7 +23,7 @@ export default function QuizPage() {
 
   return (
     <div>
-      <h1>Quiz Page</h1>
+      <Navbar />
       {quizzes
         ? quizzes.map((quiz) => (
             <Quiz key={quiz.id} quiz={quiz} withQuestion={false} />

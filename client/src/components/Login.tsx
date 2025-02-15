@@ -1,6 +1,8 @@
 import useAuth from "@/hooks/use-auth";
 import { apiErrorHandler } from "@/lib/utils";
+import useErrorStore from "@/store/error";
 import { useMutation } from "@tanstack/react-query";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -19,8 +21,14 @@ import LoadingString from "./ui/loading-string";
 
 export default function Login() {
   const { login } = useAuth();
+  const { error } = useErrorStore();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formErrors, setFormErrors] = useState<{
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
 
   const {
     mutate: loginMutation,
@@ -32,8 +40,8 @@ export default function Login() {
       const { email, password } = credentials;
       await login(email, password);
     },
-    onSuccess: () => navigate("/dashboard"),
-    onError: (error) => console.error(error),
+    onSuccess: () => navigate("/quiz-dashboard"),
+    onError: (error) => apiErrorHandler(error),
   });
 
   const onLoginAction = async (data: FormData) => {
@@ -42,13 +50,25 @@ export default function Login() {
       password: String(data.get("password")),
     };
 
-    setError(null);
+    setFormErrors({});
 
-    try {
+    let hasErrors = false;
+
+    if (!formData.email) {
+      setFormErrors((prev) => ({ ...prev, email: "Email est requis" }));
+      hasErrors = true;
+    }
+
+    if (!formData.password) {
+      setFormErrors((prev) => ({
+        ...prev,
+        password: "Le mot de passe est requis",
+      }));
+      hasErrors = true;
+    }
+
+    if (!hasErrors) {
       await loginMutation(formData);
-    } catch (error) {
-      const errorResponse = apiErrorHandler(error);
-      setError(errorResponse.error as string);
     }
   };
 
@@ -62,32 +82,58 @@ export default function Login() {
       </CardDescription>
       <CardContent className="space-y-2">
         <form id="loginForm" action={onLoginAction}>
-          <div className="space-y-1">
+          <div className="my-2 space-y-1">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" name="email" />
-            {error ? (
-              error.includes("email") ? (
-                <ErrorInputMessage error={error} />
-              ) : null
-            ) : null}
+            <Input
+              className="placeholder:opacity-55"
+              id="email"
+              type="email"
+              name="email"
+              placeholder="exemple@gmail.com"
+            />
+            {error && error.includes("email") ? (
+              <ErrorInputMessage error={error} />
+            ) : (
+              formErrors.email && <ErrorInputMessage error={formErrors.email} />
+            )}
           </div>
           <div className="space-y-1">
-            <Label htmlFor="password">Mot de passe</Label>
-            <Input id="password" type="password" name="password" />
-            {error ? (
-              error.includes("password") ? (
-                <ErrorInputMessage error={error} />
-              ) : null
-            ) : null}
+            <Label htmlFor="password">Mot de passe</Label>{" "}
+            <div className="flex items-center gap-2">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+              />
+              <Button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye /> : <EyeOff />}
+              </Button>
+            </div>
+            {error && error.includes("password") ? (
+              <ErrorInputMessage error={error} />
+            ) : (
+              formErrors.password && (
+                <ErrorInputMessage error={formErrors.password} />
+              )
+            )}
           </div>
-          {isError && (
-            <ErrorInputMessage error="Erreur de connexion. Veuillez réessayer." />
-          )}
+          {formErrors.general ||
+            (isError && (
+              <ErrorInputMessage
+                error={
+                  formErrors.general ||
+                  "Erreur de connexion. Veuillez réessayer."
+                }
+              />
+            ))}
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
         <Button type="submit" form="loginForm">
-          {isLoging ? <LoadingString word="Connexion..." /> : "Se connecter"}
+          {isLoging ? <LoadingString word="Connexion" /> : "Se connecter"}
         </Button>
       </CardFooter>
     </Card>

@@ -9,4 +9,9 @@ export const UserSchema = z.object({
   role: Role,
 });
 
+export const CreateUserSchema = UserSchema.omit({
+  id: true,
+  role: true,
+});
+
 export type User = z.infer<typeof UserSchema>;

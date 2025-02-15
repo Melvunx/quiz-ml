@@ -8,8 +8,8 @@ export const AnswerSchema = z.object({
   id: z.string().cuid(),
   content: z.string(),
   isCorrect: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   questionId: z.string().cuid(),
 });
 
@@ -18,14 +18,14 @@ export const QuestionSchema = z.object({
   id: z.string().cuid(),
   content: z.string(),
   type: QuestionTypeSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   _count: z
     .object({
       answers: z.number().int().optional(),
     })
     .optional(),
-  quizId: z.string().cuid().optional(),
+  quizId: z.string().cuid().nullable().optional(),
   answers: z.array(AnswerSchema).optional(),
 });
 
@@ -42,8 +42,8 @@ export const QuizSchema = z.object({
       questions: z.number().int().optional(),
     })
     .optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   questions: z.array(QuestionSchema).optional(),
 });
 
@@ -53,7 +53,7 @@ export const QuizzesSchema = z.array(QuizSchema);
 export const ResultSchema = z.object({
   id: z.string().cuid(),
   score: z.number().int(),
-  completedAt: z.date(),
+  completedAt: z.string().datetime(),
   quizId: z.string().cuid(),
   userId: z.string().cuid().optional(),
   quiz: QuizSchema,

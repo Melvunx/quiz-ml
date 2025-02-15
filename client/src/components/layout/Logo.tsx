@@ -8,7 +8,7 @@ type LogoProps = {
 
 const Logo: React.FC<LogoProps> = ({ logo = "Quiz Creator", classname }) => {
   return (
-    <div className="absolute top-8">
+    <div>
       <Badge className={clsx("font-semibold italic", classname)}>{logo}</Badge>
     </div>
   );

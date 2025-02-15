@@ -26,7 +26,7 @@ const LoadingString: React.FC<LoadingStringProps> = ({
   }, [delay]);
 
   return (
-    <div className={clsx("text-lg", className)}>
+    <div className={clsx("", className)}>
       {word}
       {dots}
     </div>

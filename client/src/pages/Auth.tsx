@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Auth() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-12">
       <Logo classname="text-xl" />
       <Tabs defaultValue="login" className="flex w-96 flex-col gap-4">
         <TabsList className="grid w-full grid-cols-2">

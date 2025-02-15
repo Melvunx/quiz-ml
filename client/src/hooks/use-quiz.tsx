@@ -30,36 +30,46 @@ export default function useQuiz() {
 
   const searchedQuestions = useCallback(
     async (search: string) => {
-      const response = await fetchApi<Question[]>(
-        `${BASE_URL.QUESTION}?search=${search}`,
-        {
-          requiresToken: true,
-          navigate,
-          accessToken,
-          setAccessToken,
-        }
-      );
-      const questions = QuestionsSchema.parse(response);
+      try {
+        const response = await fetchApi<Question[]>(
+          `${BASE_URL.QUESTION}?search=${search}`,
+          {
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
+        const questions = QuestionsSchema.parse(response);
 
-      return questions;
+        return questions;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
+      }
     },
     [BASE_URL.QUESTION, accessToken, navigate, setAccessToken]
   );
 
   const searchedQuiz = useCallback(
     async (search: string) => {
-      const response = await fetchApi<Question[]>(
-        `${BASE_URL.QUIZ}?search=${search}`,
-        {
-          requiresToken: true,
-          navigate,
-          accessToken,
-          setAccessToken,
-        }
-      );
-      const questions = QuestionsSchema.parse(response);
+      try {
+        const response = await fetchApi<Question[]>(
+          `${BASE_URL.QUIZ}?search=${search}`,
+          {
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
+        const questions = QuestionsSchema.parse(response);
 
-      return questions;
+        return questions;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
+      }
     },
     [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
   );
@@ -78,6 +88,7 @@ export default function useQuiz() {
       return questions;
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
+      throw error;
     }
   }, [BASE_URL.ANSWERS_ENDPOINT, accessToken, navigate, setAccessToken]);
 
@@ -94,6 +105,7 @@ export default function useQuiz() {
       return quizzes;
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
+      throw error;
     }
   }, [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]);
 
@@ -115,6 +127,7 @@ export default function useQuiz() {
         return question;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, accessToken, navigate, setAccessToken]
@@ -134,6 +147,7 @@ export default function useQuiz() {
       return results;
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
+      throw error;
     }
   }, [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]);
 
@@ -152,6 +166,7 @@ export default function useQuiz() {
         return quiz;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
@@ -175,6 +190,7 @@ export default function useQuiz() {
         return results;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
@@ -196,6 +212,7 @@ export default function useQuiz() {
         return newQuestion;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
@@ -217,6 +234,7 @@ export default function useQuiz() {
         return quiz;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
@@ -238,6 +256,7 @@ export default function useQuiz() {
         return results;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
@@ -260,6 +279,7 @@ export default function useQuiz() {
         return newAnswers;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
@@ -283,6 +303,7 @@ export default function useQuiz() {
         return addedQuestions;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
@@ -308,6 +329,7 @@ export default function useQuiz() {
         return updatedQuestion;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
@@ -330,6 +352,7 @@ export default function useQuiz() {
         return quiz;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
@@ -353,6 +376,7 @@ export default function useQuiz() {
         return updatedAnswers;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.ANSWERS_ENDPOINT, navigate, accessToken, setAccessToken]
@@ -375,6 +399,7 @@ export default function useQuiz() {
         return successMessage;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
@@ -398,6 +423,7 @@ export default function useQuiz() {
         return removedQuestions;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
@@ -420,6 +446,7 @@ export default function useQuiz() {
         return successMessage;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
@@ -442,6 +469,7 @@ export default function useQuiz() {
         return successMessage;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
@@ -464,6 +492,7 @@ export default function useQuiz() {
         return successMessage;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
@@ -487,6 +516,7 @@ export default function useQuiz() {
         return successMessage;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
@@ -510,6 +540,7 @@ export default function useQuiz() {
         return successMessage;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
       }
     },
     [BASE_URL.ANSWERS_ENDPOINT, accessToken, navigate, setAccessToken]

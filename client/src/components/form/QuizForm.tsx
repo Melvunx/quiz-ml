@@ -1,5 +1,6 @@
 import useQuiz from "@/hooks/use-quiz";
-import { apiErrorHandler } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { apiErrorHandler, dateFormater, toastParams } from "@/lib/utils";
 import ErrorPage from "@/pages/ErrorPage";
 import { CreateQuizSchema } from "@/schema/quiz";
 import { useMutation } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -19,6 +21,7 @@ import LoadingString from "../ui/loading-string";
 
 export default function QuizForm() {
   const { createQuiz } = useQuiz();
+  const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -30,6 +33,16 @@ export default function QuizForm() {
     mutationFn: async (credentials: { title: string; description: string }) => {
       const { title, description } = credentials;
       await createQuiz(title, description);
+    },
+    onSuccess: (_, varibles) => {
+      if (error === null) {
+        toast(
+          toastParams(
+            "Quiz created",
+            `${varibles.title} ${dateFormater(new Date(Date.now()))}`
+          )
+        );
+      }
     },
   });
 
@@ -59,7 +72,7 @@ export default function QuizForm() {
   }
 
   return (
-    <Card>
+    <Card className="mx-auto flex w-1/2 flex-col">
       <CardHeader>
         <CardTitle>Créer un nouveau quiz</CardTitle>
       </CardHeader>
@@ -73,7 +86,7 @@ export default function QuizForm() {
           <div className="space-y-1">
             <Label htmlFor="desc">Description</Label>
             <Input id="desc" name="description" />
-            <span>Optionnel</span>
+            <CardDescription>Optionnel</CardDescription>
           </div>
         </form>
       </CardContent>

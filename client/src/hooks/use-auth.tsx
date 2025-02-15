@@ -1,19 +1,22 @@
 import fetchApi from "@/api/fetch";
+import { apiErrorHandler } from "@/lib/utils";
 import { User, UserSchema } from "@/schema/user";
 import userAuthStore from "@/store/auth";
+import useErrorStore from "@/store/error";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function useAuth() {
   const navigate = useNavigate();
   const {
-    setAuthError,
     setUser,
     setIsAuthenticated,
     clearAuth,
     accessToken,
     setAccessToken,
   } = userAuthStore();
+
+  const { setError, clearError } = useErrorStore();
 
   const url = "/auth";
 
@@ -40,17 +43,18 @@ export default function useAuth() {
   const register = useCallback(
     async (username: string, email: string, password: string) => {
       try {
-        const r = await fetchApi<User>(`${url}/register`, {
+        const user = await fetchApi<User>(`${url}/register`, {
           payload: { username, email, password },
         });
-        const user = UserSchema.parse(r);
+        clearError();
         setUser(user);
       } catch (error) {
         setUser(null);
-        if (process.env.NODE_ENV === "development") console.error(error);
+        const errorResponse = apiErrorHandler(error);
+        setError(errorResponse.error);
       }
     },
-    [setUser]
+    [clearError, setError, setUser]
   );
 
   const login = useCallback(
@@ -65,16 +69,17 @@ export default function useAuth() {
 
         setUser(user);
         setIsAuthenticated(true);
-        setAuthError(null);
+        clearError();
         if (process.env.NODE_ENV === "development")
           console.log("Login successful");
       } catch (error) {
         setIsAuthenticated(false);
         setUser(null);
-        if (process.env.NODE_ENV === "development") console.error(error);
+        const errorResponse = apiErrorHandler(error);
+        setError(errorResponse.error);
       }
     },
-    [navigate, setUser, setIsAuthenticated, setAuthError]
+    [navigate, setUser, setIsAuthenticated, clearError, setError]
   );
 
   const logout = useCallback(async () => {

@@ -1,5 +1,6 @@
 import useQuiz from "@/hooks/use-quiz";
-import { apiErrorHandler } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { apiErrorHandler, dateFormater, toastParams } from "@/lib/utils";
 import ErrorPage from "@/pages/ErrorPage";
 import {
   CreateAnswer,
@@ -13,7 +14,6 @@ import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -33,9 +33,12 @@ import {
 
 export default function QuestionForm() {
   const { createQuestion, addAnswers } = useQuiz();
+  const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<CreateAnswer[]>([]);
   const [typeState, setTypeState] = useState<QuestionType>("SINGLE");
+  const [add, setAdd] = useState(0);
+  const maxAnswers = 4;
 
   const {
     mutate: createQuestionWithAnswersMutation,
@@ -49,13 +52,32 @@ export default function QuestionForm() {
       answers: CreateAnswer[];
     }) => {
       const { content, type, answers } = credentials;
+      try {
+        const question = await createQuestion(content, type);
 
-      const question = await createQuestion(content, type);
+        if (!question) {
+          throw new Error("La création de la question a échoué");
+        }
 
-      if (question && answers.length > 0)
-        await addAnswers(question.id, answers);
+        if (answers.length > 0) {
+          await addAnswers(question.id, answers);
+        }
 
-      return question;
+        return question;
+      } catch (error) {
+        console.error("Erreur lors de la création:", error);
+        throw error;
+      }
+    },
+    onSuccess: (data) => {
+      if (error === null) {
+        toast(
+          toastParams(
+            "Question created",
+            `${data.content} ${dateFormater(new Date(data.createdAt))}`
+          )
+        );
+      }
     },
   });
 
@@ -86,8 +108,11 @@ export default function QuestionForm() {
       answers,
     };
 
+    console.log("form data ", formData);
+
     try {
       setError(null);
+      setAdd(0);
       const validatedData = CreateQuestionSchema.parse(formData);
       await createQuestionWithAnswersMutation(validatedData);
       setAnswers([]);
@@ -102,9 +127,9 @@ export default function QuestionForm() {
   }
 
   return (
-    <Card>
+    <Card className="mx-auto flex w-1/2 flex-col">
       <CardHeader>
-        <CardTitle>Créer un nouveau quiz</CardTitle>
+        <CardTitle>Créer une nouvelle question</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <form action={onCreateQuestionAction} id="questionForm">
@@ -117,7 +142,7 @@ export default function QuestionForm() {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="desc">Type de Question</Label>
+            <Label htmlFor="desc">Type de Question *</Label>
             <Select
               name="type"
               onValueChange={(value: QuestionType) => setTypeState(value)}
@@ -133,30 +158,37 @@ export default function QuestionForm() {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            <CardDescription>Optionnel</CardDescription>
             {error && error.includes("type") && (
               <ErrorInputMessage error={error} />
             )}
           </div>
 
           <div className="mt-6 space-y-4">
-            <div className="flex items-center justify-center">
-              <Label>Réponses</Label>
+            <div className="flex flex-col items-center justify-center">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={addAnswer}
+                onClick={() => {
+                  addAnswer();
+                  setAdd(add + 1);
+                }}
+                disabled={add > maxAnswers}
               >
                 <PlusIcon className="mr-2 size-4" />
-                Ajouter une réponse
+                Ajouter un choix
               </Button>
+              {add > maxAnswers ? (
+                <span className="text-red-500">
+                  Nombre de choix maximum atteint
+                </span>
+              ) : null}
             </div>
 
             {answers.map((answer, idx) => (
-              <div key={idx} className="flex items-start gap-4">
+              <div key={idx} className="flex items-end gap-3">
                 <div className="flex-1 space-y-1">
-                  <Label htmlFor={`answer-${idx}`}>Réponse {idx + 1}</Label>
+                  <Label htmlFor={`answer-${idx}`}>Réponse n°{idx + 1}</Label>
                   <Input
                     value={answer.content}
                     onChange={(e) =>
@@ -197,7 +229,10 @@ export default function QuestionForm() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeAnswer(idx)}
+                    onClick={() => {
+                      removeAnswer(idx);
+                      setAdd(add - 1);
+                    }}
                   >
                     <TrashIcon className="size-4" />
                   </Button>
@@ -208,7 +243,7 @@ export default function QuestionForm() {
         </form>
       </CardContent>
       <CardFooter>
-        <Button type="submit" form="questionForm">
+        <Button type="submit" form="questionForm" disabled={add < 2}>
           {isCreating ? (
             <LoadingString word="Création en cours" />
           ) : (

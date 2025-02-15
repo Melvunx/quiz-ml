@@ -6,7 +6,7 @@ export type ApiErrorResponse = {
   name: string;
   success: false;
   message: string;
-  error: Error | string;
+  error: string;
 };
 
 export function cn(...inputs: ClassValue[]) {

@@ -7,7 +7,7 @@ type QuestionProps = {
 
 const Question: React.FC<QuestionProps> = ({ question }) => {
   return (
-    <div>
+    <div className="flex flex-col">
       <h1>{question.content}</h1>
       {question.answers
         ? question.answers.map((answer) => (

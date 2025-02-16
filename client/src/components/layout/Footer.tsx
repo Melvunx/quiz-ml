@@ -1,3 +1,9 @@
 export default function Footer() {
-  return <div>Footer</div>;
+  return (
+    <footer className="bg-slate-400/15 py-4">
+      <div className="container flex justify-center">
+        <p>Melvunx for Mission Locale</p>
+      </div>
+    </footer>
+  );
 }

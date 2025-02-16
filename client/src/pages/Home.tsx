@@ -1,5 +1,6 @@
 import QuestionForm from "@/components/form/QuestionForm";
 import QuizForm from "@/components/form/QuizForm";
+import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
         <QuizForm />
         <QuestionForm />
       </div>
+      <Footer />
     </div>
   );
 }

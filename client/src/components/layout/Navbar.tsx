@@ -1,9 +1,10 @@
 import useAuth from "@/hooks/use-auth";
 import ErrorPage from "@/pages/ErrorPage";
 import userAuthStore from "@/store/auth";
+import clsx from "clsx";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import LoadingString from "../ui/loading-string";
 import Logo from "./Logo";
 
@@ -24,9 +25,33 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="flex w-1/3 items-center justify-between">
-        <Link to="/quiz">Quiz</Link>
-        <Link to="/quiz-questions">Questions</Link>
-        <Link to="/quiz-results">Résultas</Link>
+        <Link
+          className={clsx(
+            "rounded-none",
+            buttonVariants({ variant: "secondary" })
+          )}
+          to="/quiz"
+        >
+          Quiz
+        </Link>
+        <Link
+          className={clsx(
+            "rounded-none",
+            buttonVariants({ variant: "secondary" })
+          )}
+          to="/quiz-questions"
+        >
+          Questions
+        </Link>
+        <Link
+          className={clsx(
+            "rounded-none",
+            buttonVariants({ variant: "secondary" })
+          )}
+          to="/quiz-results"
+        >
+          Résultas
+        </Link>
       </div>
       <div className="flex items-center gap-10">
         <h1 className="italic">{user.username}</h1>

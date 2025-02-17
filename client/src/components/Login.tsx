@@ -109,7 +109,7 @@ export default function Login() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <Eye /> : <EyeOff />}
+                {showPassword ? <EyeOff /> : <Eye />}
               </Button>
             </div>
             {error && error.includes("password") ? (

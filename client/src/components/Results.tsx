@@ -9,7 +9,7 @@ const Results: React.FC<ResultsProps> = ({ result }) => {
   return (
     <div>
       <h1>Reésultat : {result.score}</h1>
-      <p>Quiz fait le {dateFormater(result.completedAt)}</p>
+      <p>Quiz fait le {dateFormater(new Date(result.completedAt))}</p>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
 import Results from "@/components/Results";
 import LoadingString from "@/components/ui/loading-string";
 import useQuiz from "@/hooks/use-quiz";
@@ -23,7 +22,6 @@ export default function QuizResults() {
 
   return (
     <div>
-      <Navbar />
       {results
         ? results.map((result) => <Results key={result.id} result={result} />)
         : "Aucun résultat de quiz trouvé"}

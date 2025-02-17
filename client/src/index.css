@@ -65,6 +65,11 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+  min-height: 100vh;
+}
+
 body::-webkit-scrollbar {
   display: none;
 }

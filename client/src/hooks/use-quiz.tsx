@@ -285,20 +285,44 @@ export default function useQuiz() {
     [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
   );
 
-  const addQuestionsToQuiz = useCallback(
-    async (quizId: string, questions: Question[]) => {
+  const existingQuestionToQuiz = useCallback(
+    async (quizId: string) => {
       try {
-        const addedQuestions = await fetchApi<{ addedQuestions: number }>(
-          `${BASE_URL.QUIZ}/${quizId}${BASE_URL.QUESTION}/add`,
+        const response = await fetchApi<Question[]>(
+          `${BASE_URL.QUIZ + BASE_URL.QUESTION}/${quizId}`,
           {
-            method: "PATCH",
-            payload: { questions },
             requiresToken: true,
             navigate,
             accessToken,
             setAccessToken,
           }
         );
+
+        const questions = QuestionsSchema.parse(response);
+
+        return questions;
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") console.error(error);
+        throw error;
+      }
+    },
+    [BASE_URL.QUESTION, BASE_URL.QUIZ, accessToken, navigate, setAccessToken]
+  );
+
+  const addQuestionsToQuiz = useCallback(
+    async (quizId: string, questions: Question[]) => {
+      try {
+        const addedQuestions = await fetchApi<{
+          addedQuestions: number;
+          existingQuestion: Question[];
+        }>(`${BASE_URL.QUIZ}/${quizId}${BASE_URL.QUESTION}/add`, {
+          method: "PATCH",
+          payload: { questions },
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        });
 
         return addedQuestions;
       } catch (error) {
@@ -553,6 +577,7 @@ export default function useQuiz() {
     allQuizzes,
     allResults,
     questionWithAnswers,
+    existingQuestionToQuiz,
     quizDetail,
     resultDetail,
     createQuestion,

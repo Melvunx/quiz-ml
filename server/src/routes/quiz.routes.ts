@@ -5,6 +5,7 @@ import {
   deleteQuiz,
   editQuiz,
   getAllQuiz,
+  getExistQuestionToQuiz,
   getQuiz,
   getSearchedQuiz,
   removeQuestions,
@@ -26,6 +27,8 @@ router.get("/", authenticate, getSearchedQuiz);
 
 // Voir le quiz avec les questions et reponses
 router.get("/:quizId", authenticate, getQuiz);
+
+router.get("/questions/:quizId", authenticate, getExistQuestionToQuiz);
 
 // Créer un quiz
 router.post("/", authenticate, createQuiz);

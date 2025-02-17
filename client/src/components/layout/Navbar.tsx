@@ -26,31 +26,28 @@ export default function Navbar() {
       </div>
       <div className="flex w-1/3 items-center justify-between">
         <Link
-          className={clsx(
-            "rounded-none",
-            buttonVariants({ variant: "secondary" })
-          )}
+          className={clsx("rounded-none", buttonVariants({ variant: "ghost" }))}
           to="/quiz"
         >
           Quiz
         </Link>
         <Link
-          className={clsx(
-            "rounded-none",
-            buttonVariants({ variant: "secondary" })
-          )}
+          className={clsx("rounded-none", buttonVariants({ variant: "ghost" }))}
           to="/quiz-questions"
         >
           Questions
         </Link>
         <Link
-          className={clsx(
-            "rounded-none",
-            buttonVariants({ variant: "secondary" })
-          )}
+          className={clsx("rounded-none", buttonVariants({ variant: "ghost" }))}
           to="/quiz-results"
         >
           Résultas
+        </Link>
+        <Link
+          className={clsx("rounded-none", buttonVariants({ variant: "ghost" }))}
+          to="/quiz-start"
+        >
+          Quizer !
         </Link>
       </div>
       <div className="flex items-center gap-10">

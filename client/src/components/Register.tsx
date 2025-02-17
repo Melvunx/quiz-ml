@@ -115,7 +115,7 @@ export default function Register() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <Eye /> : <EyeOff />}
+                {showPassword ? <EyeOff /> : <Eye />}
               </Button>
             </div>
             {errors.length > 0 && (

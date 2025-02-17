@@ -1,4 +1,4 @@
-import Navbar from "@/components/layout/Navbar";
+import QuestionsToQuizForm from "@/components/form/QuestionsToQuizForm";
 import Quiz from "@/components/Quiz";
 import LoadingString from "@/components/ui/loading-string";
 import useQuiz from "@/hooks/use-quiz";
@@ -23,10 +23,16 @@ export default function QuizPage() {
 
   return (
     <div>
-      <Navbar />
       {quizzes
-        ? quizzes.map((quiz) => (
-            <Quiz key={quiz.id} quiz={quiz} withQuestion={false} />
+        ? quizzes.map((quiz, idx) => (
+            <>
+              <Quiz key={quiz.id} quiz={quiz} withQuestion />
+              <QuestionsToQuizForm
+                key={idx}
+                quizId={quiz.id}
+                questions={quiz?.questions}
+              />
+            </>
           ))
         : "Aucun quiz n'a été trouvé"}
     </div>

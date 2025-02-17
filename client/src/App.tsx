@@ -1,14 +1,17 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./components/layout/Layout";
 import { Toaster } from "./components/ui/toaster";
 import Auth from "./pages/Auth";
 import AuthManager from "./pages/AuthManager";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
+import QuizItem from "./pages/items/QuizItem";
 import Questions from "./pages/Questions";
 import QuizPage from "./pages/QuizPage";
 import QuizResults from "./pages/QuizResults";
+import StartQuiz from "./pages/StartQuiz";
 
 const queryClient = new QueryClient();
 
@@ -19,20 +22,33 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "quiz-dashboard",
-        element: <Home />,
-      },
-      {
-        path: "quiz-questions",
-        element: <Questions />,
-      },
-      {
-        path: "quiz-results",
-        element: <QuizResults />,
-      },
-      {
-        path: "quiz",
-        element: <QuizPage />,
+        element: <Layout />,
+        children: [
+          {
+            path: "quiz-dashboard",
+            element: <Home />,
+          },
+          {
+            path: "quiz-start",
+            element: <StartQuiz />,
+          },
+          {
+            path: "quiz-questions",
+            element: <Questions />,
+          },
+          {
+            path: "quiz-results",
+            element: <QuizResults />,
+          },
+          {
+            path: "quiz",
+            element: <QuizPage />,
+          },
+          {
+            path: "quiz/:quizId",
+            element: <QuizItem />,
+          },
+        ],
       },
     ],
   },

@@ -1,4 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
 import Question from "@/components/Question";
 import LoadingString from "@/components/ui/loading-string";
 import useQuiz from "@/hooks/use-quiz";
@@ -22,8 +21,7 @@ export default function Questions() {
   if (isError) return <ErrorPage />;
 
   return (
-    <div>
-      <Navbar />
+    <div className="flex min-h-screen flex-col items-center justify-evenly">
       {questions
         ? questions.map((question) => (
             <Question key={question.id} question={question} />

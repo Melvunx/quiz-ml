@@ -1,23 +1,39 @@
 import { Quiz as QuizType } from "@/schema/quiz";
 import Question from "./Question";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 type QuizProps = {
   quiz: QuizType;
-  withQuestion: boolean;
+  withQuestion?: boolean;
 };
 
-const Quiz: React.FC<QuizProps> = ({ quiz, withQuestion }) => {
+const Quiz: React.FC<QuizProps> = ({ quiz, withQuestion = false }) => {
   return (
-    <div>
-      <h1>{quiz.title}</h1>
-      {quiz.description ? <p>{quiz.description}</p> : null}
-
-      {withQuestion && quiz.questions
-        ? quiz.questions.map((question) => (
+    <Card>
+      <CardHeader>
+        <CardTitle>{quiz.title}</CardTitle>
+        {quiz.description !== "NULL" && (
+          <CardDescription>{quiz.description}</CardDescription>
+        )}
+      </CardHeader>
+      <CardContent>
+        {withQuestion &&
+          quiz.questions &&
+          quiz.questions.map((question) => (
             <Question key={question.id} question={question} />
-          ))
-        : null}
-    </div>
+          ))}
+      </CardContent>
+      <CardFooter>
+        
+      </CardFooter>
+    </Card>
   );
 };
 

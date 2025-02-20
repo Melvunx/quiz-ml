@@ -37,24 +37,33 @@ model Session {
 }
 
 model Quiz {
-  id          String     @id @default(cuid())
+  id          String         @id @default(cuid())
   title       String
   description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  questions   Question[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  questions   QuizQuestion[]
   results     Result[]
 }
 
 model Question {
-  id        String       @id @default(cuid())
+  id        String         @id @default(cuid())
   content   String
   type      QuestionType
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  quiz      Quiz?        @relation(fields: [quizId], references: [id])
-  quizId    String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  quizzes   QuizQuestion[]
   answers   Answer[]
+}
+
+model QuizQuestion {
+  quiz       Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId     String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  createdAt  DateTime @default(now())
+
+  @@id([quizId, questionId])
 }
 
 model Answer {

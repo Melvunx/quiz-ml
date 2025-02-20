@@ -96,34 +96,11 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
 
     if (!question) return;
 
-    // Gérer les question unique
-    if (currentQuestion.type === "SINGLE") {
-      // Pour les questions à choix unique, la valeur sera un tableau avec un seul élément
-
-      const valueArray = typeof values === "string" ? [values] : values;
-      setUserAnswers((prev) => ({
-        ...prev,
-        [questionId]: valueArray,
-      }));
-
-      if (values.length > 0) {
-        setTimeout(() => {
-          if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex((prev) => prev + 1);
-          } else {
-            finishQuiz({
-              ...userAnswers,
-              [questionId]: values,
-            });
-          }
-        }, 500);
-      }
-    } else {
-      setUserAnswers((prev) => ({
-        ...prev,
-        [questionId]: values,
-      }));
-    }
+    const valueArray = typeof values === "string" ? [values] : values;
+    setUserAnswers((prev) => ({
+      ...prev,
+      [questionId]: valueArray,
+    }));
   };
 
   const proceedToNext = () => {
@@ -273,13 +250,13 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
     <Card className="mx-auto w-full max-w-2xl">
       <CardHeader>
         <CardTitle>{quiz.title}</CardTitle>
-        <Progress value={calculateProgress()} className="w-full" />
+        <Progress value={calculateProgress()} className="mt-2" />
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <p className="mb-2 text-lg font-medium">
-            Question {currentQuestionIndex + 1} / {questions.length}
-          </p>
+          <h2 className="text-lg font-medium">
+            Question {currentQuestionIndex + 1} sur {questions.length}
+          </h2>
 
           <p className="text-lg">{currentQuestion.content}</p>
 
@@ -294,11 +271,11 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
         {currentQuestion.type === "SINGLE" ? (
           <ToggleGroup
             type="single"
-            value={selectedValues[0]}
+            value={userAnswers[currentQuestion.id]?.[0] || ""}
             onValueChange={(values) =>
-              handleToggleChange(currentQuestion.id, [...values])
+              handleToggleChange(currentQuestion.id, [values])
             }
-            className="flex flex-col space-y-2"
+            className="space-y-2"
           >
             {currentQuestion.answers.map((answer) => (
               <ToggleGroupItem
@@ -317,7 +294,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
             onValueChange={(values) =>
               handleToggleChange(currentQuestion.id, values)
             }
-            className="flex flex-col space-y-2"
+            className="space-y-2"
           >
             {currentQuestion.answers.map((answer) => (
               <ToggleGroupItem
@@ -336,17 +313,17 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
           {currentQuestionIndex + 1} sur {questions.length} questions
         </p>
 
-        {/* Bouton suivant pour les questions à choix multiple */}
-        {currentQuestion.type === "MULTIPLE" && (
-          <Button
-            onClick={proceedToNext}
-            disabled={!(userAnswers[currentQuestion.id]?.length > 0)}
-          >
-            {currentQuestionIndex < questions.length - 1
-              ? "Suivant"
-              : "Terminer"}
-          </Button>
-        )}
+        <Button
+          onClick={proceedToNext}
+          disabled={
+            !userAnswers[currentQuestion.id] ||
+            userAnswers[currentQuestion.id].length === 0
+          }
+        >
+          {currentQuestionIndex < questions.length - 1
+            ? "Question suivante"
+            : "Terminer le quiz"}
+        </Button>
       </CardFooter>
     </Card>
   );

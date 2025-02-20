@@ -47,7 +47,11 @@ export const getQuizResults: RequestHandler = async (req, res) => {
           include: {
             questions: {
               include: {
-                answers: true,
+                question: {
+                  include: {
+                    answers: true,
+                  },
+                },
               },
             },
           },

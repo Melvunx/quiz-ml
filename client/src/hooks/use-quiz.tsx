@@ -7,6 +7,8 @@ import {
   QuestionsSchema,
   QuestionType,
   Quiz,
+  QuizQuestion,
+  QuizQuestionsSchema,
   QuizSchema,
   QuizzesSchema,
   Result,
@@ -293,7 +295,7 @@ export default function useQuiz() {
   const existingQuestionToQuiz = useCallback(
     async (quizId: string) => {
       try {
-        const response = await fetchApi<Question[]>(
+        const response = await fetchApi<QuizQuestion[]>(
           `${BASE_URL.QUIZ + BASE_URL.QUESTION}/${quizId}`,
           {
             requiresToken: true,
@@ -303,7 +305,7 @@ export default function useQuiz() {
           }
         );
 
-        const questions = QuestionsSchema.parse(response);
+        const questions = QuizQuestionsSchema.parse(response);
 
         return questions;
       } catch (error) {

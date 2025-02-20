@@ -125,7 +125,7 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
       queryFn: async () => await existingQuestionToQuiz(quizId),
     });
 
-  const existingIds = new Set(existingQuestions?.map((q) => q.id));
+  const existingIds = new Set(existingQuestions?.map((q) => q.questionId));
 
   const filteredQuestions = questions?.filter((q) => !existingIds.has(q.id));
 
@@ -207,7 +207,9 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
       filteredQuestions?.filter((q) => selectedToAdd.includes(q.id)) || [];
 
     const questionsToRemove =
-      existingQuestions?.filter((q) => selectedToRemove.includes(q.id)) || [];
+      existingQuestions?.filter((q) =>
+        selectedToRemove.includes(q.questionId)
+      ) || [];
 
     // Tableau de promesses pour toutes les mutations
     const mutations: Promise<unknown>[] = [];
@@ -235,7 +237,7 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
           removeQuestionsToQuizMutation(
             {
               quizId,
-              questions: questionsToRemove,
+              questions: [...questionsToRemove.map((q) => q.question)],
             },
             {
               onSuccess: resolve,
@@ -259,6 +261,10 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
   };
 
   if (isAddingError || isRemovingError) return <ErrorPage />;
+
+  const existQuestions = existingQuestions?.map((q) => q.question);
+
+  if (!existQuestions) return;
 
   return (
     <Dialog>
@@ -291,7 +297,7 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
               </h4>
               <Separator />
               <CheckboxQuestionList
-                questions={existingQuestions}
+                questions={existQuestions}
                 onSelectionChange={setSelectedToRemove}
                 name="removed-questions"
               />

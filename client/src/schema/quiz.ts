@@ -23,14 +23,24 @@ export const QuestionSchema = z.object({
   _count: z
     .object({
       answers: z.number().int().optional(),
+      quizzes: z.number().int().optional(),
     })
     .optional(),
-  quizId: z.string().cuid().nullable().optional(),
   answers: z.array(AnswerSchema).optional(),
 });
 
 // Question array schema
 export const QuestionsSchema = z.array(QuestionSchema);
+
+// QuizQuestion schema
+export const QuizQuestionSchema = z.object({
+  quizId: z.string().cuid(),
+  questionId: z.string().cuid(),
+  createdAt: z.string().datetime(),
+  question: QuestionSchema,
+});
+
+export const QuizQuestionsSchema = z.array(QuizQuestionSchema)
 
 // Quiz schema
 export const QuizSchema = z.object({
@@ -44,7 +54,7 @@ export const QuizSchema = z.object({
     .optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  questions: z.array(QuestionSchema).optional(),
+  questions: z.array(QuizQuestionSchema).optional(),
 });
 
 export const QuizzesSchema = z.array(QuizSchema);
@@ -78,10 +88,22 @@ export const CreateQuestionSchema = QuestionSchema.omit({
   answers: z.array(CreateAnswerSchema),
 });
 
+export const CreateQuizQuestionSchema = z.object({
+  questionId: z.string().cuid(),
+});
+
 export const CreateQuizSchema = QuizSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+  questions: true,
+}).extend({
+  questions: z.array(CreateQuizQuestionSchema).optional(),
+});
+
+export const AddQuestionToQuizSchema = z.object({
+  quizId: z.string().cuid(),
+  questionId: z.string().cuid(),
 });
 
 export const saveQuizResults = ResultSchema.omit({
@@ -94,5 +116,8 @@ export type QuestionType = z.infer<typeof QuestionTypeSchema>;
 export type Answer = z.infer<typeof AnswerSchema>;
 export type CreateAnswer = z.infer<typeof CreateAnswerSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
+export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
+export type CreateQuizQuestion = z.infer<typeof CreateQuizQuestionSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
 export type Result = z.infer<typeof ResultSchema>;
+export type AddQuestionToQuiz = z.infer<typeof AddQuestionToQuizSchema>;

@@ -16,7 +16,11 @@ export const getAllQuiz: RequestHandler = async (req, res) => {
             questions: true,
           },
         },
-        questions: true,
+        questions: {
+          include: {
+            question: true,
+          },
+        },
       },
     });
 
@@ -50,7 +54,7 @@ export const getSearchedQuiz: RequestHandler<
 
     console.log(colors.info(`Searching ${search} in quizzes...`));
 
-    const quizs = await prisma.quiz.findMany({
+    const quizzes = await prisma.quiz.findMany({
       where: {
         title: {
           contains: search,
@@ -59,9 +63,9 @@ export const getSearchedQuiz: RequestHandler<
       },
     });
 
-    console.log(colors.success("Quizzes found : ", quizs.length));
+    console.log(colors.success("Quizzes found : ", quizzes.length));
 
-    return apiResponse.success(res, "OK", quizs);
+    return apiResponse.success(res, "OK", quizzes);
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }
@@ -87,12 +91,11 @@ export const getQuiz: RequestHandler = async (req, res) => {
         },
         questions: {
           include: {
-            _count: {
-              select: {
+            question: {
+              include: {
                 answers: true,
               },
             },
-            answers: true,
           },
         },
       },
@@ -114,11 +117,22 @@ export const getExistQuestionToQuiz: RequestHandler = async (req, res) => {
 
     if (!quizId) return handleError(res, "NOT_FOUND", "Id not found");
 
-    const questions = await prisma.question.findMany({
+    console.log("Check if question exists in quiz...");
+
+    const questions = await prisma.quizQuestion.findMany({
       where: {
         quizId,
       },
+      include: {
+        question: {
+          include: {
+            answers: true,
+          },
+        },
+      },
     });
+
+    console.log(`Questions found : ${questions.length}`);
 
     return apiResponse.success(res, "OK", questions);
   } catch (error) {
@@ -166,30 +180,28 @@ export const addQuestions: RequestHandler<
 
     const questionIds = questions.map((q) => q.id);
 
-    const existingQuestion = await prisma.question.findMany({
+    const existingQuestion = await prisma.quizQuestion.findMany({
       where: {
-        id: { in: questionIds },
+        questionId: { in: questionIds },
         quizId: quizId,
       },
     });
 
     // Set pour améliorer les performances
-    const existingIds = new Set(existingQuestion.map((q) => q.id));
+    const existingIds = new Set(existingQuestion.map((q) => q.questionId));
 
     // Array de questions qui ne sont pas dans le quiz
     const filteredQuestions = questions.filter((q) => !existingIds.has(q.id));
 
     console.log(colors.info("Adding questions to quiz..."));
 
-    const filteredQuestionIds = filteredQuestions.map((q) => q.id);
-
-    const addingQuestions = await prisma.question.updateMany({
-      where: {
-        id: { in: filteredQuestionIds },
-      },
-      data: {
-        quizId,
-      },
+    const addingQuestions = await prisma.quizQuestion.createMany({
+      data: [
+        ...filteredQuestions.map((q) => ({
+          questionId: q.id,
+          quizId,
+        })),
+      ],
     });
 
     console.log(
@@ -224,12 +236,10 @@ export const removeQuestions: RequestHandler<
 
     const questionIds = questions.map((q) => q.id);
 
-    const removingQuestions = await prisma.question.updateMany({
+    const removingQuestions = await prisma.quizQuestion.deleteMany({
       where: {
-        id: { in: questionIds },
-      },
-      data: {
-        quizId: null,
+        quizId,
+        questionId: { in: questionIds },
       },
     });
 

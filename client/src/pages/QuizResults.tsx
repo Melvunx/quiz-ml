@@ -16,6 +16,8 @@ export default function QuizResults() {
     queryFn: async () => await allResults(),
   });
 
+  console.log({ results });
+
   if (isLoading) return <LoadingString />;
 
   if (isError) return <ErrorPage />;

@@ -166,7 +166,7 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
     },
   });
 
-  const handleAddQuestions = (e: React.FormEvent) => {
+  const handleAddOrRemoveQuestions = (e: React.FormEvent) => {
     e.preventDefault();
     const questionsToAdd =
       filteredQuestions?.filter((q) => selectedToAdd.includes(q.id)) || [];
@@ -177,10 +177,7 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
         questions: questionsToAdd,
       });
     }
-  };
 
-  const handleRemoveQuestions = (e: React.FormEvent) => {
-    e.preventDefault();
     const questionsToRemove =
       existingQuestions?.filter((q) => selectedToRemove.includes(q.id)) || [];
 
@@ -203,7 +200,10 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
         <DialogHeader>
           <DialogTitle>Gérer votre quiz</DialogTitle>
         </DialogHeader>
-        <form className="flex flex-col items-center justify-center gap-5">
+        <form
+          onSubmit={(e) => handleAddOrRemoveQuestions(e)}
+          className="flex flex-col items-center justify-center gap-5"
+        >
           <ScrollArea className="flex h-96 max-w-2xl rounded-md border">
             <div className="p-8">
               <h4 className="mb-2 text-sm font-medium leading-none">
@@ -228,27 +228,19 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
               />
             </div>
           </ScrollArea>
-          <div className="flex w-full items-center justify-between">
+          <div className="flex w-full justify-end">
             <Button
               type="submit"
-              onClick={handleAddQuestions}
-              disabled={isRemoving || selectedToRemove.length === 0}
+              disabled={
+                isRemoving ||
+                isAdding ||
+                (selectedToAdd.length === 0 && selectedToRemove.length === 0)
+              }
             >
-              {isRemoving ? (
-                <LoadingString word="Suppression" />
+              {isRemoving || isAdding ? (
+                <LoadingString word="Changement en cours" />
               ) : (
-                "Supprimer les questions"
-              )}
-            </Button>
-            <Button
-              type="submit"
-              onClick={handleRemoveQuestions}
-              disabled={isAdding || selectedToAdd.length === 0}
-            >
-              {isAdding ? (
-                <LoadingString word="Ajout" />
-              ) : (
-                "Ajouter les questions"
+                "Effectuer les modifications"
               )}
             </Button>
           </div>

@@ -11,7 +11,7 @@ import QuizItem from "./pages/items/QuizItem";
 import Questions from "./pages/Questions";
 import QuizPage from "./pages/QuizPage";
 import QuizResults from "./pages/QuizResults";
-import StartQuiz from "./pages/StartQuiz";
+import StartQuiz from "./pages/QuizStarter";
 
 const queryClient = new QueryClient();
 

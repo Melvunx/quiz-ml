@@ -2,12 +2,13 @@ import LoadingString from "@/components/ui/loading-string";
 import useAuth from "@/hooks/use-auth";
 import userAuthStore from "@/store/auth";
 import { useEffect, useState } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export default function AuthManager() {
   const { isAuthenticated } = userAuthStore();
   const { checkAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     let isMounted = true;
@@ -29,9 +30,10 @@ export default function AuthManager() {
     };
   }, [checkAuth, isAuthenticated]);
 
-  if (isLoading) {
-    return <LoadingString />;
-  }
+  if (isLoading) return <LoadingString />;
 
+  if (isAuthenticated && location.pathname === "/")
+    return <Navigate to="/quiz-dashboard" replace />;
+  
   return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
 }

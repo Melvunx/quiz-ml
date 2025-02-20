@@ -16,6 +16,7 @@ export const getAllQuiz: RequestHandler = async (req, res) => {
             questions: true,
           },
         },
+        questions: true,
       },
     });
 

@@ -30,10 +30,7 @@ export const getAllQuizRestults: RequestHandler = async (req, res) => {
   }
 };
 
-export const getQuizResults: RequestHandler<{ quizId: string }> = async (
-  req,
-  res
-) => {
+export const getQuizResults: RequestHandler = async (req, res) => {
   try {
     const { quizId } = req.params;
 
@@ -79,7 +76,7 @@ export const saveQuizResults: RequestHandler<{}, {}, Result> = async (
     const { score, quizId } = req.body;
     const user: UserCookie | undefined = req.cookies["info"];
 
-    if (!score || !quizId)
+    if (score === undefined || !quizId)
       return handleError(res, "NOT_FOUND", "Score or quizId not found");
 
     console.log(colors.info("Saving result..."));

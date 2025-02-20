@@ -1,13 +1,15 @@
 import useQuiz from "@/hooks/use-quiz";
 import ErrorPage from "@/pages/ErrorPage";
 import { Question } from "@/schema/quiz";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -107,22 +109,30 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
     existingQuestionToQuiz,
   } = useQuiz();
 
+  const queryClient = useQueryClient();
+
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
   const [selectedToRemove, setSelectedToRemove] = useState<string[]>([]);
 
-  const { data: questions } = useQuery({
+  const { data: questions, refetch: refetchQuestions } = useQuery({
     queryKey: ["questions"],
     queryFn: async () => await questionsWithAnswers(),
   });
 
-  const { data: existingQuestions } = useQuery({
-    queryKey: ["existingQuestionToQuiz", quizId],
-    queryFn: async () => await existingQuestionToQuiz(quizId),
-  });
+  const { data: existingQuestions, refetch: refetchExistingQuestions } =
+    useQuery({
+      queryKey: ["existingQuestionToQuiz", quizId],
+      queryFn: async () => await existingQuestionToQuiz(quizId),
+    });
 
   const existingIds = new Set(existingQuestions?.map((q) => q.id));
 
   const filteredQuestions = questions?.filter((q) => !existingIds.has(q.id));
+
+  const resetSelections = () => {
+    setSelectedToAdd([]);
+    setSelectedToRemove([]);
+  };
 
   const {
     mutate: addQuestionsToQuizMutation,
@@ -138,7 +148,19 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
 
       await addQuestionsToQuiz(quizId, questions);
     },
-    onSuccess: (data, variables) => console.log({ data, variables }),
+    onSuccess: () => {
+      // Actualisation complète des données coté client
+      queryClient.invalidateQueries({ queryKey: ["quiz"] });
+      queryClient.invalidateQueries({ queryKey: ["questions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["existingQuestionToQuiz", quizId],
+      });
+
+      // Actualisations des données côté serveur
+      refetchQuestions();
+      refetchExistingQuestions();
+      resetSelections();
+    },
     onError: (error) => {
       console.error(error);
       throw error;
@@ -159,33 +181,80 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
 
       await removeQuestionsToQuiz(quizId, questions);
     },
-    onSuccess: (data, variables) => console.log({ data, variables }),
+    onSuccess: () => {
+      // Actualisation complète des données coté client
+      queryClient.invalidateQueries({ queryKey: ["quiz"] });
+      queryClient.invalidateQueries({ queryKey: ["questions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["existingQuestionToQuiz", quizId],
+      });
+
+      // Actualisations des données côté serveur
+      refetchQuestions();
+      refetchExistingQuestions();
+      resetSelections();
+    },
     onError: (error) => {
       console.error(error);
       throw error;
     },
   });
 
-  const handleAddOrRemoveQuestions = (e: React.FormEvent) => {
+  const handleAddOrRemoveQuestions = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const questionsToAdd =
       filteredQuestions?.filter((q) => selectedToAdd.includes(q.id)) || [];
-
-    if (questionsToAdd.length > 0) {
-      addQuestionsToQuizMutation({
-        quizId,
-        questions: questionsToAdd,
-      });
-    }
 
     const questionsToRemove =
       existingQuestions?.filter((q) => selectedToRemove.includes(q.id)) || [];
 
+    // Tableau de promesses pour toutes les mutations
+    const mutations: Promise<unknown>[] = [];
+
+    if (questionsToAdd.length > 0) {
+      mutations.push(
+        new Promise((resolve, reject) => {
+          addQuestionsToQuizMutation(
+            {
+              quizId,
+              questions: questionsToAdd,
+            },
+            {
+              onSuccess: resolve,
+              onError: reject,
+            }
+          );
+        })
+      );
+    }
+
     if (questionsToRemove.length > 0) {
-      removeQuestionsToQuizMutation({
-        quizId,
-        questions: questionsToRemove,
-      });
+      mutations.push(
+        new Promise((resolve, reject) => {
+          removeQuestionsToQuizMutation(
+            {
+              quizId,
+              questions: questionsToRemove,
+            },
+            {
+              onSuccess: resolve,
+              onError: reject,
+            }
+          );
+        })
+      );
+    }
+
+    // Attendre la fin de toutes les mutations puis actualiser l'interface
+    if (mutations.length > 0) {
+      try {
+        await Promise.all(mutations);
+        // Force refresh après toutes les mutations
+        await Promise.all([refetchQuestions(), refetchExistingQuestions()]);
+      } catch (error) {
+        console.error("Erreur lors des modifications:", error);
+      }
     }
   };
 
@@ -228,22 +297,30 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
               />
             </div>
           </ScrollArea>
-          <div className="flex w-full justify-end">
-            <Button
-              type="submit"
-              disabled={
-                isRemoving ||
-                isAdding ||
-                (selectedToAdd.length === 0 && selectedToRemove.length === 0)
-              }
-            >
-              {isRemoving || isAdding ? (
-                <LoadingString word="Changement en cours" />
-              ) : (
-                "Effectuer les modifications"
-              )}
-            </Button>
-          </div>
+          <DialogFooter className="w-full">
+            <div className="mx-auto flex w-1/2 justify-between">
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Fermer
+                </Button>
+              </DialogClose>
+              <Button
+                type="submit"
+                variant="outline"
+                disabled={
+                  isRemoving ||
+                  isAdding ||
+                  (selectedToAdd.length === 0 && selectedToRemove.length === 0)
+                }
+              >
+                {isRemoving || isAdding ? (
+                  <LoadingString word="Changement en cours" />
+                ) : (
+                  "Effectuer les modifications"
+                )}
+              </Button>
+            </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

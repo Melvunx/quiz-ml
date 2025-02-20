@@ -41,7 +41,7 @@ export default function QuizPage() {
     <div className="flex min-h-screen flex-col gap-4 ">
       {quizzes
         ? quizzes.map((quiz, idx) => (
-            <Card className="space-y-4">
+            <Card key={quiz.id} className="space-y-4">
               <CardHeader>
                 <CardTitle>{quiz.title}</CardTitle>
                 {quiz.description !== "NULL" && (

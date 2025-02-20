@@ -26,7 +26,7 @@ router.get("/all", authenticate, getAllQuiz);
 router.get("/", authenticate, getSearchedQuiz);
 
 // Voir le quiz avec les questions et reponses
-router.get("/:quizId", authenticate, getQuiz);
+router.get("/quiz-detail/:quizId", authenticate, getQuiz);
 
 router.get("/questions/:quizId", authenticate, getExistQuestionToQuiz);
 

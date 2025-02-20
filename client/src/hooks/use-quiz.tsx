@@ -154,12 +154,15 @@ export default function useQuiz() {
   const quizDetail = useCallback(
     async (quizId: string) => {
       try {
-        const response = await fetchApi<Quiz>(`${BASE_URL.QUIZ}/${quizId}`, {
-          requiresToken: true,
-          navigate,
-          accessToken,
-          setAccessToken,
-        });
+        const response = await fetchApi<Quiz>(
+          `${BASE_URL.QUIZ}/quiz-detail/${quizId}`,
+          {
+            requiresToken: true,
+            navigate,
+            accessToken,
+            setAccessToken,
+          }
+        );
 
         const quiz = QuizSchema.parse(response);
 
@@ -250,6 +253,8 @@ export default function useQuiz() {
           accessToken,
           setAccessToken,
         });
+
+        console.log({ results: response });
 
         const results = ResultSchema.parse(response);
 

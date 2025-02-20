@@ -56,7 +56,7 @@ export const ResultSchema = z.object({
   completedAt: z.string().datetime(),
   quizId: z.string().cuid(),
   userId: z.string().cuid().optional(),
-  quiz: QuizSchema,
+  quiz: QuizSchema.optional(),
 });
 
 export const ResultsSchema = z.array(ResultSchema);

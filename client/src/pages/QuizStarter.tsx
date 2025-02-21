@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -11,8 +12,10 @@ import { Label } from "@/components/ui/label";
 import LoadingString from "@/components/ui/loading-string";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import useQuiz from "@/hooks/use-quiz";
+import { dateFormater } from "@/lib/utils";
 import { Quiz } from "@/schema/quiz";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -28,6 +31,7 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
   onQuizChange,
 }) => {
   const [selectedQuiz, setSelectedQuiz] = useState("");
+
   if (!quizzes?.length)
     return (
       <p className="mt-6 text-center text-red-500">Aucun quiz n'a été trouvé</p>
@@ -35,23 +39,57 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
 
   const handleRadioChange = (quizId: string) => {
     setSelectedQuiz(quizId);
-    onQuizChange(quizId);
+  };
+
+  const handleValidation = () => {
+    if (selectedQuiz) {
+      onQuizChange(selectedQuiz);
+    }
   };
 
   return (
-    <RadioGroup value={selectedQuiz} onValueChange={handleRadioChange}>
-      {quizzes.map((quiz, idx) => (
-        <div key={idx} className="flex items-center space-x-2">
-          <RadioGroupItem
-            value={quiz.id}
-            onChange={() => handleRadioChange(quiz.id)}
-            checked={selectedQuiz === quiz.id}
-            id={`quiz-${quiz.id}`}
-          />
-          <Label htmlFor={`quiz-${quiz.id}`}>{quiz.title}</Label>
-        </div>
-      ))}
-    </RadioGroup>
+    <div className="flex min-h-screen items-center">
+      <Card className="mx-auto flex w-1/2 flex-col space-y-1">
+        <CardHeader>
+          <CardTitle>Choisissez un quiz</CardTitle>
+          <CardDescription>
+            Choisissez ici votre quiz pour le tester
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            className="space-y-3"
+            value={selectedQuiz}
+            onValueChange={handleRadioChange}
+          >
+            {quizzes.map((quiz, idx) => (
+              <div key={idx} className="flex flex-col space-x-2 p-2">
+                <div className="mx-2 flex items-center justify-between space-y-1">
+                  <h3 className="text-lg font-semibold">Quiz n°{idx + 1}</h3>
+                  <CardDescription>
+                    Créer le {dateFormater(new Date(quiz.createdAt))}
+                  </CardDescription>
+                </div>
+                <Separator className="my-2" />
+                <div className="flex items-center gap-4">
+                  <RadioGroupItem value={quiz.id} id={`quiz-${quiz.id}`} />
+                  <Label htmlFor={`quiz-${quiz.id}`}>{quiz.title}</Label>
+                </div>
+              </div>
+            ))}
+          </RadioGroup>
+        </CardContent>
+        <CardFooter className="justify-end">
+          <Button
+            onClick={handleValidation}
+            disabled={!selectedQuiz}
+            className="mt-4"
+          >
+            Valider la sélection
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 
@@ -88,7 +126,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
       </Card>
     );
 
-  const questions = quiz.questions;
+  const questions = quiz.questions.map((q) => q.question);
   const currentQuestion = questions[currentQuestionIndex];
 
   const handleToggleChange = (questionId: string, values: string[]) => {
@@ -387,8 +425,8 @@ const QuizStarter = () => {
       ) : (
         <QuizSelector
           quizzes={filteredQuizzes}
-          onQuizChange={() => {
-            setQuizIdToStart(filteredQuizzes[0].id);
+          onQuizChange={(selectedId) => {
+            setQuizIdToStart(selectedId);
             setIsQuizStart(true);
           }}
         />

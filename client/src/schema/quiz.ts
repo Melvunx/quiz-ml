@@ -1,7 +1,12 @@
 import { z } from "zod";
-
 // Enum schema
 export const QuestionTypeSchema = z.enum(["SINGLE", "MULTIPLE"]);
+
+export const DIALOG_DESCRIPTION = {
+  QUIZ: "Vous pouvez modifier le titre du quiz ainsi que sa description.",
+  QUESTION:
+    "Vous pouver modifier le contenu de la question et modifier les réponses.",
+} as const;
 
 // Answer schema
 export const AnswerSchema = z.object({
@@ -40,7 +45,7 @@ export const QuizQuestionSchema = z.object({
   question: QuestionSchema,
 });
 
-export const QuizQuestionsSchema = z.array(QuizQuestionSchema)
+export const QuizQuestionsSchema = z.array(QuizQuestionSchema);
 
 // Quiz schema
 export const QuizSchema = z.object({

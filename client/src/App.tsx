@@ -7,7 +7,6 @@ import Auth from "./pages/Auth";
 import AuthManager from "./pages/AuthManager";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
-import QuizItem from "./pages/items/QuizItem";
 import Questions from "./pages/Questions";
 import QuizPage from "./pages/QuizPage";
 import QuizResults from "./pages/QuizResults";
@@ -43,10 +42,6 @@ const router = createBrowserRouter([
           {
             path: "quiz",
             element: <QuizPage />,
-          },
-          {
-            path: "quiz/:quizId",
-            element: <QuizItem />,
           },
         ],
       },

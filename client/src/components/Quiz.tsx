@@ -26,13 +26,11 @@ const Quiz: React.FC<QuizProps> = ({ quiz, withQuestion = false }) => {
       <CardContent>
         {withQuestion &&
           quiz.questions &&
-          quiz.questions.map((question) => (
-            <Question key={question.id} question={question} />
+          quiz.questions.map((q) => (
+            <Question key={q.question.id} question={q.question} />
           ))}
       </CardContent>
-      <CardFooter>
-        
-      </CardFooter>
+      <CardFooter></CardFooter>
     </Card>
   );
 };

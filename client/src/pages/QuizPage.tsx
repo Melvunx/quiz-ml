@@ -12,6 +12,7 @@ import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LoadingString from "@/components/ui/loading-string";
+import { Separator } from "@/components/ui/separator";
 import useQuiz from "@/hooks/use-quiz";
 import { useToast } from "@/hooks/use-toast";
 import { dateFormater, toastParams } from "@/lib/utils";
@@ -118,7 +119,7 @@ export default function QuizPage() {
               <CardHeader>
                 <div className="flex items-center gap-2 space-y-1">
                   <CardTitle>{quiz.title}</CardTitle>
-                  <EditOrDeleteDialog edit name="le quiz" description="QUIZ">
+                  <EditOrDeleteDialog edit name="QUIZ" description="QUIZ">
                     <form
                       className="space-y-8"
                       action={async (data) =>
@@ -159,14 +160,17 @@ export default function QuizPage() {
                     </form>
                   </EditOrDeleteDialog>
                   <EditOrDeleteDialog
-                    name="la question"
+                    name="QUIZ"
                     description="QUIZ"
                     disabled={isDeleting}
                     onClick={async () => await deleteQuizMutation(quiz.id)}
                   />
                 </div>
+                <Separator className="ml-2 h-0.5 w-4/5" />
                 {quiz.description !== "NULL" && (
-                  <CardDescription>{quiz.description}</CardDescription>
+                  <CardDescription className="py-2">
+                    {quiz.description}
+                  </CardDescription>
                 )}
               </CardHeader>
               <CardContent className="flex flex-col items-start gap-2 space-x-0">

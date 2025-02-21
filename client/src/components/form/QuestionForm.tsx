@@ -45,7 +45,7 @@ export default function QuestionForm() {
     isPending: isCreating,
     isError,
   } = useMutation({
-    mutationKey: ["create-question-answer"],
+    mutationKey: ["create-question-answers"],
     mutationFn: async (credentials: {
       content: string;
       type: QuestionType;
@@ -81,25 +81,25 @@ export default function QuestionForm() {
     },
   });
 
-  function addAnswer() {
+  const addAnswer = () => {
     setAnswers([...answers, { content: "", isCorrect: false }]);
-  }
+  };
 
-  function removeAnswer(answerIdx: number) {
+  const removeAnswer = (answerIdx: number) => {
     setAnswers(answers.filter((_, idx) => idx !== answerIdx));
-  }
+  };
 
-  function updateAnswer(
+  const updateAnswer = (
     answerIdx: number,
     field: keyof CreateAnswer,
     value: string | boolean
-  ) {
+  ) => {
     setAnswers(
       answers.map((answer, idx) =>
         idx === answerIdx ? { ...answer, [field]: value } : answer
       )
     );
-  }
+  };
 
   const onCreateQuestionAction = async (data: FormData) => {
     const formData = {
@@ -107,8 +107,6 @@ export default function QuestionForm() {
       type: String(data.get("type")) as QuestionType,
       answers,
     };
-
-    console.log("form data ", formData);
 
     try {
       setError(null);
@@ -118,7 +116,7 @@ export default function QuestionForm() {
       setAnswers([]);
     } catch (error) {
       const errorResponse = apiErrorHandler(error);
-      setError(errorResponse.error as string);
+      setError(errorResponse.error);
     }
   };
 
@@ -243,7 +241,11 @@ export default function QuestionForm() {
         </form>
       </CardContent>
       <CardFooter>
-        <Button type="submit" form="questionForm" disabled={add < 2}>
+        <Button
+          type="submit"
+          form="questionForm"
+          disabled={isCreating || add < 2}
+        >
           {isCreating ? (
             <LoadingString word="Création en cours" />
           ) : (

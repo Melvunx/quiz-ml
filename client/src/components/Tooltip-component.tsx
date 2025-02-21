@@ -15,7 +15,8 @@ type TooltipComponentProps = {
   children: React.ReactNode;
   content: string;
   variant?: ButtonVariants;
-  className?: string;
+  btnClassName?: string;
+  tooltipClassName?: string;
   onClick?: () => void;
 };
 
@@ -23,7 +24,8 @@ const TooltipComponent: React.FC<TooltipComponentProps> = ({
   children,
   content,
   variant,
-  className,
+  btnClassName,
+  tooltipClassName,
   onClick,
 }) => {
   return (
@@ -33,13 +35,20 @@ const TooltipComponent: React.FC<TooltipComponentProps> = ({
           <Button
             variant={variant}
             onClick={onClick}
-            className={clsx("text-lg", className)}
+            className={clsx("text-lg", btnClassName)}
           >
             {children}
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{content}</p>
+          <p
+            className={clsx(
+              "mb-2 rounded-lg bg-indigo-200/50 px-2 py-1 opacity-75",
+              tooltipClassName
+            )}
+          >
+            {content}
+          </p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

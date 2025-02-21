@@ -53,6 +53,7 @@ export const editAnswers: RequestHandler<
   {},
   { answers: Answer[] }
 > = async (req, res) => {
+  console.log("answers : ", req.body.answers);
   try {
     const { answers } = req.body;
 
@@ -65,7 +66,7 @@ export const editAnswers: RequestHandler<
       answers.map(
         async (answer) =>
           await prisma.answer.update({
-            where: { id: answer.id },
+            where: { id: answer.id, questionId: answer.questionId },
             data: answer,
           })
       )

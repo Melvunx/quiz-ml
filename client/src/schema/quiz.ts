@@ -8,6 +8,11 @@ export const DIALOG_DESCRIPTION = {
     "Vous pouver modifier le contenu de la question et modifier les réponses.",
 } as const;
 
+export const DIALOG = {
+  QUIZ: "le quiz",
+  QUESTION: "la question",
+} as const;
+
 // Answer schema
 export const AnswerSchema = z.object({
   id: z.string().cuid(),

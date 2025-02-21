@@ -144,6 +144,8 @@ export const editQuestion: RequestHandler<
     const { questionId } = req.params;
     const { content, type } = req.body;
 
+    console.log({ content, type });
+
     if (!questionId) return handleError(res, "NOT_FOUND", "Id not found");
 
     if (!content || !type)

@@ -32,7 +32,7 @@ router.get("/:questionId/answers", authenticate, getQuestionWithAnswers);
 // creéer une question
 router.post("/", authenticate, createNewQuestion);
 
-router.put("/:questionId", authenticate, editQuestion);
+router.put("/question/:questionId", authenticate, editQuestion);
 
 router.delete("/:questionId", authenticate, deleteQuestion);
 

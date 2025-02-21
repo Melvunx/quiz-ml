@@ -4,7 +4,7 @@ import useQuiz from "@/hooks/use-quiz";
 import { useQuery } from "@tanstack/react-query";
 import ErrorPage from "./ErrorPage";
 
-export default function Questions() {
+export default function QuestionsPage() {
   const { questionsWithAnswers } = useQuiz();
 
   const {
@@ -21,8 +21,8 @@ export default function Questions() {
   if (isError) return <ErrorPage />;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-evenly">
-      {questions
+    <div className="flex min-h-screen flex-col items-center justify-evenly gap-3 py-2">
+      {questions?.length
         ? questions.map((question) => (
             <Question key={question.id} question={question} />
           ))

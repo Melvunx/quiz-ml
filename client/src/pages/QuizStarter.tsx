@@ -25,7 +25,8 @@ type QuizSelectorProps = {
   quizzes?: Quiz[];
   onQuizChange: (selectedId: string) => void;
 };
-// Me référer au système add et remove questions pour ajouter des quiz au quizStarter
+
+
 const QuizSelector: React.FC<QuizSelectorProps> = ({
   quizzes,
   onQuizChange,
@@ -52,7 +53,8 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
       <Card className="mx-auto flex w-1/2 flex-col space-y-1">
         <CardHeader>
           <CardTitle>Choisissez un quiz</CardTitle>
-          <CardDescription>
+          <Separator className="h-0.5 w-4/5" />
+          <CardDescription className="py-2">
             Choisissez ici votre quiz pour le tester
           </CardDescription>
         </CardHeader>

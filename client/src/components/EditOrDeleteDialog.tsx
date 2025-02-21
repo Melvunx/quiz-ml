@@ -1,7 +1,8 @@
 import { Dialog } from "@radix-ui/react-dialog";
+import clsx from "clsx";
 import { PenBox, Trash2 } from "lucide-react";
 import { FC, ReactNode } from "react";
-import { DIALOG_DESCRIPTION } from "../schema/quiz";
+import { DIALOG, DIALOG_DESCRIPTION } from "../schema/quiz";
 import TooltipComponent from "./Tooltip-component";
 import { Button } from "./ui/button";
 import {
@@ -15,22 +16,28 @@ import {
 } from "./ui/dialog";
 
 type EditDialogProps = {
-  name: string;
+  name: keyof typeof DIALOG;
   description: keyof typeof DIALOG_DESCRIPTION;
   children?: ReactNode;
+  className?: string;
 };
 
-const EditDialog: FC<EditDialogProps> = ({ name, description, children }) => {
+const EditDialog: FC<EditDialogProps> = ({
+  name,
+  description,
+  children,
+  className,
+}) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <TooltipComponent variant="ghost" content={`Modifier ${name}`}>
+        <TooltipComponent variant="ghost" content={`Modifier ${DIALOG[name]}`}>
           <PenBox size={19} />
         </TooltipComponent>
       </DialogTrigger>
-      <DialogContent className="space-y-2">
+      <DialogContent className={clsx("space-y-2", className)}>
         <DialogHeader>
-          <DialogTitle>{`Modifier ${name}`}</DialogTitle>
+          <DialogTitle>{`Modifier ${DIALOG[name]}`}</DialogTitle>
           <DialogDescription className="py-4">
             {DIALOG_DESCRIPTION[description]}
           </DialogDescription>
@@ -42,7 +49,7 @@ const EditDialog: FC<EditDialogProps> = ({ name, description, children }) => {
 };
 
 type DeleteDialogProps = {
-  name: string;
+  name: keyof typeof DIALOG;
   disabled?: boolean;
   onClick?: () => void;
 };
@@ -51,7 +58,7 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name, disabled, onClick }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <TooltipComponent variant="ghost" content={`Supprimer ${name}`}>
+        <TooltipComponent variant="ghost" content={`Supprimer ${DIALOG[name]}`}>
           <Trash2 size={19} />
         </TooltipComponent>
       </DialogTrigger>
@@ -79,25 +86,27 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name, disabled, onClick }) => {
 
 type EditOrDeleteDialogProps = {
   edit?: boolean;
-  name: string;
+  name: keyof typeof DIALOG;
   description: keyof typeof DIALOG_DESCRIPTION;
   children?: ReactNode;
+  className?: string;
   disabled?: boolean;
   onClick?: () => void;
 };
 
 const EditOrDeleteDialog: FC<EditOrDeleteDialogProps> = ({
   edit = false,
-  children,
   name,
   description,
+  children,
+  className,
   disabled,
   onClick,
 }) => {
   return (
     <>
       {edit ? (
-        <EditDialog name={name} description={description}>
+        <EditDialog name={name} description={description} className={className}>
           {children}
         </EditDialog>
       ) : (

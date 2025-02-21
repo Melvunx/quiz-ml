@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
@@ -30,7 +29,6 @@ const Quiz: React.FC<QuizProps> = ({ quiz, withQuestion = false }) => {
             <Question key={q.question.id} question={q.question} />
           ))}
       </CardContent>
-      <CardFooter></CardFooter>
     </Card>
   );
 };

@@ -7,7 +7,7 @@ import Auth from "./pages/Auth";
 import AuthManager from "./pages/AuthManager";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
-import Questions from "./pages/Questions";
+import Questions from "./pages/QuestionsPage";
 import QuizPage from "./pages/QuizPage";
 import QuizResults from "./pages/QuizResults";
 import StartQuiz from "./pages/QuizStarter";

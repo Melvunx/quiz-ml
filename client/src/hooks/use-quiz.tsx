@@ -344,7 +344,7 @@ export default function useQuiz() {
     async (questionId: string, content: string, type: QuestionType) => {
       try {
         const response = await fetchApi<Question>(
-          `${BASE_URL.QUESTION}/${questionId}`,
+          `${BASE_URL.QUESTION}/question/${questionId}`,
           {
             payload: { content, type },
             method: "PUT",
@@ -390,7 +390,7 @@ export default function useQuiz() {
   );
 
   const updateAnswers = useCallback(
-    async (answers: Answer[]) => {
+    async (answers: CreateAnswer[]) => {
       try {
         const updatedAnswers = await fetchApi<Answer[]>(
           BASE_URL.ANSWERS_ENDPOINT,

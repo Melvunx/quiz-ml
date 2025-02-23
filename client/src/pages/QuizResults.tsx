@@ -50,7 +50,7 @@ export default function QuizResults({
           )}
         </>
       ) : (
-        "Aucun résultat de quiz trouvé"
+        <p className="text-center">Aucun résultat de quiz trouvé</p>
       )}
     </div>
   );

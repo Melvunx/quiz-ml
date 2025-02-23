@@ -2,6 +2,7 @@ import { dateFormater } from "@/lib/utils";
 import { Result } from "@/schema/quiz";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import EditOrDeleteDialog from "./EditOrDeleteDialog";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -30,6 +31,7 @@ const Results: React.FC<ResultsProps> = ({ result }) => {
         <div className="flex flex-col items-center gap-2 space-y-1">
           <div className="flex w-full items-center justify-between">
             <CardTitle>{quiz.title}</CardTitle>
+            <EditOrDeleteDialog name="RESULT" />
             <CardDescription>
               Compléter le {dateFormater(new Date(result.completedAt))}
             </CardDescription>

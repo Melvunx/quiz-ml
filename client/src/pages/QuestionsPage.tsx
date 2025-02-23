@@ -36,10 +36,10 @@ export default function QuestionsPage({
   const currentQuestions = questions.slice(startIndex, endIndex);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between">
+    <div className="mx-auto w-full max-w-3xl">
       {currentQuestions.length ? (
         <>
-          <div className="flex w-4/5 flex-col gap-3 py-2">
+          <div className="flex flex-col gap-3 py-2">
             {currentQuestions.map((question) => (
               <Question key={question.id} question={question} />
             ))}

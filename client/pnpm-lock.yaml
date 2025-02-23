@@ -80,6 +80,9 @@ importers:
       react:
         specifier: 19.0.0-rc.1
         version: 19.0.0-rc.1
+      react-confirm:
+        specifier: ^0.3.0
+        version: 0.3.0(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)
       react-dom:
         specifier: 19.0.0-rc.1
         version: 19.0.0-rc.1(react@19.0.0-rc.1)
@@ -1732,6 +1735,12 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  react-confirm@0.3.0:
+    resolution: {integrity: sha512-xd14cjreB+ndQFqO2iZSMFRelf7MXya7dhGEyZh1km1oCeudQaF7VoIMAzSDLB4wrZiFS3KfGxeqZLnoxq6dwA==}
+    peerDependencies:
+      react: '>=18.x'
+      react-dom: '>=18.x'
 
   react-dom@19.0.0-rc.1:
     resolution: {integrity: sha512-k8MfDX+4G+eaa1cXXI9QF4d+pQtYol3nx8vauqRWUEOPqC7NQn2qmEqUsLoSd28rrZUL+R3T2VC+kZ2Hyx1geQ==}
@@ -3516,6 +3525,11 @@ snapshots:
   punycode@2.3.1: {}
 
   queue-microtask@1.2.3: {}
+
+  react-confirm@0.3.0(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1):
+    dependencies:
+      react: 19.0.0-rc.1
+      react-dom: 19.0.0-rc.1(react@19.0.0-rc.1)
 
   react-dom@19.0.0-rc.1(react@19.0.0-rc.1):
     dependencies:

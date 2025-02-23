@@ -14,18 +14,18 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useNavigationBlocker } from "@/hooks/use-navigationBlocker";
 import useQuiz from "@/hooks/use-quiz";
 import { dateFormater } from "@/lib/utils";
 import { Quiz } from "@/schema/quiz";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ErrorPage from "./ErrorPage";
 
 type QuizSelectorProps = {
   quizzes?: Quiz[];
   onQuizChange: (selectedId: string) => void;
 };
-
 
 const QuizSelector: React.FC<QuizSelectorProps> = ({
   quizzes,
@@ -95,6 +95,22 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
   );
 };
 
+function useCompleteNavigationGuard(shouldBlock: boolean) {
+  // Pour la navigation interne
+  useNavigationBlocker(shouldBlock);
+
+  // Pour la navigation externe
+  useEffect(() => {
+    if (!shouldBlock) return;
+
+    window.addEventListener("beforeunload", (e) => e.preventDefault());
+
+    return () => {
+      window.removeEventListener("beforeunload", (e) => e.preventDefault());
+    };
+  }, [shouldBlock]);
+}
+
 type LoadedQuizProps = {
   quizId: string;
   onFinish: (score: number, answers: Record<string, string[]>) => void;
@@ -105,6 +121,12 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, string[]>>({});
   const [showResults, setShowResults] = useState(false);
+
+  const shouldBlockNavigation = useMemo(() => {
+    return Object.keys(userAnswers) && !showResults;
+  }, [userAnswers, showResults]);
+
+  useCompleteNavigationGuard(shouldBlockNavigation);
 
   const {
     data: quiz,
@@ -287,7 +309,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
   if (isLoading) return <LoadingString word="Chargement du quiz" />;
 
   return (
-    <Card className="mx-auto w-full max-w-2xl">
+    <Card className="mx-auto w-full max-w-2xl space-y-2">
       <CardHeader>
         <CardTitle>{quiz.title}</CardTitle>
         <Progress value={calculateProgress()} className="mt-2" />

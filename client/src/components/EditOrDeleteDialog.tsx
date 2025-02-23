@@ -17,7 +17,7 @@ import {
 
 type EditDialogProps = {
   name: keyof typeof DIALOG;
-  description: keyof typeof DIALOG_DESCRIPTION;
+  description?: keyof typeof DIALOG_DESCRIPTION;
   children?: ReactNode;
   className?: string;
 };
@@ -39,7 +39,7 @@ const EditDialog: FC<EditDialogProps> = ({
         <DialogHeader>
           <DialogTitle>{`Modifier ${DIALOG[name]}`}</DialogTitle>
           <DialogDescription className="py-4">
-            {DIALOG_DESCRIPTION[description]}
+            {description ? DIALOG_DESCRIPTION[description] : null}
           </DialogDescription>
         </DialogHeader>
         {children}
@@ -87,7 +87,7 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name, disabled, onClick }) => {
 type EditOrDeleteDialogProps = {
   edit?: boolean;
   name: keyof typeof DIALOG;
-  description: keyof typeof DIALOG_DESCRIPTION;
+  description?: keyof typeof DIALOG_DESCRIPTION;
   children?: ReactNode;
   className?: string;
   disabled?: boolean;

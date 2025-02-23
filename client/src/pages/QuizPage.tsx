@@ -123,7 +123,7 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
   const currentQuizzes = quizzes.slice(startIndex, endIndex);
 
   return (
-    <div className="mx-auto flex min-h-screen w-3/6 flex-col gap-3 ">
+    <div className=" mx-auto w-full max-w-2xl">
       {currentQuizzes.length ? (
         <>
           {currentQuizzes.map((quiz, idx) => (

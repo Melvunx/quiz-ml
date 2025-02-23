@@ -1,5 +1,7 @@
 import { ApiError } from "@/api/fetch";
+import Confirmation from "@ui/confirm";
 import { clsx, type ClassValue } from "clsx";
+import { confirmable, createConfirmation } from "react-confirm";
 import { twMerge } from "tailwind-merge";
 
 export type ApiErrorResponse = {
@@ -68,3 +70,7 @@ export function showError(errors: string[], filter: string) {
 
   return errorList[0];
 }
+
+const Confirmable = confirmable(Confirmation);
+
+export const confirm = createConfirmation(Confirmable);

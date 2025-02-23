@@ -28,7 +28,7 @@ const CreateDropdownMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Créer un quiz ou une question</DropdownMenuLabel>
+        <DropdownMenuLabel>Un quiz ou une question</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem
@@ -37,7 +37,9 @@ const CreateDropdownMenu = () => {
             }}
           >
             Quiz
-            <DropdownMenuShortcut>ctrl q</DropdownMenuShortcut>
+            <DropdownMenuShortcut className="rounded-full border border-black bg-slate-200 p-1 italic">
+              ctrl q
+            </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -45,7 +47,9 @@ const CreateDropdownMenu = () => {
             }}
           >
             Question
-            <DropdownMenuShortcut>ctrl m</DropdownMenuShortcut>
+            <DropdownMenuShortcut className="rounded-full border border-black bg-slate-200 p-1 italic">
+              ctrl m
+            </DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -71,7 +75,7 @@ export default function Navbar() {
       </div>
       <div className="flex w-1/3 items-center justify-between">
         <Link
-          className={clsx("rounded-none", buttonVariants({ variant: "ghost" }))}
+          className={clsx("rounded-sm", buttonVariants({ variant: "ghost" }))}
           to="/quiz"
         >
           Quiz
@@ -99,6 +103,7 @@ export default function Navbar() {
       <div className="flex items-center gap-10">
         <h1 className="italic">{user.username}</h1>
         <Button
+          variant="destructive"
           type="button"
           onClick={async () => {
             setIsLoading(true);

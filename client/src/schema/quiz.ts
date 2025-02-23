@@ -11,6 +11,7 @@ export const DIALOG_DESCRIPTION = {
 export const DIALOG = {
   QUIZ: "le quiz",
   QUESTION: "la question",
+  RESULT: "le résultat",
 } as const;
 
 // Answer schema

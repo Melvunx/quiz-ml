@@ -76,7 +76,7 @@ const PaginationControls: FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="my-4 flex w-4/5 items-center justify-around">
+    <div className="my-4 flex w-full items-center justify-around">
       <Button
         variant="outline"
         onClick={() => handlePageChange(currentPage - 1)}

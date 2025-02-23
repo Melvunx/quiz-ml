@@ -1,5 +1,6 @@
 import EditOrDeleteDialog from "@/components/EditOrDeleteDialog";
 import QuestionsToQuizForm from "@/components/form/QuestionsToQuizForm";
+import PaginationControls from "@/components/layout/PaginationControls";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +18,7 @@ import useQuiz from "@/hooks/use-quiz";
 import { useToast } from "@/hooks/use-toast";
 import { dateFormater, toastParams } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
 const QuizCount = ({ count }: { count?: number }) => {
@@ -29,11 +31,16 @@ const QuizCount = ({ count }: { count?: number }) => {
   );
 };
 
-export default function QuizPage() {
+export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
   const { allQuizzes, modifyQuiz, deleteQuiz } = useQuiz();
+  const [searchParams] = useSearchParams();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const queryClient = useQueryClient();
+  const currentPage = Number(searchParams.get("page")) || 1;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   const {
     data: quizzes,
@@ -107,14 +114,19 @@ export default function QuizPage() {
     }
   };
 
+  if (!quizzes) return null;
+
   if (isLoading) return <LoadingString />;
 
   if (isError) return <ErrorPage />;
 
+  const currentQuizzes = quizzes.slice(startIndex, endIndex);
+
   return (
-    <div className="mx-auto flex min-h-screen w-3/6 flex-col gap-4 ">
-      {quizzes?.length
-        ? quizzes.map((quiz, idx) => (
+    <div className="mx-auto flex min-h-screen w-3/6 flex-col gap-3 ">
+      {currentQuizzes.length ? (
+        <>
+          {currentQuizzes.map((quiz, idx) => (
             <Card key={quiz.id} className="space-y-4">
               <CardHeader>
                 <div className="flex items-center gap-2 space-y-1">
@@ -178,8 +190,14 @@ export default function QuizPage() {
                 <QuestionsToQuizForm key={idx} quizId={quiz.id} />
               </CardContent>
             </Card>
-          ))
-        : "Aucun quiz n'a été trouvé"}
+          ))}
+          {quizzes.length >= itemsPerPage && (
+            <PaginationControls totalItems={quizzes.length} />
+          )}
+        </>
+      ) : (
+        "Aucun quiz n'a été trouvé"
+      )}
     </div>
   );
 }

@@ -1,11 +1,19 @@
+import PaginationControls from "@/components/layout/PaginationControls";
 import Question from "@/components/Question";
 import LoadingString from "@/components/ui/loading-string";
 import useQuiz from "@/hooks/use-quiz";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
-export default function QuestionsPage() {
+export default function QuestionsPage({
+  itemsPerPage,
+}: {
+  itemsPerPage: number;
+}) {
   const { questionsWithAnswers } = useQuiz();
+  const [searchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
 
   const {
     data: questions,
@@ -16,17 +24,33 @@ export default function QuestionsPage() {
     queryFn: async () => await questionsWithAnswers(),
   });
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  if (!questions) return null;
+
   if (isLoading) return <LoadingString />;
 
   if (isError) return <ErrorPage />;
 
+  const currentQuestions = questions.slice(startIndex, endIndex);
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-evenly gap-3 py-2">
-      {questions?.length
-        ? questions.map((question) => (
-            <Question key={question.id} question={question} />
-          ))
-        : "Aucune question n'a été trouvée"}
+    <div className="flex min-h-screen flex-col items-center justify-between">
+      {currentQuestions.length ? (
+        <>
+          <div className="flex w-4/5 flex-col gap-3 py-2">
+            {currentQuestions.map((question) => (
+              <Question key={question.id} question={question} />
+            ))}
+          </div>
+          {questions.length >= itemsPerPage && (
+            <PaginationControls totalItems={questions.length} />
+          )}
+        </>
+      ) : (
+        "Aucune question n'a été trouvée"
+      )}
     </div>
   );
 }

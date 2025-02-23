@@ -392,17 +392,17 @@ export default function useQuiz() {
   const updateAnswers = useCallback(
     async (answers: CreateAnswer[]) => {
       try {
-        const updatedAnswers = await fetchApi<Answer[]>(
-          BASE_URL.ANSWERS_ENDPOINT,
-          {
-            payload: { answers },
-            method: "PUT",
-            requiresToken: true,
-            navigate,
-            accessToken,
-            setAccessToken,
-          }
-        );
+        const updatedAnswers = await fetchApi<{
+          updatedAnswers: number;
+          createdAnswers: number;
+        }>(BASE_URL.ANSWERS_ENDPOINT, {
+          payload: { answers },
+          method: "PUT",
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        });
 
         return updatedAnswers;
       } catch (error) {
@@ -506,12 +506,13 @@ export default function useQuiz() {
     [BASE_URL.RESULTS_ENDPOINT, accessToken, navigate, setAccessToken]
   );
 
-  const removeAnswer = useCallback(
-    async (answerId: string) => {
+  const removeAnswers = useCallback(
+    async (answers: CreateAnswer[]) => {
       try {
         const successMessage = await fetchApi<string>(
-          `${BASE_URL.QUESTION}/answer/${answerId}`,
+          `${BASE_URL.ANSWERS_ENDPOINT}/many`,
           {
+            payload: { answers },
             method: "DELETE",
             requiresToken: true,
             navigate,
@@ -526,7 +527,7 @@ export default function useQuiz() {
         throw error;
       }
     },
-    [BASE_URL.QUESTION, navigate, accessToken, setAccessToken]
+    [BASE_URL.ANSWERS_ENDPOINT, navigate, accessToken, setAccessToken]
   );
 
   const deleteMultipleQuestions = useCallback(
@@ -597,7 +598,7 @@ export default function useQuiz() {
     updateAnswers,
     deleteQuestion,
     removeQuestionsToQuiz,
-    removeAnswer,
+    removeAnswers,
     deleteMultipleQuestions,
     deleteQuiz,
     deleteQuizResults,

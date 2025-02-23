@@ -3,10 +3,55 @@ import ErrorPage from "@/pages/ErrorPage";
 import userAuthStore from "@/store/auth";
 import clsx from "clsx";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, buttonVariants } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import LoadingString from "../ui/loading-string";
 import Logo from "./Logo";
+
+const CreateDropdownMenu = () => {
+  const navigate = useNavigate();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button type="button" variant="secondary">
+          Créer..
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>Créer un quiz ou une question</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() => {
+              setTimeout(() => navigate("/add-quizzes"), 250);
+            }}
+          >
+            Quiz
+            <DropdownMenuShortcut>ctrl q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setTimeout(() => navigate("/add-questions"), 250);
+            }}
+          >
+            Question
+            <DropdownMenuShortcut>ctrl m</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 export default function Navbar() {
   const { logout } = useAuth();
@@ -49,6 +94,7 @@ export default function Navbar() {
         >
           Quizer !
         </Link>
+        <CreateDropdownMenu />
       </div>
       <div className="flex items-center gap-10">
         <h1 className="italic">{user.username}</h1>

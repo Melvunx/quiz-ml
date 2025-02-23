@@ -76,21 +76,21 @@ type QuestionProps = {
 };
 
 const Question: React.FC<QuestionProps> = ({ question }) => {
-  const { updateQuestion, updateAnswers } = useQuiz();
+  const { updateQuestion, updateAnswers, removeAnswers } = useQuiz();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [typeState, setTypeState] = useState<QuestionType>(question.type);
-  const [answers, setAnswers] = useState<CreateAnswer[]>(question.answers);
-  const [answerCount, setAnswerCount] = useState(question.answers.length);
+  const [answers, setAnswers] = useState<CreateAnswer[]>(
+    question.answers || []
+  );
+  const [answerCount, setAnswerCount] = useState(
+    question.answers ? question.answers.length : 0
+  );
+  const [removedAnswers, setRemovedAnswers] = useState<CreateAnswer[]>([]);
+
   const maxAnswers = 5;
 
   const queryClient = useQueryClient();
-
-  // Synchroniser les réponses lorsque question.answers change
-  // useEffect(() => {
-  //   setAnswers(question.answers);
-  //   setAnswerCount(question.answers.length);
-  // }, [question.answers]);
 
   const addAnswer = () => {
     if (answerCount >= maxAnswers) return;
@@ -107,6 +107,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
     );
 
     const newAnswers = answers.filter((_, idx) => idx !== answerIdx);
+    const deletedAnswersArray = answers[answerIdx];
 
     // Si en mode SINGLE et on supprime la seule réponse correcte, définir la première comme correcte
     if (
@@ -119,6 +120,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
     }
 
     setAnswers(newAnswers);
+    setRemovedAnswers((prev) => [...prev, deletedAnswersArray]);
     setAnswerCount(newAnswers.length);
   };
 
@@ -156,21 +158,17 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
       type: QuestionType;
       answers: CreateAnswer[];
     }) => {
-      console.log("credentials : ", credentials);
-
       const { questionId, content, type, answers } = credentials;
 
       try {
-        const question = await updateQuestion(questionId, content, type);
+        await updateQuestion(questionId, content, type);
 
-        if (!question) {
-          throw new Error("Question not updated");
+        if (removedAnswers.length > 0) {
+          await removeAnswers(removedAnswers);
         }
+
         if (answers.length > 0) {
-          const updatedAnswer = await updateAnswers(answers);
-          if (!updatedAnswer) {
-            throw new Error("Question not updated");
-          }
+          await updateAnswers(answers);
         }
       } catch (error) {
         console.error("Erreur lors de la mise à jour : ", error);
@@ -192,13 +190,13 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
   });
 
   const onUpdateQuestionAction = async (data: FormData) => {
-    // Validation: vérifier qu'au moins une réponse est marquée comme correcte
+    // vérifie qu'au moins une réponse est marquée comme correcte
     if (!answers.some((a) => a.isCorrect)) {
       setError("Au moins une réponse doit être marquée comme correcte");
       return;
     }
 
-    // Vérifier que toutes les réponses ont un contenu
+    // Vérifie que toutes les réponses ont un contenu
     if (answers.some((a) => !a.content.trim())) {
       setError("Toutes les réponses doivent avoir un contenu");
       return;

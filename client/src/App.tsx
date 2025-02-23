@@ -11,6 +11,8 @@ import Questions from "./pages/QuestionsPage";
 import QuizPage from "./pages/QuizPage";
 import QuizResults from "./pages/QuizResults";
 import StartQuiz from "./pages/QuizStarter";
+import AddQuestionPage from "./pages/form/AddQuestionPage";
+import AddQuizPage from "./pages/form/AddQuizPage";
 
 const queryClient = new QueryClient();
 
@@ -28,20 +30,28 @@ const router = createBrowserRouter([
             element: <Home />,
           },
           {
+            path: "quiz",
+            element: <QuizPage itemsPerPage={3} />,
+          },
+          {
+            path: "add-quizzes",
+            element: <AddQuizPage />,
+          },
+          {
+            path: "quiz-questions",
+            element: <Questions itemsPerPage={3} />,
+          },
+          {
+            path: "add-questions",
+            element: <AddQuestionPage />,
+          },
+          {
             path: "quiz-start",
             element: <StartQuiz />,
           },
           {
-            path: "quiz-questions",
-            element: <Questions />,
-          },
-          {
             path: "quiz-results",
-            element: <QuizResults />,
-          },
-          {
-            path: "quiz",
-            element: <QuizPage />,
+            element: <QuizResults itemsPerPage={5} />,
           },
         ],
       },
@@ -55,7 +65,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       <Toaster />
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }

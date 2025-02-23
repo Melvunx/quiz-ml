@@ -1,12 +1,10 @@
-import QuestionForm from "@/components/form/QuestionForm";
-import QuizForm from "@/components/form/QuizForm";
-
 export default function Home() {
   return (
-    <div className="flex flex-col gap-10 py-5">
-      {/* Page expliquative */}
-      <QuizForm />
-      <QuestionForm />
+    <div className="flex w-full flex-col gap-2 py-5">
+      <div className="flex"></div>
+      <div className="flex"></div>
+      <div className="flex"></div>
+      <div className="flex"></div>
     </div>
   );
 }

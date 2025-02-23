@@ -2,7 +2,6 @@ import { authenticate } from "@/middleware/authentification";
 import {
   addAnswers,
   editAnswers,
-  removeAnswer,
   removeAnswers,
 } from "@controller/answer.controller";
 import {
@@ -46,8 +45,6 @@ router.post("/:questionId/answers", authenticate, addAnswers);
 
 router.put("/answers", authenticate, editAnswers);
 
-router.delete("/answer/:answerId", authenticate, removeAnswer);
-
-router.delete("/answers", authenticate, removeAnswers);
+router.delete("/answers/many", authenticate, removeAnswers);
 
 module.exports = router;

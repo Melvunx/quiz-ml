@@ -1,5 +1,5 @@
 import Answer from "@/components/Answer";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import CounterAnimation from "@/components/ui/counter-animation";
 import { Label } from "@/components/ui/label";
 import LoadingString from "@/components/ui/loading-string";
 import { Progress } from "@/components/ui/progress";
@@ -19,7 +20,9 @@ import useQuiz from "@/hooks/use-quiz";
 import { dateFormater } from "@/lib/utils";
 import { Quiz } from "@/schema/quiz";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
 type QuizSelectorProps = {
@@ -120,6 +123,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
   const { quizDetail } = useQuiz();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, string[]>>({});
+  const [isFinishing, setisFinishing] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
   const shouldBlockNavigation = useMemo(() => {
@@ -208,7 +212,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
       }
     });
 
-    console.log({ score, totalPossiblePoints });
+    console.log({ totalPossiblePoints });
 
     setShowResults(true);
     onFinish(score, finalAnswers);
@@ -221,7 +225,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
   // Si l'utilisateur à fini le quiz
   if (showResults) {
     return (
-      <Card className="mx-auto w-full max-w-2xl">
+      <Card className="mx-auto my-6 w-full max-w-2xl">
         <CardHeader>
           <CardTitle>Résultas du Quiz: {quiz.title}</CardTitle>
         </CardHeader>
@@ -287,6 +291,28 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
             })}
           </div>
         </CardContent>
+        <CardFooter className="flex w-full items-center justify-evenly">
+          <Button
+            disabled={isLoading}
+            onClick={() => {
+              setisFinishing(true);
+              setTimeout(() => window.location.reload(), 250);
+              setisFinishing(false);
+            }}
+          >
+            {isFinishing ? (
+              <LoadingString word="Chargement en cours" />
+            ) : (
+              <p>Recommencer un nouveau quiz</p>
+            )}
+          </Button>
+          <Link
+            to="/quiz-results"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Voir les résultats
+          </Link>
+        </CardFooter>
       </Card>
     );
   }
@@ -310,24 +336,35 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
 
   return (
     <Card className="mx-auto w-full max-w-2xl space-y-2">
-      <CardHeader>
-        <CardTitle>{quiz.title}</CardTitle>
-        <Progress value={calculateProgress()} className="mt-2" />
+      <CardHeader className="px-6 py-4">
+        <div className="space-y-2">
+          <CardTitle>{quiz.title}</CardTitle>
+          <Separator className="ml-1 h-0.5 w-3/5" />
+        </div>
+        <div className="flex items-center">
+          <Progress
+            value={calculateProgress()}
+            className="mx-auto my-2 w-4/5"
+          />
+          <div className="min-w-12 text-center">
+            <CounterAnimation
+              finalNumber={calculateProgress()}
+              duration={1000}
+            />
+            %
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         <div>
-          <h2 className="text-lg font-medium">
-            Question {currentQuestionIndex + 1} sur {questions.length}
-          </h2>
-
-          <p className="text-lg">{currentQuestion.content}</p>
+          <p className="text-lg font-medium">{currentQuestion.content}</p>
 
           {/* Indication du type de question */}
-          <p className="mt-2 text-sm text-gray-500">
+          <CardDescription className="mt-1 italic">
             {currentQuestion.type === "SINGLE"
               ? "Choisissez une seule réponse"
               : "Sélectionnez toutes les réponses correctes"}
-          </p>
+          </CardDescription>
         </div>
 
         {currentQuestion.type === "SINGLE" ? (
@@ -337,13 +374,20 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
             onValueChange={(values) =>
               handleToggleChange(currentQuestion.id, [values])
             }
-            className="space-y-2"
+            className="space-y-4"
           >
             {currentQuestion.answers.map((answer) => (
               <ToggleGroupItem
                 key={answer.id}
                 value={answer.id}
-                className="h-auto w-full justify-start rounded-md px-4 py-3 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                className={clsx(
+                  "w-full",
+                  buttonVariants({
+                    variant: "default",
+                    size: "sm",
+                    className: "border-2 border-black",
+                  })
+                )}
               >
                 {answer.content}
               </ToggleGroupItem>
@@ -362,7 +406,14 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
               <ToggleGroupItem
                 key={answer.id}
                 value={answer.id}
-                className="h-auto w-full justify-start rounded-md px-4 py-3 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                className={clsx(
+                  "w-full",
+                  buttonVariants({
+                    variant: "default",
+                    size: "sm",
+                    className: "border-2 border-black",
+                  })
+                )}
               >
                 <Answer answer={answer} />
               </ToggleGroupItem>
@@ -371,12 +422,17 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
         )}
       </CardContent>
       <CardFooter className="flex justify-between">
-        <p className="text-sm text-gray-500">
+        <CardDescription className="text-sm">
           {currentQuestionIndex + 1} sur {questions.length} questions
-        </p>
+        </CardDescription>
 
         <Button
           onClick={proceedToNext}
+          variant={
+            currentQuestionIndex < questions.length - 1
+              ? "default"
+              : "destructive"
+          }
           disabled={
             !userAnswers[currentQuestion.id] ||
             userAnswers[currentQuestion.id].length === 0

@@ -10,21 +10,36 @@ export const getAllQuizRestults: RequestHandler = async (req, res) => {
   try {
     console.log(colors.info("Getting all quizzes results..."));
 
-    const results = await prisma.result.findMany({
+    const quizResults = await prisma.quiz.findMany({
       include: {
-        quiz: true,
+        _count: {
+          select: {
+            questions: true,
+          },
+        },
+        results: {
+          orderBy: {
+            score: "asc",
+          },
+        },
+      },
+      omit: {
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
-    console.log(colors.success("Quizzes results found : ", results.length));
+    console.log(colors.success("Quizzes results found : ", quizResults.length));
 
-    results.map((result, index) =>
-      console.log(
-        colors.success(`\nQuiz n°${index + 1} \nResults : ${result.score} `)
-      )
-    );
+    quizResults.map((q) => {
+      q.results.map((r, index) =>
+        console.log(
+          colors.success(`\nQuiz n°${index + 1} \nquizResults : ${r.score} `)
+        )
+      );
+    });
 
-    return apiResponse.success(res, "OK", results);
+    return apiResponse.success(res, "OK", quizResults);
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }

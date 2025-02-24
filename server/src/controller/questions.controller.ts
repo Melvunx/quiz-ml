@@ -27,6 +27,9 @@ export const searchQuestion: RequestHandler<
           mode: "insensitive",
         },
       },
+      include: {
+        answers: true,
+      },
     });
 
     console.log(colors.success("Questions found : ", questions.length));

@@ -19,7 +19,7 @@ export const getAllQuizRestults: RequestHandler = async (req, res) => {
         },
         results: {
           orderBy: {
-            score: "asc",
+            score: "desc",
           },
         },
       },
@@ -34,7 +34,7 @@ export const getAllQuizRestults: RequestHandler = async (req, res) => {
     quizResults.map((q) => {
       q.results.map((r, index) =>
         console.log(
-          colors.success(`\nQuiz n°${index + 1} \nquizResults : ${r.score} `)
+          colors.success(`\nQuiz n°${index + 1} \nResults : ${r.score} `)
         )
       );
     });

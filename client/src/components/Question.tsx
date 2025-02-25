@@ -76,7 +76,8 @@ type QuestionProps = {
 };
 
 const Question: React.FC<QuestionProps> = ({ question }) => {
-  const { updateQuestion, updateAnswers, removeAnswers } = useQuiz();
+  const { updateQuestion, updateAnswers, removeAnswers, deleteQuestion } =
+    useQuiz();
   const { toast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const [typeState, setTypeState] = useState<QuestionType>(question.type);
@@ -188,6 +189,26 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
       }
     },
   });
+
+  const { mutate: deleteQuestionMutation, isPending: isDeleting } = useMutation(
+    {
+      mutationKey: ["delete-question"],
+      mutationFn: async (questionId: string) =>
+        await deleteQuestion(questionId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["questions"] });
+
+        setTimeout(() => {
+          toast(
+            toastParams(
+              "Question supprimé avec succès",
+              `Question supprimé le ${dateFormater(new Date(Date.now()))}`
+            )
+          );
+        }, 1500);
+      },
+    }
+  );
 
   const onUpdateQuestionAction = async (data: FormData) => {
     // vérifie qu'au moins une réponse est marquée comme correcte
@@ -362,7 +383,12 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
               </DialogFooter>
             </form>
           </EditOrDeleteDialog>
-          <EditOrDeleteDialog name="QUESTION" description="QUESTION" />
+          <EditOrDeleteDialog
+            name="QUESTION"
+            description="QUESTION"
+            disabled={isDeleting}
+            onClick={async () => await deleteQuestionMutation(question.id)}
+          />
         </div>
         <Separator className="ml-2 h-0.5 w-4/5" />
       </CardHeader>

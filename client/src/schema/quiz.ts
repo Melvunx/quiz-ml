@@ -82,6 +82,22 @@ export const ResultSchema = z.object({
 
 export const ResultsSchema = z.array(ResultSchema);
 
+export const QuizResultsSchema = z.object({
+  id: z.string().cuid(),
+  title: z.string(),
+  description: z.string().optional(),
+  results: z.array(
+    ResultSchema.omit({
+      quiz: true,
+    })
+  ),
+  _count: z.object({
+    questions: z.number().int(),
+  }),
+});
+
+export const QuizzesResultsSchema = z.array(QuizResultsSchema);
+
 // Create schemas
 export const CreateAnswerSchema = AnswerSchema.omit({
   id: true,
@@ -131,4 +147,5 @@ export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
 export type CreateQuizQuestion = z.infer<typeof CreateQuizQuestionSchema>;
 export type Quiz = z.infer<typeof QuizSchema>;
 export type Result = z.infer<typeof ResultSchema>;
+export type QuizResults = z.infer<typeof QuizResultsSchema>;
 export type AddQuestionToQuiz = z.infer<typeof AddQuestionToQuizSchema>;

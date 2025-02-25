@@ -23,7 +23,7 @@ export default function Layout() {
   return (
     <div>
       <Navbar />
-      <main className="flex min-h-screen w-full flex-col justify-center">
+      <main className="relative flex min-h-screen w-full flex-col justify-center">
         <Outlet />
       </main>
       <Footer />

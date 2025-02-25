@@ -1,9 +1,15 @@
 import PaginationControls from "@/components/layout/PaginationControls";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import LoadingString from "@/components/ui/loading-string";
+import { Separator } from "@/components/ui/separator";
 import useQuiz from "@/hooks/use-quiz";
-import { Quiz } from "@/schema/quiz";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
@@ -14,14 +20,13 @@ export default function QuizResults({
 }) {
   const { allResults } = useQuiz();
   const [searchParams] = useSearchParams();
-  const [quizAttempt, setQuizAttempt] = useState<Quiz[]>([]);
   const currentPage = Number(searchParams.get("page")) || 1;
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
   const {
-    data: results,
+    data: quizResults,
     isLoading,
     isError,
   } = useQuery({
@@ -29,39 +34,41 @@ export default function QuizResults({
     queryFn: async () => await allResults(),
   });
 
-  useEffect(() => {
-    if (!results) return;
-
-    const uniqueQuizzes: Quiz[] = [];
-
-    for (const result of results) {
-      if (result.quiz && !uniqueQuizzes.some((q) => q.id === result.quizId)) {
-        uniqueQuizzes.push(result.quiz);
-      }
-    }
-
-    setQuizAttempt(uniqueQuizzes);
-  }, [results]);
-
-  if (!results || !results) return null;
+  if (!quizResults) return null;
 
   if (isLoading) return <LoadingString />;
 
   if (isError) return <ErrorPage />;
 
-  const currentQuizResults = quizAttempt.slice(startIndex, endIndex);
+  const currentResults = quizResults.slice(startIndex, endIndex);
 
-  const totalItems = quizAttempt.length;
+  const totalItems = quizResults.length;
 
   return (
     <div>
-      {currentQuizResults.length ? (
+      {currentResults.length ? (
         <>
-          {currentQuizResults.map(
-            (quiz, idx) =>  
-            // <Results key={result.id} result={result} />
-          )}
-          {results.length > itemsPerPage && (
+          {currentResults.map((quiz) => (
+            <Card key={quiz.id}>
+              <CardHeader>
+                <CardTitle>{quiz.title}</CardTitle>
+                {quiz.description !== "NULL" && (
+                  <CardDescription>{quiz.description}</CardDescription>
+                )}
+              </CardHeader>
+              <CardContent>
+                <Separator />
+                {quiz.results.map((result, idx) => (
+                  <div key={result.id}>
+                    <h2>Essais n°{idx + 1}</h2>
+                    <p>Score: {result.score}</p>
+                    <Separator />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+          {quizResults.length > itemsPerPage && (
             <PaginationControls
               totalItems={totalItems}
               itemsPerPage={itemsPerPage}

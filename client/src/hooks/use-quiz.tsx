@@ -9,11 +9,12 @@ import {
   Quiz,
   QuizQuestion,
   QuizQuestionsSchema,
+  QuizResults,
   QuizSchema,
+  QuizzesResultsSchema,
   QuizzesSchema,
   Result,
   ResultSchema,
-  ResultsSchema,
 } from "@/schema/quiz";
 import userAuthStore from "@/store/auth";
 import { useCallback } from "react";
@@ -56,7 +57,7 @@ export default function useQuiz() {
   const searchedQuiz = useCallback(
     async (search: string) => {
       try {
-        const response = await fetchApi<Question[]>(
+        const response = await fetchApi<Quiz[]>(
           `${BASE_URL.QUIZ}?search=${search}`,
           {
             requiresToken: true,
@@ -65,9 +66,9 @@ export default function useQuiz() {
             setAccessToken,
           }
         );
-        const questions = QuestionsSchema.parse(response);
+        const quizzes = QuizzesSchema.parse(response);
 
-        return questions;
+        return quizzes;
       } catch (error) {
         if (process.env.NODE_ENV === "development") console.error(error);
         throw error;
@@ -137,16 +138,19 @@ export default function useQuiz() {
 
   const allResults = useCallback(async () => {
     try {
-      const response = await fetchApi<Result[]>(BASE_URL.RESULTS_ENDPOINT, {
-        requiresToken: true,
-        navigate,
-        accessToken,
-        setAccessToken,
-      });
+      const response = await fetchApi<QuizResults[]>(
+        BASE_URL.RESULTS_ENDPOINT,
+        {
+          requiresToken: true,
+          navigate,
+          accessToken,
+          setAccessToken,
+        }
+      );
 
-      const results = ResultsSchema.parse(response);
+      const quizzesResults = QuizzesResultsSchema.parse(response);
 
-      return results;
+      return quizzesResults;
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
       throw error;

@@ -1,6 +1,5 @@
 import { dateFormater } from "@/lib/utils";
 import { Result } from "@/schema/quiz";
-import { useState } from "react";
 import EditOrDeleteDialog from "./EditOrDeleteDialog";
 import {
   Card,
@@ -19,8 +18,6 @@ const Results: React.FC<ResultsProps> = ({ result }) => {
   const { quiz } = result;
 
   if (!quiz || !quiz._count) return null;
-
-
 
   return (
     <Card className="h-72 max-w-2xl">

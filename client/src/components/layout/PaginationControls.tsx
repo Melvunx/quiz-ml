@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { FC } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -5,14 +6,16 @@ import { Button } from "../ui/button";
 
 type PaginationControlsProps = {
   totalItems: number;
-  itemsPerPage?: number;
+  itemsPerPage: number;
   defaultPage?: number;
+  className?: string;
 };
 
 const PaginationControls: FC<PaginationControlsProps> = ({
   totalItems,
-  itemsPerPage = 4,
+  itemsPerPage,
   defaultPage = 1,
+  className,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -76,7 +79,12 @@ const PaginationControls: FC<PaginationControlsProps> = ({
   };
 
   return (
-    <div className="my-4 flex w-full items-center justify-around rounded-lg bg-zinc-300/25 p-2">
+    <div
+      className={cn(
+        "my-4 flex w-full items-center justify-around rounded-lg bg-zinc-300/25 p-2",
+        className
+      )}
+    >
       <Button
         variant="outline"
         onClick={() => handlePageChange(currentPage - 1)}

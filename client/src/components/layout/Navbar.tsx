@@ -67,7 +67,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="flex w-full items-center justify-between border-y-2 px-4 py-2">
+    <nav className="relative flex w-full items-center justify-between border-y-2 px-4 py-2">
       <div className="flex text-lg font-bold">
         <Link to="/quiz-dashboard">
           <Logo />

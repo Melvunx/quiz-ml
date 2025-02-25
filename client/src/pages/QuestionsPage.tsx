@@ -7,6 +7,8 @@ import LoadingString from "@/components/ui/loading-string";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import useKeyboardShortcut from "@/hooks/use-keyboardShortcut";
 import useQuiz from "@/hooks/use-quiz";
+import { useToast } from "@/hooks/use-toast";
+import { toastParams } from "@/lib/utils";
 import { Question as QuestionItems, QuestionType } from "@/schema/quiz";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -19,6 +21,7 @@ export default function QuestionsPage({
   itemsPerPage: number;
 }) {
   const { questionsWithAnswers, searchedQuestions } = useQuiz();
+  const { toast } = useToast();
   const { shortcutToSearch } = useKeyboardShortcut();
   const [searchParams] = useSearchParams();
   const [filteredQuestions, setFilteredQuestions] = useState<QuestionItems[]>(
@@ -40,9 +43,38 @@ export default function QuestionsPage({
     useMutation({
       mutationKey: ["searched-questions"],
       mutationFn: async (query: string) => await searchedQuestions(query),
-      onSuccess: (data) => {
-        setSearchResults(data);
+      onSuccess: (questions, searchedText) => {
+        setSearchResults(questions);
         setFilteredQuestions([]);
+
+        const foundedQuestions = questions.length;
+
+        const foundTitle =
+          foundedQuestions > 1 ? "Questions trouvés 😁" : "Question trouvé 😁";
+
+        const foundDescription =
+          foundedQuestions > 1
+            ? `${foundedQuestions} questions on été trouvés avec "${searchedText}"`
+            : `${foundedQuestions} question on été trouvé avec "${searchedText}"`;
+
+        setTimeout(
+          () =>
+            toast(
+              toastParams(
+                `${
+                  foundedQuestions
+                    ? foundTitle
+                    : "Aucune question n'a été trouvé 😔"
+                }`,
+                `${
+                  foundedQuestions
+                    ? foundDescription
+                    : `Aucune question n'a été trouvé avec "${searchedText}" .`
+                }`
+              )
+            ),
+          300
+        );
       },
       onError: (error) => {
         console.error(error);
@@ -105,17 +137,21 @@ export default function QuestionsPage({
 
   const totalItems = displayQuestions.length;
 
+  const currentQuestionsNumber = currentQuestions.length;
+
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div
-        className={`my-3 flex gap-2 rounded-lg bg-zinc-200 px-3 py-2 ${
-          currentQuestions.length <= 2
-            ? "absolute left-1/4 top-0 w-full max-w-3xl translate-y-3/4"
+        className={`my-3 flex gap-2 rounded-lg px-3 py-2 ${
+          currentQuestionsNumber <= 2
+            ? "absolute left-0 top-0 w-full items-center justify-evenly"
             : "relative"
         }`}
       >
         <Label>
-          <p className="absolute top-0 z-10 ml-5 bg-zinc-200 px-1">Filtrer</p>
+          <p className="absolute top-0 z-10 ml-5 bg-white px-1 md:hidden lg:hidden">
+            Filtrer
+          </p>
         </Label>
         <div className="rounded-lg border-2 border-zinc-400 p-2">
           <ToggleGroup
@@ -141,12 +177,12 @@ export default function QuestionsPage({
         </div>
         <SearchItems
           onSearchAction={onSearchedQuestionsAction}
-          className="justify-end"
+          className="w-1/2 justify-center"
           inputId="questionSearchId"
           disabled={isSearching}
         />
       </div>
-      {currentQuestions.length ? (
+      {currentQuestionsNumber ? (
         <>
           <div className="flex flex-col gap-4 py-2">
             {currentQuestions.map((question) => (
@@ -154,7 +190,15 @@ export default function QuestionsPage({
             ))}
           </div>
           {totalItems > itemsPerPage && (
-            <PaginationControls totalItems={totalItems} />
+            <PaginationControls
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+              className={
+                currentQuestionsNumber <= 2
+                  ? "absolute bottom-0 left-0 mb-0 pb-0"
+                  : ""
+              }
+            />
           )}
         </>
       ) : (

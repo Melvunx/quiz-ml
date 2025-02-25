@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { FC } from "react";
 import { Button } from "../ui/button";
@@ -20,9 +20,9 @@ const SearchItems: FC<SearchItempsProps> = ({
   return (
     <form
       action={onSearchAction}
-      className={clsx("flex w-full max-w-md items-center", className)}
+      className={cn("flex w-full items-center", className)}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-6">
         <div className="flex items-center space-x-2">
           <Search size={18} />
           <Input

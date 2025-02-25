@@ -61,6 +61,13 @@ export const getSearchedQuiz: RequestHandler<
           mode: "insensitive",
         },
       },
+      include: {
+        questions: {
+          include: {
+            question: true,
+          },
+        },
+      },
     });
 
     console.log(colors.success("Quizzes found : ", quizzes.length));

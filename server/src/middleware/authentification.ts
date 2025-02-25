@@ -23,7 +23,7 @@ export async function authenticate(
 
     const isVerified = await verifyRefreshToken(token);
     if (!isVerified)
-      return apiResponse.error(res, "FORBIDDEN", "Invalid token");
+      return apiResponse.error(res, "UNAUTHORIZED", "Invalid token");
 
     if (process.env.NODE_ENV !== "production")
       console.log(colors.success(`User ${user.username} is authenticated`));

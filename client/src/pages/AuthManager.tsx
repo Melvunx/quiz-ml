@@ -12,6 +12,7 @@ export default function AuthManager() {
 
   useEffect(() => {
     let isMounted = true;
+
     const verifyAuth = async () => {
       try {
         await checkAuth();
@@ -34,6 +35,6 @@ export default function AuthManager() {
 
   if (isAuthenticated && location.pathname === "/")
     return <Navigate to="/quiz-dashboard" replace />;
-  
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
 }

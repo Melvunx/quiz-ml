@@ -1,4 +1,4 @@
-import { authenticate } from "@/middleware/authentification";
+import { amdinAuthenticate, authenticate } from "@/middleware/authentification";
 import {
   addQuestions,
   createQuiz,
@@ -31,19 +31,29 @@ router.get("/quiz-detail/:quizId", authenticate, getQuiz);
 router.get("/questions/:quizId", authenticate, getExistQuestionToQuiz);
 
 // Créer un quiz
-router.post("/", authenticate, createQuiz);
+router.post("/", authenticate, amdinAuthenticate, createQuiz);
 
 // Ajouter des questions dans un quiz
-router.patch("/:quizId/questions/add", authenticate, addQuestions);
+router.patch(
+  "/:quizId/questions/add",
+  authenticate,
+  amdinAuthenticate,
+  addQuestions
+);
 
 // Suppression de question dans un quiz
-router.patch("/:quizId/questions/remove", authenticate, removeQuestions);
+router.patch(
+  "/:quizId/questions/remove",
+  authenticate,
+  amdinAuthenticate,
+  removeQuestions
+);
 
 // Modifier quelques variables du quiz (titre et description)
-router.put("/:quizId", authenticate, editQuiz);
+router.put("/:quizId", authenticate, amdinAuthenticate, editQuiz);
 
 // Supprimer un quiz
-router.delete("/:quizId", authenticate, deleteQuiz);
+router.delete("/:quizId", authenticate, amdinAuthenticate, deleteQuiz);
 
 // Avoir le resultat de tous les quiz sans les questions et réponses
 router.get("/results", authenticate, getAllQuizRestults);
@@ -55,6 +65,11 @@ router.get("/results/:resultId", authenticate, getQuizResults);
 router.post("/results", authenticate, saveQuizResults);
 
 // Supprimer les résultats
-router.delete("/results/:resultId", authenticate, removeQuizResults);
+router.delete(
+  "/results/:resultId",
+  authenticate,
+  amdinAuthenticate,
+  removeQuizResults
+);
 
 module.exports = router;

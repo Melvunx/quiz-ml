@@ -18,12 +18,13 @@ import {
 import LoadingString from "../ui/loading-string";
 import Logo from "./Logo";
 
-const CreateDropdownMenu = () => {
+const CreateDropdownMenu = ({ disabled }: { disabled?: boolean }) => {
   const navigate = useNavigate();
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button type="button" variant="secondary">
+      <DropdownMenuTrigger disabled={disabled} asChild>
+        <Button type="button" variant={disabled ? "default" : "secondary"}>
           Créer..
         </Button>
       </DropdownMenuTrigger>
@@ -59,12 +60,14 @@ const CreateDropdownMenu = () => {
 
 export default function Navbar() {
   const { logout } = useAuth();
-  const { user } = userAuthStore();
+  const { user, isAdmin } = userAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 
   if (!user) {
     return <ErrorPage />;
   }
+
+  console.log({ isAdmin });
 
   return (
     <nav className="relative flex w-full items-center justify-between border-y-2 px-4 py-2">
@@ -98,7 +101,7 @@ export default function Navbar() {
         >
           Quizer !
         </Link>
-        <CreateDropdownMenu />
+        <CreateDropdownMenu disabled={!isAdmin} />
       </div>
       <div className="flex items-center gap-10">
         <h1 className="italic">{user.username}</h1>

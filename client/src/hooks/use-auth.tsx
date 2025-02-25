@@ -11,6 +11,7 @@ export default function useAuth() {
   const {
     setUser,
     setIsAuthenticated,
+    setIsAdmin,
     clearAuth,
     accessToken,
     setAccessToken,
@@ -18,11 +19,11 @@ export default function useAuth() {
 
   const { setError, clearError } = useErrorStore();
 
-  const url = "/auth";
+  const URL = "/auth";
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetchApi<User>(`${url}/check-auth`, {
+      const response = await fetchApi<User>(`${URL}/check-auth`, {
         navigate,
         requiresToken: true,
         accessToken,
@@ -31,6 +32,10 @@ export default function useAuth() {
       const user = UserSchema.parse(response);
 
       setUser(user);
+
+      if (user.role === "ADMIN") setIsAdmin(true);
+      else setIsAdmin(false);
+
       setIsAuthenticated(true);
       if (process.env.NODE_ENV === "development")
         console.log("Check successfull");
@@ -38,12 +43,40 @@ export default function useAuth() {
       setIsAuthenticated(false);
       if (process.env.NODE_ENV === "development") console.error(error);
     }
-  }, [setUser, setIsAuthenticated, navigate, accessToken, setAccessToken]);
+  }, [
+    navigate,
+    accessToken,
+    setAccessToken,
+    setUser,
+    setIsAdmin,
+    setIsAuthenticated,
+  ]);
+
+  const checkAdminAuth = useCallback(async () => {
+    try {
+      const response = await fetchApi<User>(`${URL}/check-admin`, {
+        navigate,
+        requiresToken: true,
+        accessToken,
+        setAccessToken,
+      });
+
+      const user = UserSchema.parse(response);
+
+      setUser(user);
+      setIsAdmin(true);
+      if (process.env.NODE_ENV === "development")
+        console.log("Admin check successfull");
+    } catch (error) {
+      setIsAdmin(false);
+      if (process.env.NODE_ENV === "development") console.error(error);
+    }
+  }, [accessToken, navigate, setAccessToken, setIsAdmin, setUser]);
 
   const register = useCallback(
     async (username: string, email: string, password: string) => {
       try {
-        const user = await fetchApi<User>(`${url}/register`, {
+        const user = await fetchApi<User>(`${URL}/register`, {
           payload: { username, email, password },
         });
         clearError();
@@ -60,7 +93,7 @@ export default function useAuth() {
   const login = useCallback(
     async (email: string, password: string) => {
       try {
-        const response = await fetchApi<User>(`${url}/login`, {
+        const response = await fetchApi<User>(`${URL}/login`, {
           payload: { email, password },
           navigate,
         });
@@ -84,7 +117,7 @@ export default function useAuth() {
 
   const logout = useCallback(async () => {
     try {
-      await fetchApi<string>(`${url}/logout`, {
+      await fetchApi<string>(`${URL}/logout`, {
         method: "POST",
         navigate,
         requiresToken: true,
@@ -105,5 +138,6 @@ export default function useAuth() {
     login,
     logout,
     checkAuth,
+    checkAdminAuth,
   };
 }

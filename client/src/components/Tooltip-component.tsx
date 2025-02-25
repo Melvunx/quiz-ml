@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { TooltipContent } from "@radix-ui/react-tooltip";
 import clsx from "clsx";
 import { Button } from "./ui/button";
@@ -17,6 +18,7 @@ type TooltipComponentProps = {
   variant?: ButtonVariants;
   btnClassName?: string;
   tooltipClassName?: string;
+  disabled?: boolean;
   onClick?: () => void;
 };
 
@@ -26,6 +28,7 @@ const TooltipComponent: React.FC<TooltipComponentProps> = ({
   variant,
   btnClassName,
   tooltipClassName,
+  disabled,
   onClick,
 }) => {
   return (
@@ -35,7 +38,8 @@ const TooltipComponent: React.FC<TooltipComponentProps> = ({
           <Button
             variant={variant}
             onClick={onClick}
-            className={clsx("text-lg", btnClassName)}
+            disabled={disabled}
+            className={cn("text-lg", btnClassName)}
           >
             {children}
           </Button>

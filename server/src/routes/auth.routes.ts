@@ -1,5 +1,6 @@
 import { authenticate } from "@/middleware/authentification";
 import {
+  adminAuth,
   auth,
   login,
   logout,
@@ -15,9 +16,11 @@ router.post("/register", regester);
 
 router.post("/login", login);
 
-router.post("/refresh-token", authenticate, amdinAuthenticate, refreshToken);
+router.post("/refresh-token", authenticate, refreshToken);
 
 router.get("/check-auth", authenticate, auth);
+
+router.get("/check-admin", authenticate, amdinAuthenticate, adminAuth);
 
 router.post("/logout", authenticate, logout);
 

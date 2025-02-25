@@ -1,4 +1,4 @@
-import { authenticate } from "@/middleware/authentification";
+import { amdinAuthenticate, authenticate } from "@/middleware/authentification";
 import {
   addAnswers,
   editAnswers,
@@ -29,22 +29,34 @@ router.get("/answers", authenticate, getQuestionsWithAnswers);
 router.get("/:questionId/answers", authenticate, getQuestionWithAnswers);
 
 // creéer une question
-router.post("/", authenticate, createNewQuestion);
+router.post("/", authenticate, amdinAuthenticate, createNewQuestion);
 
-router.put("/question/:questionId", authenticate, editQuestion);
+router.put(
+  "/question/:questionId",
+  authenticate,
+  amdinAuthenticate,
+  editQuestion
+);
 
-router.delete("/:questionId", authenticate, deleteQuestion);
+router.delete("/:questionId", authenticate, amdinAuthenticate, deleteQuestion);
 
 // Supprime toutes les questions où les id sont stockés dans un tableau
-router.delete("/many", authenticate, deleteManyQuestions);
+router.delete("/many", authenticate, amdinAuthenticate, deleteManyQuestions);
 
 // -----ANSWERS----- //
 
 // ajouter une ou des réponses
-router.post("/:questionId/answers", authenticate, addAnswers);
+router.post(
+  "/:questionId/answers",
+  authenticate,
+  amdinAuthenticate,
+  addAnswers
+);
 
-router.put("/answers", authenticate, editAnswers);
+// Modifier une ou des réponses
+router.put("/answers", authenticate, amdinAuthenticate, editAnswers);
 
-router.delete("/answers/many", authenticate, removeAnswers);
+// Supprimer une ou plusieurs réponses
+router.delete("/answers/many", authenticate, amdinAuthenticate, removeAnswers);
 
 module.exports = router;

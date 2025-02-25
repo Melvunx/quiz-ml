@@ -148,7 +148,7 @@ export const refreshToken: RequestHandler = async (req, res) => {
     const token: string | undefined = req.cookies.refreshJwt;
 
     if (!token)
-      return handleError(res, "FORBIDDEN", "You don't have the rights");
+      return handleError(res, "UNAUTHORIZED", "Token not found");
 
     const decoded = await verifyRefreshToken<{ userId: string }>(token);
 
@@ -169,6 +169,25 @@ export const auth: RequestHandler = async (req, res) => {
     if (!user) return handleError(res, "UNAUTHORIZED", "User not found");
 
     return apiResponse.success(res, "OK", user, "User is authenticated");
+  } catch (error) {
+    return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
+  }
+};
+
+export const adminAuth: RequestHandler = async (req, res) => {
+  try {
+    const user: UserCookie | undefined = req.cookies.info;
+    if (!user) return handleError(res, "UNAUTHORIZED", "User not found");
+
+    if (user.role !== "ADMIN")
+      return handleError(res, "FORBIDDEN", "You don't have the rights");
+
+    return apiResponse.success(
+      res,
+      "OK",
+      user,
+      "User admin is authentificated"
+    );
   } catch (error) {
     return apiResponse.error(res, "INTERNAL_SERVER_ERROR", error);
   }

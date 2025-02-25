@@ -119,6 +119,11 @@ const fetchApi = async <T>(
     }
   }
 
+  if (r.status === 403) {
+    if (navigate) navigate("/quiz-dashboard");
+    throw new ApiError(r.status, await r.json(), "You don't have the rights");
+  }
+
   const json = await r.json();
 
   if (!r.ok) {

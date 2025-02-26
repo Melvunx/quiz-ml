@@ -17,11 +17,7 @@ export const getAllQuizRestults: RequestHandler = async (req, res) => {
             questions: true,
           },
         },
-        results: {
-          orderBy: {
-            score: "desc",
-          },
-        },
+        results: true,
       },
       omit: {
         createdAt: true,

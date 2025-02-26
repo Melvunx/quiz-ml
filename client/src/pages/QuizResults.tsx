@@ -1,3 +1,4 @@
+import EditOrDeleteDialog from "@/components/EditOrDeleteDialog";
 import PaginationControls from "@/components/layout/PaginationControls";
 import {
   Card,
@@ -7,9 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import LoadingString from "@/components/ui/loading-string";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import useQuiz from "@/hooks/use-quiz";
-import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { toastParams } from "@/lib/utils";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
@@ -18,9 +22,11 @@ export default function QuizResults({
 }: {
   itemsPerPage: number;
 }) {
-  const { allResults } = useQuiz();
+  const { allResults, deleteQuizResults } = useQuiz();
   const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
+  const clientQuery = useQueryClient();
+  const { toast } = useToast();
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -34,6 +40,25 @@ export default function QuizResults({
     queryFn: async () => await allResults(),
   });
 
+  const { mutate: deleteQuizResultsMutation, isPending: isDeleting } =
+    useMutation({
+      mutationKey: ["delete-results"],
+      mutationFn: async (resultId: string) => await deleteQuizResults(resultId),
+      onSuccess: () => {
+        clientQuery.invalidateQueries({ queryKey: ["results"] });
+        setTimeout(
+          () =>
+            toast(
+              toastParams(
+                "Résultat supprimé 😁",
+                "Résultat supprimé avec succès"
+              )
+            ),
+          300
+        );
+      },
+    });
+
   if (!quizResults) return null;
 
   if (isLoading) return <LoadingString />;
@@ -44,34 +69,59 @@ export default function QuizResults({
 
   const totalItems = quizResults.length;
 
+  const currentResultsNumber = currentResults.length;
+
   return (
-    <div>
-      {currentResults.length ? (
+    <div className="mx-auto w-full max-w-2xl space-y-4 py-4">
+      {currentResultsNumber ? (
         <>
-          {currentResults.map((quiz) => (
-            <Card key={quiz.id}>
-              <CardHeader>
-                <CardTitle>{quiz.title}</CardTitle>
-                {quiz.description !== "NULL" && (
-                  <CardDescription>{quiz.description}</CardDescription>
-                )}
-              </CardHeader>
-              <CardContent>
-                <Separator />
-                {quiz.results.map((result, idx) => (
-                  <div key={result.id}>
-                    <h2>Essais n°{idx + 1}</h2>
-                    <p>Score: {result.score}</p>
-                    <Separator />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          ))}
+          {currentResults.map((quiz) =>
+            quiz.results.length ? (
+              <Card key={quiz.id}>
+                <CardHeader>
+                  <CardTitle>{quiz.title}</CardTitle>
+                  {quiz.description !== "NULL" && (
+                    <CardDescription>{quiz.description}</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="flex justify-center">
+                  <ScrollArea className="h-72 w-3/5 rounded-lg border">
+                    <div className="mx-4">
+                      <h2 className="">Résultas</h2>
+                      <Separator className="ml-0.5 w-1/3" />
+                      {quiz.results.map((result, idx) => (
+                        <div key={result.id}>
+                          <div className="flex justify-between py-2">
+                            <div className="flex items-center gap-3">
+                              <p className="font-medium">Essais n°{idx + 1}</p>
+                              <EditOrDeleteDialog
+                                name="RESULT"
+                                disabled={isDeleting}
+                                onClick={async () =>
+                                  await deleteQuizResultsMutation(result.id)
+                                }
+                              />
+                            </div>
+                            <p>Score: {result.score}</p>
+                          </div>
+                          {idx < quiz.results.length - 1 && <Separator />}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            ) : null
+          )}
           {quizResults.length > itemsPerPage && (
             <PaginationControls
               totalItems={totalItems}
               itemsPerPage={itemsPerPage}
+              className={`${
+                currentResultsNumber <= 2
+                  ? "absolute bottom-0 left-0"
+                  : "w-full"
+              }`}
             />
           )}
         </>

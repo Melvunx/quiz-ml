@@ -348,7 +348,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
           />
           <div className="min-w-12 text-center">
             <CounterAnimation
-              finalNumber={calculateProgress()}
+              finalNumber={Math.ceil(calculateProgress())}
               duration={1000}
             />
             %

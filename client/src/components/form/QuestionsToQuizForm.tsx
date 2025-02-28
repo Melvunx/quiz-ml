@@ -1,4 +1,6 @@
 import useQuiz from "@/hooks/use-quiz";
+import { useToast } from "@/hooks/use-toast";
+import { toastParams } from "@/lib/utils";
 import ErrorPage from "@/pages/ErrorPage";
 import { Question } from "@/schema/quiz";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -109,6 +111,8 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
     existingQuestionToQuiz,
   } = useQuiz();
 
+  const { toast } = useToast();
+
   const queryClient = useQueryClient();
 
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
@@ -160,6 +164,13 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
       refetchQuestions();
       refetchExistingQuestions();
       resetSelections();
+
+      toast(
+        toastParams(
+          "Question(s) ajoutée(s) 😁",
+          "Question(s) ajoutée(s) avec succès."
+        )
+      );
     },
     onError: (error) => {
       console.error(error);
@@ -193,6 +204,13 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
       refetchQuestions();
       refetchExistingQuestions();
       resetSelections();
+
+      toast(
+        toastParams(
+          "Question(s) supprimée(s) 😁",
+          "Question(s) supprimée(s) avec succès."
+        )
+      );
     },
     onError: (error) => {
       console.error(error);

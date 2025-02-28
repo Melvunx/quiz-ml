@@ -16,13 +16,13 @@ import {
   Result,
   ResultSchema,
 } from "@/schema/quiz";
-import userAuthStore from "@/store/auth";
+import useAuthStore from "@/store/auth";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function useQuiz() {
   const navigate = useNavigate();
-  const { accessToken, setAccessToken } = userAuthStore();
+  const { accessToken, setAccessToken } = useAuthStore();
 
   const BASE_URL = {
     QUIZ: "/quiz",

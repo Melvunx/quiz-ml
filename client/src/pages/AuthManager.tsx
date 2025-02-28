@@ -1,11 +1,11 @@
 import LoadingString from "@/components/ui/loading-string";
 import useAuth from "@/hooks/use-auth";
-import userAuthStore from "@/store/auth";
+import useAuthStore from "@/store/auth";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export default function AuthManager() {
-  const { isAuthenticated } = userAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { checkAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();

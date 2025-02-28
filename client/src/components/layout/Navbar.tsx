@@ -1,6 +1,6 @@
 import useAuth from "@/hooks/use-auth";
 import ErrorPage from "@/pages/ErrorPage";
-import userAuthStore from "@/store/auth";
+import useAuthStore from "@/store/auth";
 import clsx from "clsx";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ const CreateDropdownMenu = ({ disabled }: { disabled?: boolean }) => {
 
 export default function Navbar() {
   const { logout } = useAuth();
-  const { user, isAdmin } = userAuthStore();
+  const { user, isAdmin } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 
   if (!user) {

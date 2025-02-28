@@ -1,12 +1,12 @@
 import QuizForm from "@/components/form/QuizForm";
 import LoadingString from "@/components/ui/loading-string";
 import useAuth from "@/hooks/use-auth";
-import userAuthStore from "@/store/auth";
+import useAuthStore from "@/store/auth";
 import { useEffect, useState } from "react";
 
 export default function AddQuizPage() {
   const { checkAdminAuth } = useAuth();
-  const { isAdmin } = userAuthStore();
+  const { isAdmin } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

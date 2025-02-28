@@ -8,6 +8,7 @@ import {
   Question as QuestionDetail,
   QuestionType,
 } from "@/schema/quiz";
+import useAuthStore from "@/store/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
@@ -79,6 +80,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
   const { updateQuestion, updateAnswers, removeAnswers, deleteQuestion } =
     useQuiz();
   const { toast } = useToast();
+  const { isAdmin } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [typeState, setTypeState] = useState<QuestionType>(question.type);
   const [answers, setAnswers] = useState<CreateAnswer[]>(
@@ -250,154 +252,168 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
       <CardHeader className="flex gap-2">
         <div className="flex items-center gap-2 space-y-1">
           <CardTitle>Question {question.type.toLocaleLowerCase()}</CardTitle>
-          <EditOrDeleteDialog edit name="QUESTION" description="QUESTION">
-            <form action={onUpdateQuestionAction}>
-              <div className="space-y-1">
-                <Label htmlFor="content">Contenu *</Label>
-                <Input
-                  defaultValue={question.content}
-                  id="content"
-                  name="content"
-                />
-                {error && error.includes("contenu") && (
-                  <ErrorInputMessage error={error} />
-                )}
-              </div>
+          {isAdmin ?? (
+            <>
+              <EditOrDeleteDialog edit name="QUESTION" description="QUESTION">
+                <form action={onUpdateQuestionAction}>
+                  <div className="space-y-1">
+                    <Label htmlFor="content">Contenu *</Label>
+                    <Input
+                      defaultValue={question.content}
+                      id="content"
+                      name="content"
+                    />
+                    {error && error.includes("contenu") && (
+                      <ErrorInputMessage error={error} />
+                    )}
+                  </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="desc">Type de Question *</Label>
-                <Select
-                  name="type"
-                  onValueChange={(value: QuestionType) => setTypeState(value)}
-                  value={typeState}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="SINGLE">Choix unique</SelectItem>
-                      <SelectItem value="MULTIPLE">Choix multiple</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                {error && error.includes("type") && (
-                  <ErrorInputMessage error={error} />
-                )}
-              </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="desc">Type de Question *</Label>
+                    <Select
+                      name="type"
+                      onValueChange={(value: QuestionType) =>
+                        setTypeState(value)
+                      }
+                      value={typeState}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="SINGLE">Choix unique</SelectItem>
+                          <SelectItem value="MULTIPLE">
+                            Choix multiple
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    {error && error.includes("type") && (
+                      <ErrorInputMessage error={error} />
+                    )}
+                  </div>
 
-              <div className="mt-6 space-y-4">
-                <div className="flex flex-col items-center justify-center">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addAnswer}
-                    disabled={answerCount >= maxAnswers}
-                  >
-                    <PlusIcon className="mr-2 size-4" />
-                    Ajouter un choix
-                  </Button>
-                  {answerCount >= maxAnswers ? (
-                    <span className="text-red-500">
-                      Nombre de choix maximum atteint
-                    </span>
-                  ) : null}
-                </div>
-                <ScrollArea className="flex h-56 max-w-2xl rounded-md border p-3">
-                  {answers.map((answer, idx) => (
-                    <div key={idx} className="flex items-end gap-3">
-                      <div className="flex-1 space-y-3">
-                        <Label htmlFor={`answer-${idx}`}>
-                          Réponse n°{idx + 1}
-                        </Label>
-                        <Input
-                          value={answer.content}
-                          onChange={(e) =>
-                            updateAnswer(idx, "content", e.target.value)
-                          }
-                          placeholder="Contenu de la réponse"
-                        />
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {typeState === "MULTIPLE" ? (
-                          <Input
-                            id={`isCorrect-${idx}`}
-                            type="checkbox"
-                            checked={answer.isCorrect}
-                            onChange={(e) =>
-                              updateAnswer(idx, "isCorrect", e.target.checked)
-                            }
-                          />
-                        ) : (
-                          <Input
-                            id={`isCorrect-${idx}`}
-                            type="radio"
-                            name="correctAnswer"
-                            checked={answer.isCorrect}
-                            onChange={() => {
-                              updateAnswer(idx, "isCorrect", true);
-                            }}
-                          />
-                        )}
+                  <div className="mt-6 space-y-4">
+                    <div className="flex flex-col items-center justify-center">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addAnswer}
+                        disabled={answerCount >= maxAnswers}
+                      >
+                        <PlusIcon className="mr-2 size-4" />
+                        Ajouter un choix
+                      </Button>
+                      {answerCount >= maxAnswers ? (
+                        <span className="text-red-500">
+                          Nombre de choix maximum atteint
+                        </span>
+                      ) : null}
+                    </div>
+                    <ScrollArea className="flex h-56 max-w-2xl rounded-md border p-3">
+                      {answers.map((answer, idx) => (
+                        <div key={idx} className="flex items-end gap-3">
+                          <div className="flex-1 space-y-3">
+                            <Label htmlFor={`answer-${idx}`}>
+                              Réponse n°{idx + 1}
+                            </Label>
+                            <Input
+                              value={answer.content}
+                              onChange={(e) =>
+                                updateAnswer(idx, "content", e.target.value)
+                              }
+                              placeholder="Contenu de la réponse"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {typeState === "MULTIPLE" ? (
+                              <Input
+                                id={`isCorrect-${idx}`}
+                                type="checkbox"
+                                checked={answer.isCorrect}
+                                onChange={(e) =>
+                                  updateAnswer(
+                                    idx,
+                                    "isCorrect",
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                            ) : (
+                              <Input
+                                id={`isCorrect-${idx}`}
+                                type="radio"
+                                name="correctAnswer"
+                                checked={answer.isCorrect}
+                                onChange={() => {
+                                  updateAnswer(idx, "isCorrect", true);
+                                }}
+                              />
+                            )}
 
-                        <Label htmlFor={`isCorrect-${idx}`}>Correct</Label>
+                            <Label htmlFor={`isCorrect-${idx}`}>Correct</Label>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                removeAnswer(idx);
+                              }}
+                            >
+                              <TrashIcon className="size-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </ScrollArea>
+                    {error &&
+                      !error.includes("contenu") &&
+                      !error.includes("type") && (
+                        <ErrorInputMessage error={error} />
+                      )}
+                  </div>
+                  <DialogFooter className="pt-4">
+                    <DialogClose asChild>
+                      <div className="mx-auto flex w-4/5 justify-between">
+                        <Button type="button" variant="secondary">
+                          Fermer
+                        </Button>
                         <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            removeAnswer(idx);
-                          }}
+                          type="submit"
+                          disabled={isUpdating || answers.length < 2}
                         >
-                          <TrashIcon className="size-4" />
+                          {isUpdating ? (
+                            <LoadingString word="Modification en cours" />
+                          ) : (
+                            "Modifier"
+                          )}
                         </Button>
                       </div>
-                    </div>
-                  ))}
-                </ScrollArea>
-                {error &&
-                  !error.includes("contenu") &&
-                  !error.includes("type") && (
-                    <ErrorInputMessage error={error} />
-                  )}
-              </div>
-              <DialogFooter className="pt-4">
-                <DialogClose asChild>
-                  <div className="mx-auto flex w-4/5 justify-between">
-                    <Button type="button" variant="secondary">
-                      Fermer
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={isUpdating || answers.length < 2}
-                    >
-                      {isUpdating ? (
-                        <LoadingString word="Modification en cours" />
-                      ) : (
-                        "Modifier"
-                      )}
-                    </Button>
-                  </div>
-                </DialogClose>
-              </DialogFooter>
-            </form>
-          </EditOrDeleteDialog>
-          <EditOrDeleteDialog
-            name="QUESTION"
-            description="QUESTION"
-            disabled={isDeleting}
-            onClick={async () => await deleteQuestionMutation(question.id)}
-          />
+                    </DialogClose>
+                  </DialogFooter>
+                </form>
+              </EditOrDeleteDialog>
+              <EditOrDeleteDialog
+                name="QUESTION"
+                description="QUESTION"
+                disabled={isDeleting}
+                onClick={async () => await deleteQuestionMutation(question.id)}
+              />
+            </>
+          )}
         </div>
         <Separator className="ml-2 h-0.5 w-4/5" />
       </CardHeader>
       <CardContent className="ml-6 leading-loose">
         {question.content}
       </CardContent>
-      <CardFooter>
-        <AnswersToggle answers={question.answers} type={question.type} />
-      </CardFooter>
+      {isAdmin ?? (
+        <CardFooter>
+          <AnswersToggle answers={question.answers} type={question.type} />
+        </CardFooter>
+      )}
     </Card>
   );
 };

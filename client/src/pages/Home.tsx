@@ -1,10 +1,10 @@
 import { useToast } from "@/hooks/use-toast";
 import { toastParams } from "@/lib/utils";
-import userAuthStore from "@/store/auth";
+import useAuthStore from "@/store/auth";
 import { useEffect } from "react";
 
 export default function Home() {
-  const { isAuthenticated, isAdmin } = userAuthStore();
+  const { isAuthenticated, isAdmin } = useAuthStore();
   const { toast } = useToast();
 
   useEffect(() => {

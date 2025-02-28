@@ -1,7 +1,7 @@
 import fetchApi from "@/api/fetch";
 import { apiErrorHandler } from "@/lib/utils";
 import { User, UserSchema } from "@/schema/user";
-import userAuthStore from "@/store/auth";
+import useAuthStore from "@/store/auth";
 import useErrorStore from "@/store/error";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ export default function useAuth() {
     clearAuth,
     accessToken,
     setAccessToken,
-  } = userAuthStore();
+  } = useAuthStore();
 
   const { setError, clearError } = useErrorStore();
 

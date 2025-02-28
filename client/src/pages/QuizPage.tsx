@@ -37,6 +37,7 @@ const QuizCount = ({ count }: { count?: number }) => {
 export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
   const { allQuizzes, modifyQuiz, deleteQuiz, searchedQuiz } = useQuiz();
   const [searchedQuizResults, setSearchedQuizResults] = useState<Quiz[]>([]);
+  
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -205,6 +206,9 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
               <CardHeader className="pb-0">
                 <div className="flex items-center gap-2 space-y-1">
                   <CardTitle>{quiz.title}</CardTitle>
+                  {
+
+                  }
                   <EditOrDeleteDialog edit name="QUIZ" description="QUIZ">
                     <form
                       className="space-y-8"

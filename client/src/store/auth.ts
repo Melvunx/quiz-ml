@@ -13,7 +13,7 @@ type AuthStore = {
   clearAuth: () => void;
 };
 
-const userAuthStore = create<AuthStore>((set) => ({
+const useAuthStore = create<AuthStore>((set) => ({
   accessToken: null,
   user: null,
   isAuthenticated: false,
@@ -31,4 +31,4 @@ const userAuthStore = create<AuthStore>((set) => ({
     }),
 }));
 
-export default userAuthStore;
+export default useAuthStore;

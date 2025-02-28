@@ -125,7 +125,7 @@ export default function QuestionForm() {
   }
 
   return (
-    <Card className="mx-auto flex w-1/2 flex-col">
+    <Card className="mx-auto my-6 flex w-1/2 flex-col">
       <CardHeader>
         <CardTitle>Créer une nouvelle question</CardTitle>
       </CardHeader>

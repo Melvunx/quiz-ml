@@ -63,7 +63,7 @@ export default function QuizForm() {
       await createQuizMutation(validatedData);
     } catch (error) {
       const responseError = apiErrorHandler(error);
-      setError(responseError.error as string);
+      setError(responseError.error);
     }
   };
 
@@ -72,7 +72,7 @@ export default function QuizForm() {
   }
 
   return (
-    <Card className="mx-auto flex w-1/2 flex-col">
+    <Card className="mx-auto my-6 flex w-1/2 flex-col">
       <CardHeader>
         <CardTitle>Créer un nouveau quiz</CardTitle>
       </CardHeader>

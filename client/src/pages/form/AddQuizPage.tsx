@@ -34,7 +34,7 @@ export default function AddQuizPage() {
 
   if (isAdmin) {
     return (
-      <div className="mx-auto min-h-screen w-1/2">
+      <div>
         <QuizForm />
       </div>
     );

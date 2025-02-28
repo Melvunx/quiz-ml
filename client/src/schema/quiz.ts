@@ -138,6 +138,23 @@ export const saveQuizResults = ResultSchema.omit({
   completedAt: true,
 });
 
+export const JsonQuizDataSchema = z.object({
+  quiz: CreateQuizSchema.omit({ questions: true }).extend({
+    questions: z.array(
+      z.object({
+        question: CreateQuestionSchema.omit({ answers: true }).extend({
+          id: z.string(),
+          answers: z.array(
+            z.object({
+              answer: CreateAnswerSchema.extend({ id: z.string() }),
+            })
+          ),
+        }),
+      })
+    ),
+  }),
+});
+
 // Types
 export type QuestionType = z.infer<typeof QuestionTypeSchema>;
 export type Answer = z.infer<typeof AnswerSchema>;
@@ -149,3 +166,4 @@ export type Quiz = z.infer<typeof QuizSchema>;
 export type Result = z.infer<typeof ResultSchema>;
 export type QuizResults = z.infer<typeof QuizResultsSchema>;
 export type AddQuestionToQuiz = z.infer<typeof AddQuestionToQuizSchema>;
+export type JsonQuizData = z.infer<typeof JsonQuizDataSchema>;

@@ -19,6 +19,7 @@ import useQuiz from "@/hooks/use-quiz";
 import { useToast } from "@/hooks/use-toast";
 import { dateFormater, toastParams } from "@/lib/utils";
 import { Quiz } from "@/schema/quiz";
+import useAuthStore from "@/store/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -37,7 +38,7 @@ const QuizCount = ({ count }: { count?: number }) => {
 export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
   const { allQuizzes, modifyQuiz, deleteQuiz, searchedQuiz } = useQuiz();
   const [searchedQuizResults, setSearchedQuizResults] = useState<Quiz[]>([]);
-  
+  const { isAdmin } = useAuthStore();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -206,55 +207,56 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
               <CardHeader className="pb-0">
                 <div className="flex items-center gap-2 space-y-1">
                   <CardTitle>{quiz.title}</CardTitle>
-                  {
-
-                  }
-                  <EditOrDeleteDialog edit name="QUIZ" description="QUIZ">
-                    <form
-                      className="space-y-8"
-                      action={async (data) =>
-                        await onModifyQuizAction(quiz.id, data)
-                      }
-                    >
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="title">Titre *</Label>
-                        <Input
-                          id="title"
-                          name="title"
-                          placeholder={quiz.title}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="desc">Description</Label>
-                        <Input
-                          id="desc"
-                          name="description"
-                          placeholder={`${
-                            quiz.description !== "NULL"
-                              ? quiz.description
-                              : "Description"
-                          }`}
-                        />
-                      </div>
-                      <DialogFooter>
-                        <DialogClose>
-                          <Button
-                            disabled={isUpdating}
-                            type="submit"
-                            variant="outline"
-                          >
-                            Modifier
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </form>
-                  </EditOrDeleteDialog>
-                  <EditOrDeleteDialog
-                    name="QUIZ"
-                    description="QUIZ"
-                    disabled={isDeleting}
-                    onClick={async () => await deleteQuizMutation(quiz.id)}
-                  />
+                  {isAdmin ?? (
+                    <>
+                      <EditOrDeleteDialog edit name="QUIZ" description="QUIZ">
+                        <form
+                          className="space-y-8"
+                          action={async (data) =>
+                            await onModifyQuizAction(quiz.id, data)
+                          }
+                        >
+                          <div className="flex flex-col gap-2">
+                            <Label htmlFor="title">Titre *</Label>
+                            <Input
+                              id="title"
+                              name="title"
+                              placeholder={quiz.title}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <Label htmlFor="desc">Description</Label>
+                            <Input
+                              id="desc"
+                              name="description"
+                              placeholder={`${
+                                quiz.description !== "NULL"
+                                  ? quiz.description
+                                  : "Description"
+                              }`}
+                            />
+                          </div>
+                          <DialogFooter>
+                            <DialogClose>
+                              <Button
+                                disabled={isUpdating}
+                                type="submit"
+                                variant="outline"
+                              >
+                                Modifier
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </form>
+                      </EditOrDeleteDialog>
+                      <EditOrDeleteDialog
+                        name="QUIZ"
+                        description="QUIZ"
+                        disabled={isDeleting}
+                        onClick={async () => await deleteQuizMutation(quiz.id)}
+                      />
+                    </>
+                  )}
                 </div>
                 <Separator className="ml-2 h-0.5 w-4/5" />
                 {quiz.description !== "NULL" && (
@@ -265,7 +267,11 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
               </CardHeader>
               <CardContent className="flex flex-col items-start gap-2 space-x-0">
                 <QuizCount count={quiz._count?.questions} />
-                <QuestionsToQuizForm key={idx} quizId={quiz.id} />
+                <QuestionsToQuizForm
+                  key={idx}
+                  quizId={quiz.id}
+                  disabled={!isAdmin}
+                />
               </CardContent>
             </Card>
           ))}

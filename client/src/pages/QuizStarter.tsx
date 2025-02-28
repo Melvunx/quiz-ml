@@ -1,4 +1,5 @@
 import Answer from "@/components/Answer";
+import DownloadJsonFile from "@/components/DownloadJsonFile";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -291,7 +292,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
             })}
           </div>
         </CardContent>
-        <CardFooter className="flex w-full items-center justify-evenly">
+        <CardFooter className="flex w-full items-center justify-evenly gap-2">
           <Button
             disabled={isLoading}
             onClick={() => {
@@ -306,6 +307,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
               <p>Recommencer un nouveau quiz</p>
             )}
           </Button>
+          <DownloadJsonFile quiz={quiz} />
           <Link
             to="/quiz-results"
             className={buttonVariants({ variant: "outline" })}

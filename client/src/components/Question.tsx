@@ -8,7 +8,7 @@ import {
   Question as QuestionDetail,
   QuestionType,
 } from "@/schema/quiz";
-import useAuthStore from "@/store/auth";
+import userAuthStore from "@/store/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
@@ -80,7 +80,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
   const { updateQuestion, updateAnswers, removeAnswers, deleteQuestion } =
     useQuiz();
   const { toast } = useToast();
-  const { isAdmin } = useAuthStore();
+  const { isAdmin } = userAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [typeState, setTypeState] = useState<QuestionType>(question.type);
   const [answers, setAnswers] = useState<CreateAnswer[]>(
@@ -252,7 +252,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
       <CardHeader className="flex gap-2">
         <div className="flex items-center gap-2 space-y-1">
           <CardTitle>Question {question.type.toLocaleLowerCase()}</CardTitle>
-          {isAdmin ?? (
+          {isAdmin ? (
             <>
               <EditOrDeleteDialog edit name="QUESTION" description="QUESTION">
                 <form action={onUpdateQuestionAction}>
@@ -402,18 +402,18 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
                 onClick={async () => await deleteQuestionMutation(question.id)}
               />
             </>
-          )}
+          ) : null}
         </div>
         <Separator className="ml-2 h-0.5 w-4/5" />
       </CardHeader>
       <CardContent className="ml-6 leading-loose">
         {question.content}
       </CardContent>
-      {isAdmin ?? (
+      {isAdmin ? (
         <CardFooter>
           <AnswersToggle answers={question.answers} type={question.type} />
         </CardFooter>
-      )}
+      ) : null}
     </Card>
   );
 };

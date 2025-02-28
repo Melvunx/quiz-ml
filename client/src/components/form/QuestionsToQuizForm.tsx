@@ -4,7 +4,7 @@ import { toastParams } from "@/lib/utils";
 import ErrorPage from "@/pages/ErrorPage";
 import { Question } from "@/schema/quiz";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import {
@@ -101,9 +101,13 @@ const CheckboxQuestionList: React.FC<CheckboxQuestionListProps> = ({
 
 type QuestionToQuizFormProps = {
   quizId: string;
+  disabled?: boolean;
 };
 
-const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
+const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
+  quizId,
+  disabled,
+}) => {
   const {
     questionsWithAnswers,
     addQuestionsToQuiz,
@@ -287,7 +291,9 @@ const QuestionsToQuizForm: React.FC<QuestionToQuizFormProps> = ({ quizId }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Ajouter ou supprimer des questions</Button>
+        <Button disabled={disabled} variant="outline">
+          Ajouter ou supprimer des questions
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>

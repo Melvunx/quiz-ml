@@ -75,4 +75,8 @@ const Confirmable = confirmable(Confirmation);
 
 export const confirm = createConfirmation(Confirmable);
 
-
+export const CHARACTER = {
+  LOWERS: "azertyuiopmlkjhgfdsqwxcvbn",
+  SYMBOLS: ",?;./:!§£*µù%^\"'éèàç([)@){=}]#~&",
+  NUMBERS: "0473291586",
+} as const;

@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 
 type LogoProps = {
@@ -9,7 +9,9 @@ type LogoProps = {
 const Logo: React.FC<LogoProps> = ({ logo = "Quiz Creator", classname }) => {
   return (
     <div>
-      <Badge className={clsx("font-semibold italic", classname)}>{logo}</Badge>
+      <Badge className={cn("font-logo font-semibold italic", classname)}>
+        {logo}
+      </Badge>
     </div>
   );
 };

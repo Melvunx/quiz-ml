@@ -73,7 +73,7 @@ export default function Login() {
   };
 
   return (
-    <Card>
+    <Card className="font-regular-funnel-display">
       <CardHeader>
         <CardTitle>Connexion</CardTitle>
       </CardHeader>
@@ -132,7 +132,11 @@ export default function Login() {
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button type="submit" form="loginForm">
+        <Button
+          type="submit"
+          className="font-regular-noto tracking-tight"
+          form="loginForm"
+        >
           {isLoging ? <LoadingString word="Connexion" /> : "Se connecter"}
         </Button>
       </CardFooter>

@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import LoadingString from "@/components/ui/loading-string";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useNavigationBlocker } from "@/hooks/use-navigationBlocker";
@@ -53,21 +54,21 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
   };
 
   return (
-    <div className="flex min-h-screen items-center">
-      <Card className="mx-auto flex w-1/2 flex-col space-y-1">
-        <CardHeader>
-          <CardTitle>Choisissez un quiz</CardTitle>
-          <Separator className="h-0.5 w-4/5" />
-          <CardDescription className="py-2">
-            Choisissez ici votre quiz pour le tester
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            className="space-y-3"
-            value={selectedQuiz}
-            onValueChange={handleRadioChange}
-          >
+    <Card className="mx-auto flex w-1/2 flex-col space-y-1 font-regular-funnel-display">
+      <CardHeader>
+        <CardTitle>Choisissez un quiz</CardTitle>
+        <Separator className="h-0.5 w-4/5" />
+        <CardDescription className="py-2 italic">
+          Choisissez ici votre quiz pour le tester
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex justify-center">
+        <RadioGroup
+          className="w-5/6 space-y-3"
+          value={selectedQuiz}
+          onValueChange={handleRadioChange}
+        >
+          <ScrollArea className="h-80 rounded-lg border p-1">
             {quizzes.map((quiz, idx) => (
               <div key={idx} className="flex flex-col space-x-2 p-2">
                 <div className="mx-2 flex items-center justify-between space-y-1">
@@ -83,19 +84,19 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
                 </div>
               </div>
             ))}
-          </RadioGroup>
-        </CardContent>
-        <CardFooter className="justify-end">
-          <Button
-            onClick={handleValidation}
-            disabled={!selectedQuiz}
-            className="mt-4"
-          >
-            Valider la sélection
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+          </ScrollArea>
+        </RadioGroup>
+      </CardContent>
+      <CardFooter className="justify-end">
+        <Button
+          onClick={handleValidation}
+          disabled={!selectedQuiz}
+          className="mt-4 font-regular-noto"
+        >
+          Valider
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
@@ -226,73 +227,83 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
   // Si l'utilisateur à fini le quiz
   if (showResults) {
     return (
-      <Card className="mx-auto my-6 w-full max-w-2xl">
+      <Card className="mx-auto my-6 w-full max-w-2xl font-regular-funnel-display">
         <CardHeader>
-          <CardTitle>Résultas du Quiz: {quiz.title}</CardTitle>
+          <CardTitle className="font-logo">
+            Résultas du Quiz: {quiz.title}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {questions.map((question, idx) => {
-              if (!question.answers) return null;
+            <ScrollArea className="h-96 rounded-lg border">
+              {questions.map((question, idx) => {
+                if (!question.answers) return null;
 
-              const userSelectedIds = userAnswers[question.id] || [];
-              const correctAnswerIds = question.answers
-                .filter((a) => a.isCorrect)
-                .map((a) => a.id);
+                const userSelectedIds = userAnswers[question.id] || [];
+                const correctAnswerIds = question.answers
+                  .filter((a) => a.isCorrect)
+                  .map((a) => a.id);
 
-              const isQuestionCorrect =
-                question.type === "SINGLE"
-                  ? userSelectedIds.length === 1 &&
-                    correctAnswerIds.includes(userSelectedIds[0])
-                  : userSelectedIds.length === correctAnswerIds.length &&
-                    userSelectedIds.every((id) =>
-                      correctAnswerIds.includes(id)
-                    );
-
-              return (
-                <div
-                  key={question.id}
-                  className={`rounded border p-4 ${
-                    isQuestionCorrect ? "bg-green-50" : "bg-red-50"
-                  }`}
-                >
-                  <p className="mb-2 font-medium">
-                    {idx + 1}. {question.content}
-                    {isQuestionCorrect ? (
-                      <span className="ml-2 text-green-500">✓ Correcte</span>
-                    ) : (
-                      <span className="ml-2 text-red-500">✗ Incorrecte</span>
-                    )}
-                  </p>
-
-                  <div className="ml-4 space-y-1">
-                    {question.answers.map((answer) => {
-                      const isSelected = userSelectedIds.includes(answer.id);
-                      const { isCorrect } = answer;
-
-                      let textColorClassName = "";
-                      if (isSelected && isCorrect)
-                        textColorClassName = "text-green-500";
-                      else if (isSelected && !isCorrect)
-                        textColorClassName = "text-red-500";
-                      else if (!isSelected && isCorrect)
-                        textColorClassName = "text-indigo-500";
-
-                      return (
-                        <p key={answer.id} className={`${textColorClassName}`}>
-                          {isSelected ? "✔ " : "⚬ "}
-                          {answer.content}
-                          {isCorrect && "(Correcte)"}
-                        </p>
+                const isQuestionCorrect =
+                  question.type === "SINGLE"
+                    ? userSelectedIds.length === 1 &&
+                      correctAnswerIds.includes(userSelectedIds[0])
+                    : userSelectedIds.length === correctAnswerIds.length &&
+                      userSelectedIds.every((id) =>
+                        correctAnswerIds.includes(id)
                       );
-                    })}
+
+                return (
+                  <div
+                    key={question.id}
+                    className={`border p-5 ${
+                      isQuestionCorrect
+                        ? "bg-green-50 dark:bg-green-50/85"
+                        : "bg-red-50 dark:bg-red-50/85"
+                    }`}
+                  >
+                    <p className="mb-2 font-medium dark:text-black">
+                      {idx + 1}. {question.content}
+                      {isQuestionCorrect ? (
+                        <span className="ml-2 text-green-500">✓ Correcte</span>
+                      ) : (
+                        <span className="ml-2 text-red-500">✗ Incorrecte</span>
+                      )}
+                    </p>
+
+                    <div className="ml-4 space-y-1">
+                      {question.answers.map((answer) => {
+                        const isSelected = userSelectedIds.includes(answer.id);
+                        const { isCorrect } = answer;
+
+                        let textColorClassName = "";
+                        if (isSelected && isCorrect)
+                          textColorClassName = "text-green-500";
+                        else if (isSelected && !isCorrect)
+                          textColorClassName = "text-red-500";
+                        else if (!isSelected && isCorrect)
+                          textColorClassName = "text-indigo-500";
+                        else textColorClassName = "dark:text-black";
+
+                        return (
+                          <p
+                            key={answer.id}
+                            className={`${textColorClassName}`}
+                          >
+                            {isSelected ? "✔ " : "⚬ "}
+                            {answer.content}
+                            {isCorrect && " (Correcte)"}
+                          </p>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </ScrollArea>
           </div>
         </CardContent>
-        <CardFooter className="flex w-full items-center justify-evenly gap-2">
+        <CardFooter className="flex w-full items-center justify-evenly gap-2 font-regular-noto">
           <Button
             disabled={isLoading}
             onClick={() => {
@@ -337,7 +348,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
   if (isLoading) return <LoadingString word="Chargement du quiz" />;
 
   return (
-    <Card className="mx-auto w-full max-w-2xl space-y-2">
+    <Card className="mx-auto w-full max-w-2xl space-y-2 font-regular-funnel-display">
       <CardHeader className="px-6 py-4">
         <div className="space-y-2">
           <CardTitle>{quiz.title}</CardTitle>
@@ -435,6 +446,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
               ? "default"
               : "destructive"
           }
+          className="font-regular-noto"
           disabled={
             !userAnswers[currentQuestion.id] ||
             userAnswers[currentQuestion.id].length === 0

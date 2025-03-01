@@ -185,7 +185,7 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
   const currentQuizzesNumber = currentQuizzes.length;
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <div className="mx-auto w-full max-w-2xl font-regular-funnel-display">
       <div
         className={
           currentQuizzesNumber <= 2

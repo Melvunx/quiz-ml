@@ -81,20 +81,27 @@ const CheckboxQuestionList: React.FC<CheckboxQuestionListProps> = ({
           Tout désélectionner
         </Button>
       </div>
-      {questions.map((question, idx) => (
-        <div key={question.id}>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id={`${name}-${question.id}`}
-              name={name}
-              checked={selectedQuestions.includes(question.id)}
-              onCheckedChange={() => handleCheckboxChange(question.id)}
-            />
-            <Label htmlFor={`${name}-${question.id}`}>{question.content}</Label>
+      <div className="light:border-black/60 flex flex-col gap-4 rounded border-2 px-4 py-3 dark:border-white/60">
+        {questions.map((question, idx) => (
+          <div key={question.id}>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`${name}-${question.id}`}
+                name={name}
+                checked={selectedQuestions.includes(question.id)}
+                onCheckedChange={() => handleCheckboxChange(question.id)}
+              />
+              <Label
+                className="cursor-pointer"
+                htmlFor={`${name}-${question.id}`}
+              >
+                {question.content}
+              </Label>
+            </div>
+            {idx < questions.length - 1 && <Separator className="mt-4" />}
           </div>
-          {idx < questions.length - 1 && <Separator className="mt-4" />}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
@@ -295,9 +302,9 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
           Ajouter ou supprimer des questions
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl font-regular-funnel-display">
         <DialogHeader>
-          <DialogTitle>Gérer votre quiz</DialogTitle>
+          <DialogTitle className="font-logo">Gérer votre quiz</DialogTitle>
         </DialogHeader>
         <form
           onSubmit={(e) => handleAddOrRemoveQuestions(e)}
@@ -305,10 +312,10 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
         >
           <ScrollArea className="flex h-96 max-w-2xl rounded-md border">
             <div className="p-8">
-              <h4 className="mb-2 text-sm font-medium leading-none">
+              <h4 className="mb-2 font-medium leading-none">
                 Question à ajouter
               </h4>
-              <Separator />
+              <Separator className="my-2 h-0.5 w-2/3" />
               <CheckboxQuestionList
                 questions={filteredQuestions}
                 onSelectionChange={setSelectedToAdd}
@@ -316,10 +323,10 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
               />
             </div>
             <div className="p-8">
-              <h4 className="mb-2 text-sm font-medium leading-none">
+              <h4 className="mb-2 font-medium leading-none">
                 Question à supprimer
               </h4>
-              <Separator />
+              <Separator className="my-2 h-0.5 w-2/3" />
               <CheckboxQuestionList
                 questions={existQuestions}
                 onSelectionChange={setSelectedToRemove}

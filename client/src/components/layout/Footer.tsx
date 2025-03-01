@@ -2,7 +2,7 @@ import { Button } from "../ui/button";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-zinc-300/25 py-4">
+    <footer className="w-full bg-zinc-300/25 py-4 font-regular-noto">
       <ul className="container flex w-full flex-col items-center justify-center">
         <li className="font-semibold">Melvunx for Mission Locale</li>
         <li className="italic">

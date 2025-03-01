@@ -81,7 +81,7 @@ const PaginationControls: FC<PaginationControlsProps> = ({
   return (
     <div
       className={cn(
-        "my-4 flex w-full items-center justify-around rounded-lg bg-zinc-300/25 p-2",
+        "my-4 flex w-full items-center font-regular-noto justify-around rounded-lg bg-zinc-300/25 p-2",
         className
       )}
     >

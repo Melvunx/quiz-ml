@@ -26,16 +26,19 @@ const Confirmation: ConfirmDialog<ConfirmationProps, boolean> = ({
 }) => {
   return (
     <Dialog open={show}>
-      <DialogContent>
+      <DialogContent className="font-regular-funnel-display">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle className="font-logo">{title}</DialogTitle>
+          <DialogDescription className="italic">
+            {description}
+          </DialogDescription>
         </DialogHeader>
         {confirmation}
         <DialogFooter>
           <DialogClose>
             <Button
               variant="secondary"
+              className="font-regular-noto tracking-tight"
               onClick={(e) => {
                 e.preventDefault();
                 cancel();
@@ -46,6 +49,7 @@ const Confirmation: ConfirmDialog<ConfirmationProps, boolean> = ({
           </DialogClose>
           <Button
             variant="destructive"
+            className="font-regular-noto tracking-tight"
             onClick={(e) => {
               e.preventDefault();
               proceed(true);

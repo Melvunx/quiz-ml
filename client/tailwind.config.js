@@ -3,6 +3,15 @@ export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
+    fontFamily: {
+      logo: "Cabin Sketch",
+      "regular-caveat": "Caveat",
+      "regular-risque": "Risque",
+      "regular-atma": "Atma",
+      "regular-noto": "Noto Sans Mono",
+      "regular-m-plus": "M PLUS Rounded",
+      "regular-funnel-display": "Funnel Display",
+    },
     extend: {
       borderRadius: {
         lg: "var(--radius)",

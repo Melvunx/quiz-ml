@@ -65,14 +65,28 @@ export default function QuizResults({
 
   if (isError) return <ErrorPage />;
 
-  const currentResults = quizResults.slice(startIndex, endIndex);
+  const onlyQuizResults = quizResults.filter((quiz) => quiz.results.length);
 
-  const totalItems = quizResults.length;
+  const currentResults = onlyQuizResults.slice(startIndex, endIndex);
+
+  const totalItems = onlyQuizResults.length;
 
   const currentResultsNumber = currentResults.length;
 
+  const scoreColor = (score: number, countQuestion: number) => {
+    if (score === 0) return "text-red-500";
+
+    const rate = Math.ceil((score / countQuestion) * 100);
+
+    if (rate < 35) return "text-red-500";
+
+    if (rate > 70) return "text-green-500";
+
+    return "text-yellow-600";
+  };
+
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-4 py-4">
+    <div className="mx-auto w-full max-w-2xl space-y-4 py-4 font-regular-funnel-display">
       {currentResultsNumber ? (
         <>
           {currentResults.map((quiz) =>
@@ -102,7 +116,14 @@ export default function QuizResults({
                                 }
                               />
                             </div>
-                            <p>Score: {result.score}</p>
+                            <p
+                              className={`${scoreColor(
+                                result.score,
+                                quiz._count.questions
+                              )}`}
+                            >
+                              Score : {result.score} / {quiz._count.questions}
+                            </p>
                           </div>
                           {idx < quiz.results.length - 1 && <Separator />}
                         </div>
@@ -113,7 +134,7 @@ export default function QuizResults({
               </Card>
             ) : null
           )}
-          {quizResults.length > itemsPerPage && (
+          {onlyQuizResults.length > itemsPerPage && (
             <PaginationControls
               totalItems={totalItems}
               itemsPerPage={itemsPerPage}

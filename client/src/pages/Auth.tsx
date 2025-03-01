@@ -9,8 +9,18 @@ export default function Auth() {
       <Logo classname="text-xl" />
       <Tabs defaultValue="login" className="flex w-96 flex-col gap-4">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="login">Se connecter</TabsTrigger>
-          <TabsTrigger value="register">Créer un compte</TabsTrigger>
+          <TabsTrigger
+            className="font-regular-noto tracking-wide"
+            value="login"
+          >
+            Se connecter
+          </TabsTrigger>
+          <TabsTrigger
+            className="font-regular-noto tracking-wide"
+            value="register"
+          >
+            Créer un compte
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="login">
           <Login />

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&family=Cabin+Sketch:wght@400;700&family=Caveat:wght@400..700&family=Funnel+Display:wght@300..800&family=M+PLUS+Rounded+1c&family=Noto+Sans+Mono:wght@100..900&family=Risque&family=Rubik+Glitch&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,8 +75,6 @@ html {
 body::-webkit-scrollbar {
   display: none;
 }
-
-
 
 @layer base {
   * {

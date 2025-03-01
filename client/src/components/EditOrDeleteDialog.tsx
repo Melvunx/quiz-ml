@@ -35,9 +35,11 @@ const EditDialog: FC<EditDialogProps> = ({
           <PenBox size={19} />
         </TooltipComponent>
       </DialogTrigger>
-      <DialogContent className={clsx("space-y-2", className)}>
+      <DialogContent
+        className={clsx("space-y-2 font-regular-funnel-display", className)}
+      >
         <DialogHeader>
-          <DialogTitle>{`Modifier ${DIALOG[name]}`}</DialogTitle>
+          <DialogTitle className="font-logo">{`Modifier ${DIALOG[name]}`}</DialogTitle>
           <DialogDescription className="py-4">
             {description ? DIALOG_DESCRIPTION[description] : null}
           </DialogDescription>
@@ -64,12 +66,14 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name, disabled, onClick }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Êtes-vous vraiment sûr ?</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="font-logo">
+            Êtes-vous vraiment sûr ?
+          </DialogTitle>
+          <DialogDescription className="font-regular-funnel-display">
             Cette élément sera supprimer définitivement si vous le confirmer.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="font-regular-noto">
           <DialogClose>
             <Button variant="secondary">Annuler</Button>
           </DialogClose>

@@ -20,7 +20,7 @@ const SearchItems: FC<SearchItempsProps> = ({
   return (
     <form
       action={onSearchAction}
-      className={cn("flex w-full items-center", className)}
+      className={cn("flex font-logo w-full items-center", className)}
     >
       <div className="flex items-center gap-6">
         <div className="flex items-center space-x-2">

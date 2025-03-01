@@ -61,7 +61,7 @@ const AnswersToggle = ({
           aria-label={`Toggle ${answer.content} ${idx + 1} of ${
             answers.length
           } options`}
-          className={`bg-slate-200 font-semibold ${
+          className={`light:bg-slate-200 font-semibold dark:bg-zinc-100 ${
             answer.isCorrect ? "text-green-600" : "text-red-600"
           }`}
         >
@@ -248,7 +248,7 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
   }
 
   return (
-    <Card className="mx-auto w-4/5">
+    <Card className="mx-auto w-4/5 font-regular-funnel-display">
       <CardHeader className="flex gap-2">
         <div className="flex items-center gap-2 space-y-1">
           <CardTitle>Question {question.type.toLocaleLowerCase()}</CardTitle>

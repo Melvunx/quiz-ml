@@ -125,12 +125,16 @@ export default function QuestionForm() {
   }
 
   return (
-    <Card className="mx-auto my-6 flex w-1/2 flex-col">
+    <Card className="mx-auto my-6 flex w-1/2 flex-col font-regular-funnel-display">
       <CardHeader>
         <CardTitle>Créer une nouvelle question</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
-        <form action={onCreateQuestionAction} id="questionForm">
+      <CardContent>
+        <form
+          className="flex flex-col gap-4"
+          action={onCreateQuestionAction}
+          id="questionForm"
+        >
           <div className="space-y-1">
             <Label htmlFor="content">Contenu *</Label>
             <Input id="content" name="content" />
@@ -240,10 +244,11 @@ export default function QuestionForm() {
           </div>
         </form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex justify-end">
         <Button
           type="submit"
           form="questionForm"
+          className="font-regular-noto tracking-tight"
           disabled={isCreating || add < 2}
         >
           {isCreating ? (

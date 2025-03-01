@@ -72,12 +72,16 @@ export default function QuizForm() {
   }
 
   return (
-    <Card className="mx-auto my-6 flex w-1/2 flex-col">
+    <Card className="mx-auto my-6 flex w-1/2 flex-col font-regular-funnel-display">
       <CardHeader>
         <CardTitle>Créer un nouveau quiz</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <form action={onCreateQuizAction} id="quizForm">
+        <form
+          className="flex flex-col gap-4"
+          action={onCreateQuizAction}
+          id="quizForm"
+        >
           <div className="space-y-1">
             <Label htmlFor="title">Titre *</Label>
             <Input id="title" name="title" />
@@ -86,12 +90,16 @@ export default function QuizForm() {
           <div className="space-y-1">
             <Label htmlFor="desc">Description</Label>
             <Input id="desc" name="description" />
-            <CardDescription>Optionnel</CardDescription>
+            <CardDescription className="italic">Optionnel</CardDescription>
           </div>
         </form>
       </CardContent>
-      <CardFooter>
-        <Button type="submit" form="quizForm">
+      <CardFooter className="flex w-full justify-end">
+        <Button
+          type="submit"
+          className="font-regular-noto tracking-tight"
+          form="quizForm"
+        >
           {isCreating ? (
             <LoadingString word="Création en cours" />
           ) : (

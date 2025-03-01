@@ -69,7 +69,7 @@ export default function Register() {
   if (isError) return <ErrorPage />;
 
   return (
-    <Card>
+    <Card className="font-regular-funnel-display">
       <CardHeader>
         <CardTitle>Créer votre compte</CardTitle>
       </CardHeader>
@@ -125,7 +125,11 @@ export default function Register() {
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button type="submit" form="registerForm">
+        <Button
+          type="submit"
+          className="font-regular-noto tracking-tight"
+          form="registerForm"
+        >
           {isCreatingUser ? (
             <LoadingString word="Création en cours" />
           ) : (

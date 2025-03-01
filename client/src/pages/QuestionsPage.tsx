@@ -142,14 +142,14 @@ export default function QuestionsPage({
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div
-        className={`my-3 flex gap-2 rounded-lg px-3 py-2 ${
+        className={`my-3 flex gap-2 rounded-lg px-3 py-2 font-logo ${
           currentQuestionsNumber <= 2
             ? "absolute left-0 top-0 w-full items-center justify-evenly"
             : "relative"
         }`}
       >
         <Label>
-          <p className="absolute top-0 z-10 ml-5 bg-white px-1 md:hidden lg:hidden">
+          <p className="light:bg-white absolute top-0 z-10 ml-5 px-1 font-regular-funnel-display dark:bg-black md:hidden lg:hidden">
             Filtrer
           </p>
         </Label>

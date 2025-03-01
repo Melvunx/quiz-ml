@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 type LoadingStringProps = {
@@ -26,7 +26,12 @@ const LoadingString: React.FC<LoadingStringProps> = ({
   }, [delay]);
 
   return (
-    <div className={clsx("", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center font-regular-noto",
+        className
+      )}
+    >
       {word}
       {dots}
     </div>

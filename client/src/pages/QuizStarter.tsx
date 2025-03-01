@@ -303,7 +303,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
             </ScrollArea>
           </div>
         </CardContent>
-        <CardFooter className="flex w-full items-center justify-evenly gap-2 font-regular-noto">
+        <CardFooter className="flex w-full items-center justify-evenly gap-2 font-regular-noto tracking-tight">
           <Button
             disabled={isLoading}
             onClick={() => {

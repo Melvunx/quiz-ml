@@ -5,13 +5,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import LoadingString from "@/components/ui/loading-string";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import useKeyboardShortcut from "@/hooks/use-keyboardShortcut";
 import useQuiz from "@/hooks/use-quiz";
 import { useToast } from "@/hooks/use-toast";
 import { toastParams } from "@/lib/utils";
 import { Question as QuestionItems, QuestionType } from "@/schema/quiz";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
@@ -22,7 +21,6 @@ export default function QuestionsPage({
 }) {
   const { questionsWithAnswers, searchedQuestions } = useQuiz();
   const { toast } = useToast();
-  const { shortcutToSearch } = useKeyboardShortcut();
   const [searchParams] = useSearchParams();
   const [filteredQuestions, setFilteredQuestions] = useState<QuestionItems[]>(
     []
@@ -77,22 +75,10 @@ export default function QuestionsPage({
         );
       },
       onError: (error) => {
-        console.error(error);
+        console.error("Erreur lors de la recherche de question : ", error);
         throw error;
       },
     });
-
-  useEffect(() => {
-    const handleSearchInput = (e: KeyboardEvent) => {
-      shortcutToSearch(e, "questionSearchId");
-    };
-
-    window.addEventListener("keydown", handleSearchInput);
-
-    return () => {
-      window.removeEventListener("keydown", handleSearchInput);
-    };
-  }, [shortcutToSearch]);
 
   if (!questions) return null;
 
@@ -202,7 +188,9 @@ export default function QuestionsPage({
           )}
         </>
       ) : (
-        "Aucune question n'a été trouvée"
+        <p className="text-center font-regular-funnel-display text-yellow-600">
+          Aucune question n'a été trouvée
+        </p>
       )}
     </div>
   );

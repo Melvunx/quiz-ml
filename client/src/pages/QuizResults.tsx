@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import useQuiz from "@/hooks/use-quiz";
 import { useToast } from "@/hooks/use-toast";
 import { toastParams } from "@/lib/utils";
+import useAuthStore from "@/store/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
@@ -23,6 +24,7 @@ export default function QuizResults({
   itemsPerPage: number;
 }) {
   const { allResults, deleteQuizResults } = useQuiz();
+  const { isAdmin } = useAuthStore();
   const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
   const clientQuery = useQueryClient();
@@ -51,11 +53,15 @@ export default function QuizResults({
             toast(
               toastParams(
                 "Résultat supprimé 😁",
-                "Résultat supprimé avec succès"
+                "Résultat supprimé avec succès ☑️"
               )
             ),
           300
         );
+      },
+      onError: (error) => {
+        console.error("Erreur lors de la suppression du résultat : ", error);
+        throw error;
       },
     });
 
@@ -108,13 +114,15 @@ export default function QuizResults({
                           <div className="flex justify-between py-2">
                             <div className="flex items-center gap-3">
                               <p className="font-medium">Essais n°{idx + 1}</p>
-                              <EditOrDeleteDialog
-                                name="RESULT"
-                                disabled={isDeleting}
-                                onClick={async () =>
-                                  await deleteQuizResultsMutation(result.id)
-                                }
-                              />
+                              {isAdmin ? (
+                                <EditOrDeleteDialog
+                                  name="RESULT"
+                                  disabled={isDeleting}
+                                  onClick={async () =>
+                                    await deleteQuizResultsMutation(result.id)
+                                  }
+                                />
+                              ) : null}
                             </div>
                             <p
                               className={`${scoreColor(
@@ -147,7 +155,9 @@ export default function QuizResults({
           )}
         </>
       ) : (
-        <p className="text-center">Aucun résultat de quiz trouvé</p>
+        <p className="text-center font-regular-funnel-display text-yellow-600">
+          Aucun résultat de quiz n'a été trouvée
+        </p>
       )}
     </div>
   );

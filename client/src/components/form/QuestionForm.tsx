@@ -65,7 +65,7 @@ export default function QuestionForm() {
 
         return question;
       } catch (error) {
-        console.error("Erreur lors de la création:", error);
+        console.error("Erreur lors de la création de la création : ", error);
         throw error;
       }
     },
@@ -73,8 +73,10 @@ export default function QuestionForm() {
       if (error === null) {
         toast(
           toastParams(
-            "Question created",
-            `${data.content} ${dateFormater(new Date(data.createdAt))}`
+            "Question créée 😁",
+            `Question "${data.content}" à été crée ! - ${dateFormater(
+              new Date(data.createdAt)
+            )}`
           )
         );
       }

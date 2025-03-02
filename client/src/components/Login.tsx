@@ -41,7 +41,10 @@ export default function Login() {
       await login(email, password);
     },
     onSuccess: () => navigate("/quiz-dashboard"),
-    onError: (error) => apiErrorHandler(error),
+    onError: (error) => {
+      const err = apiErrorHandler(error);
+      throw err;
+    },
   });
 
   const onLoginAction = async (data: FormData) => {

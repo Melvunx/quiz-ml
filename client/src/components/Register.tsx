@@ -1,6 +1,6 @@
 import useAuth from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { dateFormater, showError, toastParams } from "@/lib/utils";
+import { showError, toastParams } from "@/lib/utils";
 import ErrorPage from "@/pages/ErrorPage";
 import { RegisterUser, RegisterUserSchema } from "@/schema/auth";
 import { useMutation } from "@tanstack/react-query";
@@ -37,12 +37,19 @@ export default function Register() {
       const { username, email, password } = credentials;
       await register(username, email, password);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       if (errors.length === 0) {
         toast(
-          toastParams("User created !", `${dateFormater(new Date(Date.now()))}`)
+          toastParams(
+            `Bienvenue ${variables.username} 🎊`,
+            "Vous pouvez vous connecter avec votre adresse email."
+          )
         );
       }
+    },
+    onError: (error) => {
+      console.error("Erreur lors de l'inscription : ", error);
+      throw error;
     },
   });
 

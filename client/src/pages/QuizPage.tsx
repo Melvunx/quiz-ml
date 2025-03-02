@@ -72,15 +72,11 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
       queryClient.invalidateQueries({ queryKey: ["quiz"] });
 
       setTimeout(() => {
-        toast(
-          toastParams(
-            "Quiz modifié avec succès",
-            `Quiz modifié le ${dateFormater(new Date(Date.now()))}`
-          )
-        );
+        toast(toastParams("Quiz modifié 😁", "Quiz modifié avec succès ☑️"));
       }, 1500);
     },
     onError: (error) => {
+      console.error("Erreur lors de la modification du quiz : ", error);
       throw error;
     },
   });
@@ -98,7 +94,11 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
             `Quiz supprimé le ${dateFormater(new Date(Date.now()))}`
           )
         );
-      }, 1500);
+      }, 1300);
+    },
+    onError: (error) => {
+      console.error("Erreur lors de la suppression du quiz : ", error);
+      throw error;
     },
   });
 
@@ -129,8 +129,12 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
               }`
             )
           ),
-        300
+        1300
       );
+    },
+    onError: (error) => {
+      console.error("Erreur lors de la recherche du quiz : ", error);
+      throw error;
     },
   });
 
@@ -288,7 +292,9 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
           )}
         </div>
       ) : (
-        "Aucun quiz n'a été trouvé"
+        <p className="text-center font-regular-funnel-display text-yellow-600">
+          Aucune quiz n'a été trouvée
+        </p>
       )}
     </div>
   );

@@ -44,6 +44,10 @@ export default function QuizForm() {
         );
       }
     },
+    onError: (error) => {
+      console.error("Erreur lors de la création de la question : ", error);
+      throw error;
+    },
   });
 
   const onCreateQuizAction = async (data: FormData) => {

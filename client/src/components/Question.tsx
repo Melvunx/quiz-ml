@@ -203,11 +203,11 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
         setTimeout(() => {
           toast(
             toastParams(
-              "Question supprimé avec succès",
-              `Question supprimé le ${dateFormater(new Date(Date.now()))}`
+              "Question supprimée 😁",
+              "Question supprimée avec succes ☑️"
             )
           );
-        }, 1500);
+        }, 1300);
       },
     }
   );
@@ -232,8 +232,6 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
       answers,
     };
 
-    console.log("FormData : ", formData);
-
     try {
       setError(null);
       await updateQuestionAndAnswersMutation(formData);
@@ -251,7 +249,9 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
     <Card className="mx-auto w-4/5 font-regular-funnel-display">
       <CardHeader className="flex gap-2">
         <div className="flex items-center gap-2 space-y-1">
-          <CardTitle>Question {question.type.toLocaleLowerCase()}</CardTitle>
+          <CardTitle>
+            Question {question.type === "SINGLE" ? "unique" : "multiple"}
+          </CardTitle>
           {isAdmin ? (
             <>
               <EditOrDeleteDialog edit name="QUESTION" description="QUESTION">

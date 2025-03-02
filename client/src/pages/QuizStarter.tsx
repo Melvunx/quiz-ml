@@ -40,7 +40,9 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
 
   if (!quizzes?.length)
     return (
-      <p className="mt-6 text-center text-red-500">Aucun quiz n'a été trouvé</p>
+      <p className="font-regular-funnel-display text-yellow-600">
+        Aucune quiz n'a été trouvée
+      </p>
     );
 
   const handleRadioChange = (quizId: string) => {
@@ -56,7 +58,7 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
   return (
     <Card className="mx-auto flex w-1/2 flex-col space-y-1 font-regular-funnel-display">
       <CardHeader>
-        <CardTitle>Choisissez un quiz</CardTitle>
+        <CardTitle className="font-logo">Choisissez un quiz</CardTitle>
         <Separator className="h-0.5 w-4/5" />
         <CardDescription className="py-2 italic">
           Choisissez ici votre quiz pour le tester
@@ -149,7 +151,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
 
   if (!quiz || !quiz.questions || quiz.questions.length === 0)
     return (
-      <Card className="mx-auto w-full max-w-2xl">
+      <Card className="mx-auto w-full max-w-2xl font-regular-funnel-display">
         <CardContent className="p-6">
           <p className="text-center">Sélectionnez un quiz pour commencer</p>
         </CardContent>
@@ -230,7 +232,7 @@ const LoadedQuiz: React.FC<LoadedQuizProps> = ({ quizId, onFinish }) => {
       <Card className="mx-auto my-6 w-full max-w-2xl font-regular-funnel-display">
         <CardHeader>
           <CardTitle className="font-logo">
-            Résultas du Quiz: {quiz.title}
+            Résultas du Quiz {quiz.title}
           </CardTitle>
         </CardHeader>
         <CardContent>

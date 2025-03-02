@@ -1,10 +1,6 @@
 import { Answer as AnswerType } from "@/schema/quiz";
 
-type AnswerProps = {
-  answer: AnswerType;
-};
-
-const Answer: React.FC<AnswerProps> = ({ answer }) => {
+const Answer = ({ answer }: { answer: AnswerType }) => {
   return (
     <div className="container flex items-center justify-center">
       <h3>{answer.content}</h3>

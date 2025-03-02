@@ -203,7 +203,8 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
 
       await removeQuestionsToQuiz(quizId, questions);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      const { questions } = variables;
       // Actualisation complète des données coté client
       queryClient.invalidateQueries({ queryKey: ["quiz"] });
       queryClient.invalidateQueries({ queryKey: ["questions"] });
@@ -216,15 +217,18 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
       refetchExistingQuestions();
       resetSelections();
 
+      const isMultipleQuestions =
+        questions.length > 1 ? "Questions supprimées" : "Question supprimée";
+
       toast(
         toastParams(
-          "Question(s) supprimée(s) 😁",
-          "Question(s) supprimée(s) avec succès."
+          `${isMultipleQuestions} 😁`,
+          `${isMultipleQuestions} avec succes ☑️`
         )
       );
     },
     onError: (error) => {
-      console.error(error);
+      console.error("Erreur lors de la suppression des questions : ", error);
       throw error;
     },
   });
@@ -284,7 +288,7 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
         // Force refresh après toutes les mutations
         await Promise.all([refetchQuestions(), refetchExistingQuestions()]);
       } catch (error) {
-        console.error("Erreur lors des modifications:", error);
+        console.error("Erreur lors des modifications : ", error);
       }
     }
   };

@@ -116,7 +116,7 @@ export const login: RequestHandler<
     res.cookie("refreshJwt", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 14 * 24 * 60 * 60 * 1000,
     });
 
@@ -124,7 +124,8 @@ export const login: RequestHandler<
       "info",
       { id: user.id, username: user.username, email, role: user.role },
       {
-        httpOnly: true,
+        httpOnly: false,
+        sameSite: "none",
         maxAge: 14 * 24 * 60 * 60 * 1000,
       }
     );

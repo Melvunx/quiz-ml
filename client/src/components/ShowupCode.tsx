@@ -72,7 +72,7 @@ export default function ShowupCode() {
   const formattedJson = JSON.stringify(jsonData, null, 2);
 
   return (
-    <div className="overflow-hidden rounded-lg bg-gray-800 shadow-lg">
+    <div className="w-4/5 overflow-hidden rounded-lg bg-gray-800 shadow-lg">
       <div className="flex items-center justify-between bg-gray-900 p-2">
         <div className="flex space-x-1">
           <div className="size-3 rounded-full bg-red-500"></div>

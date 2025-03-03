@@ -1,16 +1,15 @@
+const { VITE_BACKEND_URL } = import.meta.env;
+
 const refreshToken = async (): Promise<string | null> => {
   try {
-    const response = await fetch(
-      "http://localhost:4000/api/auth/refresh-token",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${VITE_BACKEND_URL}/api/auth/refresh-token`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
 
     if (!response.ok) {
       throw new ApiError(
@@ -92,7 +91,7 @@ const fetchApi = async <T>(
     },
   };
 
-  let r = await fetch(`http://localhost:4000/api${url}`, requestOptions);
+  let r = await fetch(`${VITE_BACKEND_URL}/api${url}`, requestOptions);
 
   if (requiresToken && r.status === 401) {
     try {
@@ -111,7 +110,7 @@ const fetchApi = async <T>(
         Authorization: `Bearer ${newAccessToken}`,
       };
 
-      r = await fetch(`http://localhost:4000/api${url}`, requestOptions);
+      r = await fetch(`${VITE_BACKEND_URL}/api${url}`, requestOptions);
     } catch (error) {
       if (setAccessToken) setAccessToken(null);
       if (navigate) navigate("/auth");

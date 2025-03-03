@@ -5,9 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./build/app.js",
-    "build": "npx prisma generate && tsc --build",
+    "build": "prisma generate && tsc --build",
     "dev": "nodemon src/app.ts",
-    "vercel-build": "tsc --build"
+    "vercel-build": "prisma generate && tsc --build"
   },
   "keywords": [],
   "author": "",

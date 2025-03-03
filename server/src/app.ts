@@ -36,3 +36,6 @@ app.listen(PORT, () => {
 app.get("/", (_, response) => {
   response.send("Hello World!");
 });
+
+module.exports = app;
+export default app;

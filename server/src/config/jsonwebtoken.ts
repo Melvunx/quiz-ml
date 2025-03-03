@@ -1,4 +1,4 @@
-import colors from "../schema/colors.schema";
+import colors from "@/schema/colors.schema";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 const { PUBLICKEY, SECRETKEY } = process.env;

@@ -19,7 +19,7 @@ app.use(
   })
 );
 
-const authRoutes = require("./auth.routes");
+const authRoutes = require("./routes/auth.routes");
 const questionsRoutes = require("./routes/questions.routes");
 const quizRoutes = require("./routes/quiz.routes");
 

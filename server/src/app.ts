@@ -19,9 +19,9 @@ app.use(
   })
 );
 
-const authRoutes = require("@routes/auth.routes");
-const questionsRoutes = require("@routes/questions.routes");
-const quizRoutes = require("@routes/quiz.routes");
+const authRoutes = require("./auth.routes");
+const questionsRoutes = require("./routes/questions.routes");
+const quizRoutes = require("./routes/quiz.routes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/questions", questionsRoutes);

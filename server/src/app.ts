@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 
-const { PORT } = process.env;
+const { PORT, FRONTEND_URL } = process.env;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND_URL,
     credentials: true,
   })
 );

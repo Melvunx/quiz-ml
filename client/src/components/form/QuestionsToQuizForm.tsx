@@ -85,7 +85,7 @@ const CheckboxQuestionList: React.FC<CheckboxQuestionListProps> = ({
       </div>
       <div className="light:border-black/60 flex flex-col gap-4 rounded border-2 px-4 py-3 dark:border-white/60">
         {questions.map((question, idx) => {
-          if (question.content.includes("Exemple de question à ajouter"))
+          if (question.id === (VITE_EXEMPLE_QUIZ_ID as string))
             return (
               <div className="flex items-center space-x-2">
                 <Checkbox id={`${name}-${question.id}`} disabled />
@@ -319,10 +319,7 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          disabled={disabled}
-          variant="outline"
-        >
+        <Button disabled={disabled} variant="outline">
           Ajouter ou supprimer des questions
         </Button>
       </DialogTrigger>

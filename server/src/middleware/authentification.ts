@@ -14,6 +14,8 @@ export async function authenticate(
   try {
     console.log(colors.info("Authentification in progress ..."));
 
+    console.log("Cookies : ", req.cookies);
+
     const token: string | undefined = req.cookies.refreshJwt;
     const user: UserCookie | undefined = req.cookies.info;
 

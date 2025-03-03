@@ -17,13 +17,15 @@ import LoadingString from "@/components/ui/loading-string";
 import { Separator } from "@/components/ui/separator";
 import useQuiz from "@/hooks/use-quiz";
 import { useToast } from "@/hooks/use-toast";
-import { dateFormater, toastParams } from "@/lib/utils";
+import { toastParams } from "@/lib/utils";
 import { Quiz } from "@/schema/quiz";
 import useAuthStore from "@/store/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
+
+const { VITE_EXEMPLE_QUIZ_ID } = import.meta.env;
 
 const QuizCount = ({ count }: { count?: number }) => {
   if (!count || count === 0) return <p>Ce quiz ne contient aucune question.</p>;
@@ -88,12 +90,7 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
       queryClient.invalidateQueries({ queryKey: ["quiz"] });
 
       setTimeout(() => {
-        toast(
-          toastParams(
-            "Quiz supprimé avec succès",
-            `Quiz supprimé le ${dateFormater(new Date(Date.now()))}`
-          )
-        );
+        toast(toastParams("Quiz supprimé 😁", `Quiz supprimé avec succès ☑️`));
       }, 1300);
     },
     onError: (error) => {
@@ -192,17 +189,19 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
     <div className="mx-auto w-full max-w-2xl font-regular-funnel-display">
       <div
         className={
-          currentQuizzesNumber <= 2
+          currentQuizzesNumber < 1
             ? "absolute top-0 translate-x-1/2 translate-y-20"
             : "flex w-full justify-center p-2"
         }
       >
-        <SearchItems
-          onSearchAction={onSearchedQuizAction}
-          inputId="quizSearchId"
-          disabled={isSearching}
-          className="justify-center px-3 py-1"
-        />
+        {currentQuizzesNumber > 1 ? (
+          <SearchItems
+            onSearchAction={onSearchedQuizAction}
+            inputId="quizSearchId"
+            disabled={isSearching}
+            className="justify-center px-3 py-1"
+          />
+        ) : null}
       </div>
       {currentQuizzesNumber ? (
         <div className="space-y-3 pb-6">
@@ -211,7 +210,7 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
               <CardHeader className="pb-0">
                 <div className="flex items-center gap-2 space-y-1">
                   <CardTitle>{quiz.title}</CardTitle>
-                  {isAdmin ?? (
+                  {isAdmin && quiz.id !== (VITE_EXEMPLE_QUIZ_ID as string) ? (
                     <>
                       <EditOrDeleteDialog edit name="QUIZ" description="QUIZ">
                         <form
@@ -260,7 +259,7 @@ export default function QuizPage({ itemsPerPage }: { itemsPerPage: number }) {
                         onClick={async () => await deleteQuizMutation(quiz.id)}
                       />
                     </>
-                  )}
+                  ) : null}
                 </div>
                 <Separator className="ml-2 h-0.5 w-4/5" />
                 {quiz.description !== "NULL" && (

@@ -38,8 +38,10 @@ export default function QuizForm() {
       if (error === null) {
         toast(
           toastParams(
-            "Quiz created",
-            `${varibles.title} ${dateFormater(new Date(Date.now()))}`
+            "Quiz créé 😁",
+            `Quiz "${varibles.title}" avec succès - ${dateFormater(
+              new Date(Date.now())
+            )}`
           )
         );
       }

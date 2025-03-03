@@ -40,8 +40,8 @@ const QuizSelector: React.FC<QuizSelectorProps> = ({
 
   if (!quizzes?.length)
     return (
-      <p className="font-regular-funnel-display text-yellow-600">
-        Aucune quiz n'a été trouvée
+      <p className="text-center font-regular-funnel-display text-yellow-600">
+        Aucune quiz n'a été trouvé
       </p>
     );
 

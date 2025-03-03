@@ -252,7 +252,8 @@ const Question: React.FC<QuestionProps> = ({ question }) => {
           <CardTitle>
             Question {question.type === "SINGLE" ? "unique" : "multiple"}
           </CardTitle>
-          {isAdmin ? (
+          {isAdmin &&
+          !question.content.includes("Exemple de question à ajouter") ? (
             <>
               <EditOrDeleteDialog edit name="QUESTION" description="QUESTION">
                 <form action={onUpdateQuestionAction}>

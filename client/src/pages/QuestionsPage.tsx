@@ -127,47 +127,49 @@ export default function QuestionsPage({
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <div
-        className={`my-3 flex gap-2 rounded-lg px-3 py-2 font-logo ${
-          currentQuestionsNumber <= 2
-            ? "absolute left-0 top-0 w-full items-center justify-evenly"
-            : "relative"
-        }`}
-      >
-        <Label>
-          <p className="light:bg-white absolute top-0 z-10 ml-5 px-1 font-regular-funnel-display dark:bg-black md:hidden lg:hidden">
-            Filtrer
-          </p>
-        </Label>
-        <div className="rounded-lg border-2 border-zinc-400 p-2">
-          <ToggleGroup
-            className="flex gap-6 p-1"
-            onValueChange={(value: QuestionType) =>
-              handleQuestionsFilter(value)
-            }
-            type="single"
-          >
-            <ToggleGroupItem
-              className={buttonVariants({ variant: "default", size: "sm" })}
-              value="SINGLE"
+      {currentQuestionsNumber > 1 ? (
+        <div
+          className={`my-3 flex gap-2 rounded-lg px-3 py-2 font-logo ${
+            currentQuestionsNumber <= 2
+              ? "absolute left-0 top-0 w-full items-center justify-evenly"
+              : "relative"
+          }`}
+        >
+          <Label>
+            <p className="light:bg-white absolute top-0 z-10 ml-5 px-1 font-regular-funnel-display dark:bg-black md:hidden lg:hidden">
+              Filtrer
+            </p>
+          </Label>
+          <div className="rounded-lg border-2 border-zinc-400 p-2">
+            <ToggleGroup
+              className="flex gap-6 p-1"
+              onValueChange={(value: QuestionType) =>
+                handleQuestionsFilter(value)
+              }
+              type="single"
             >
-              Question unique
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              className={buttonVariants({ variant: "default", size: "sm" })}
-              value="MULTIPLE"
-            >
-              Question Multiple
-            </ToggleGroupItem>
-          </ToggleGroup>
+              <ToggleGroupItem
+                className={buttonVariants({ variant: "default", size: "sm" })}
+                value="SINGLE"
+              >
+                Question unique
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                className={buttonVariants({ variant: "default", size: "sm" })}
+                value="MULTIPLE"
+              >
+                Question Multiple
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <SearchItems
+            onSearchAction={onSearchedQuestionsAction}
+            className="w-1/2 justify-center"
+            inputId="questionSearchId"
+            disabled={isSearching}
+          />
         </div>
-        <SearchItems
-          onSearchAction={onSearchedQuestionsAction}
-          className="w-1/2 justify-center"
-          inputId="questionSearchId"
-          disabled={isSearching}
-        />
-      </div>
+      ) : null}
       {currentQuestionsNumber ? (
         <>
           <div className="flex flex-col gap-4 py-2">

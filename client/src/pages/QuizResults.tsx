@@ -156,7 +156,7 @@ export default function QuizResults({
         </>
       ) : (
         <p className="text-center font-regular-funnel-display text-yellow-600">
-          Aucun résultat de quiz n'a été trouvée
+          Aucun résultat de quiz n'a été trouvé
         </p>
       )}
     </div>

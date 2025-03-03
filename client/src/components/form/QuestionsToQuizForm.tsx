@@ -27,6 +27,8 @@ type CheckboxQuestionListProps = {
   onSelectionChange?: (selectedIds: string[]) => void;
 };
 
+const { VITE_EXEMPLE_QUIZ_ID } = import.meta.env;
+
 const CheckboxQuestionList: React.FC<CheckboxQuestionListProps> = ({
   questions,
   name,
@@ -82,25 +84,40 @@ const CheckboxQuestionList: React.FC<CheckboxQuestionListProps> = ({
         </Button>
       </div>
       <div className="light:border-black/60 flex flex-col gap-4 rounded border-2 px-4 py-3 dark:border-white/60">
-        {questions.map((question, idx) => (
-          <div key={question.id}>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id={`${name}-${question.id}`}
-                name={name}
-                checked={selectedQuestions.includes(question.id)}
-                onCheckedChange={() => handleCheckboxChange(question.id)}
-              />
-              <Label
-                className="cursor-pointer"
-                htmlFor={`${name}-${question.id}`}
-              >
-                {question.content}
-              </Label>
-            </div>
-            {idx < questions.length - 1 && <Separator className="mt-4" />}
-          </div>
-        ))}
+        {questions.map((question, idx) => {
+          if (question.content.includes("Exemple de question à ajouter"))
+            return (
+              <div className="flex items-center space-x-2">
+                <Checkbox id={`${name}-${question.id}`} disabled />
+                <Label
+                  className="cursor-pointer"
+                  htmlFor={`${name}-${question.id}`}
+                >
+                  {question.content}
+                </Label>
+              </div>
+            );
+          else
+            return (
+              <div key={question.id}>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`${name}-${question.id}`}
+                    name={name}
+                    checked={selectedQuestions.includes(question.id)}
+                    onCheckedChange={() => handleCheckboxChange(question.id)}
+                  />
+                  <Label
+                    className="cursor-pointer"
+                    htmlFor={`${name}-${question.id}`}
+                  >
+                    {question.content}
+                  </Label>
+                </div>
+                {idx < questions.length - 1 && <Separator className="mt-4" />}
+              </div>
+            );
+        })}
       </div>
     </div>
   );
@@ -302,7 +319,10 @@ const QuestionsToQuizForm: FC<QuestionToQuizFormProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button disabled={disabled} variant="outline">
+        <Button
+          disabled={disabled}
+          variant="outline"
+        >
           Ajouter ou supprimer des questions
         </Button>
       </DialogTrigger>

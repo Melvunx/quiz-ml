@@ -1,10 +1,10 @@
-import colors from "@/schema/colors.schema";
-import apiResponse from "@/services/api.response";
-import { handleError } from "@/utils/handleResponse";
-import isArrayOrIsEmpty from "@/utils/isArrayOrEmpty";
-import { prisma } from "@config/prisma";
 import { Question } from "@prisma/client";
 import { RequestHandler } from "express";
+import { prisma } from "../config/prisma";
+import colors from "../schema/colors.schema";
+import apiResponse from "../services/api.response";
+import { handleError } from "../utils/handleResponse";
+import isArrayOrIsEmpty from "../utils/isArrayOrEmpty";
 
 export const searchQuestion: RequestHandler<
   {},

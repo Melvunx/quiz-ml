@@ -1,9 +1,9 @@
-import { amdinAuthenticate, authenticate } from "@/middleware/authentification";
+import { Router } from "express";
 import {
   addAnswers,
   editAnswers,
   removeAnswers,
-} from "@controller/answer.controller";
+} from "../controller/answer.controller";
 import {
   createNewQuestion,
   deleteManyQuestions,
@@ -12,8 +12,11 @@ import {
   getQuestionsWithAnswers,
   getQuestionWithAnswers,
   searchQuestion,
-} from "@controller/questions.controller";
-import { Router } from "express";
+} from "../controller/questions.controller";
+import {
+  amdinAuthenticate,
+  authenticate,
+} from "../middleware/authentification";
 
 const router = Router();
 

@@ -1,14 +1,14 @@
+import { Response } from "express";
 import {
   ApiData,
   ErrorStatus,
   HttpStatus,
   SuccessStatus,
-} from "@/schema/api.schema";
+} from "../schema/api.schema";
 import {
   handleResponseError,
   handleResponseSuccess,
-} from "@/utils/handleResponse";
-import { Response } from "express";
+} from "../utils/handleResponse";
 
 export class ApiResponse {
   constructor() {}

@@ -1,4 +1,8 @@
-import { amdinAuthenticate, authenticate } from "@/middleware/authentification";
+import { Router } from "express";
+import {
+  amdinAuthenticate,
+  authenticate,
+} from "..//middleware/authentification";
 import {
   addQuestions,
   createQuiz,
@@ -9,14 +13,13 @@ import {
   getQuiz,
   getSearchedQuiz,
   removeQuestions,
-} from "@controller/quiz.controller";
+} from "../controller/quiz.controller";
 import {
   getAllQuizRestults,
   getQuizResults,
   removeQuizResults,
   saveQuizResults,
-} from "@controller/results.controller";
-import { Router } from "express";
+} from "../controller/results.controller";
 
 const router = Router();
 // Avoir tous les quiz mais avec uniquement le nombre de question

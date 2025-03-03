@@ -1,10 +1,10 @@
-import { prisma } from "@/config/prisma";
-import colors from "@/schema/colors.schema";
-import { UserCookie } from "@/schema/user.schema";
-import apiResponse from "@/services/api.response";
-import { handleError } from "@/utils/handleResponse";
 import { Result } from "@prisma/client";
 import { RequestHandler } from "express";
+import { prisma } from "../config/prisma";
+import colors from "../schema/colors.schema";
+import { UserCookie } from "../schema/user.schema";
+import apiResponse from "../services/api.response";
+import { handleError } from "../utils/handleResponse";
 
 export const getAllQuizRestults: RequestHandler = async (req, res) => {
   try {

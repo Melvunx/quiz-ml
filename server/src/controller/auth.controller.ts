@@ -1,16 +1,16 @@
+import { Role, User } from "@prisma/client";
+import bcrypt from "bcrypt";
+import { RequestHandler } from "express";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
-} from "@/config/jsonwebtoken";
-import { prisma } from "@/config/prisma";
-import colors from "@/schema/colors.schema";
-import { UserCookie } from "@/schema/user.schema";
-import apiResponse from "@/services/api.response";
-import { handleError } from "@/utils/handleResponse";
-import { Role, User } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { RequestHandler } from "express";
+} from "../config/jsonwebtoken";
+import { prisma } from "../config/prisma";
+import colors from "../schema/colors.schema";
+import { UserCookie } from "../schema/user.schema";
+import apiResponse from "../services/api.response";
+import { handleError } from "../utils/handleResponse";
 
 const { USER_ADMIN, SALT_ROUNDS, USER_ADMIN_BACKUP } = process.env;
 
@@ -147,8 +147,7 @@ export const refreshToken: RequestHandler = async (req, res) => {
   try {
     const token: string | undefined = req.cookies.refreshJwt;
 
-    if (!token)
-      return handleError(res, "UNAUTHORIZED", "Token not found");
+    if (!token) return handleError(res, "UNAUTHORIZED", "Token not found");
 
     const decoded = await verifyRefreshToken<{ userId: string }>(token);
 

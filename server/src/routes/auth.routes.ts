@@ -1,4 +1,4 @@
-import { authenticate } from "@/middleware/authentification";
+import { Router } from "express";
 import {
   adminAuth,
   auth,
@@ -6,9 +6,11 @@ import {
   logout,
   refreshToken,
   regester,
-} from "@controller/auth.controller";
-import { Router } from "express";
-import { amdinAuthenticate } from "../middleware/authentification";
+} from "../controller/auth.controller";
+import {
+  amdinAuthenticate,
+  authenticate,
+} from "../middleware/authentification";
 
 const router = Router();
 

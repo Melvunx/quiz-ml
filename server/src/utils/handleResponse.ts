@@ -1,12 +1,12 @@
+import { Response } from "express";
 import {
   ApiData,
   ApiResponseError,
   ApiResponseSuccess,
   ErrorStatus,
-} from "@schema/api.schema";
-import colors from "@schema/colors.schema";
-import apiResponse from "@services/api.response";
-import { Response } from "express";
+} from "../schema/api.schema";
+import colors from "../schema/colors.schema";
+import apiResponse from "../services/api.response";
 
 export function handleResponseSuccess(
   data: ApiData,

@@ -2,13 +2,13 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "start": "node ./build/app.js",
-  "build": "tsc --build",
-  "dev": "nodemon -r tsconfig-paths/register src/app.ts",
-  "vercel-build": "tsc --build"
-},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./build/app.js",
+    "build": "tsc --build",
+    "dev": "nodemon src/app.ts",
+    "vercel-build": "tsc --build"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

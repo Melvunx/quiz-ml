@@ -14,7 +14,7 @@ import { handleError } from "../utils/handleResponse";
 
 const { USER_ADMIN, SALT_ROUNDS, USER_ADMIN_BACKUP } = process.env;
 
-if (!USER_ADMIN || !SALT_ROUNDS || !USER_ADMIN_BACKUP) {
+if (!SALT_ROUNDS || !USER_ADMIN_BACKUP) {
   throw new Error("Id or salt rounds not found");
 }
 

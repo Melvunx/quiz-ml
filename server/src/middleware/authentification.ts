@@ -1,10 +1,10 @@
-import colors from "@/schema/colors.schema";
-import { UserCookie } from "@/schema/user.schema";
-import apiResponse from "@/services/api.response";
-import { handleError } from "@/utils/handleResponse";
-import { verifyRefreshToken } from "@config/jsonwebtoken";
 import { Role } from "@prisma/client";
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { verifyRefreshToken } from "../config/jsonwebtoken";
+import colors from "../schema/colors.schema";
+import { UserCookie } from "../schema/user.schema";
+import apiResponse from "../services/api.response";
+import { handleError } from "../utils/handleResponse";
 
 export async function authenticate(
   req: Request,

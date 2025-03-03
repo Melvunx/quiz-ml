@@ -1,7 +1,7 @@
-import colors from "@/schema/colors.schema";
-import apiResponse from "@/services/api.response";
-import { handleError } from "@/utils/handleResponse";
-import { prisma } from "@config/prisma";
+import colors from "../schema/colors.schema";
+import apiResponse from "../services/api.response";
+import { handleError } from "../utils/handleResponse";
+import { prisma } from "../config/prisma";
 import { Question, Quiz } from "@prisma/client";
 import { RequestHandler } from "express";
 

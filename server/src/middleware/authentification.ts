@@ -26,6 +26,8 @@ export async function authenticate(
 
     if (!token) return handleError(res, "UNAUTHORIZED", "Token not found");
 
+    console.log({ token, user });
+
     const isVerified = await verifyRefreshToken(token);
     if (!isVerified)
       return apiResponse.error(res, "UNAUTHORIZED", "Invalid token");

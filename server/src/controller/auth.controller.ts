@@ -113,13 +113,6 @@ export const login: RequestHandler<
       },
     });
 
-    res.cookie("refreshJwt", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 14 * 24 * 60 * 60 * 1000,
-    });
-
     res.cookie(
       "info",
       JSON.stringify({
@@ -130,11 +123,18 @@ export const login: RequestHandler<
       }),
       {
         httpOnly: false,
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: "none",
         maxAge: 14 * 24 * 60 * 60 * 1000,
       }
     );
+
+    res.cookie("refreshJwt", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 14 * 24 * 60 * 60 * 1000,
+    });
 
     if (process.env.NODE_ENV !== "production")
       console.log(colors.success(`User ${user.username} logged in`));

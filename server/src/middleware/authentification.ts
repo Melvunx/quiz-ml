@@ -30,6 +30,7 @@ export async function authenticate(
 
     if (process.env.NODE_ENV !== "production")
       console.log(colors.success(`User ${user.username} is authenticated`));
+    else console.log(colors.success("User is authenticated"));
 
     next();
   } catch (error) {

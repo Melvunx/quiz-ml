@@ -113,15 +113,14 @@ export const login: RequestHandler<
       },
     });
 
-
-
     res.cookie("refreshJwt", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      sameSite: "strict",
+      domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
       maxAge: 14 * 24 * 60 * 60 * 1000,
-    }); 
-    
+    });
+
     res.cookie(
       "info",
       JSON.stringify({
@@ -133,7 +132,9 @@ export const login: RequestHandler<
       {
         httpOnly: false,
         secure: true,
-        sameSite: "none",
+        sameSite: "strict",
+        domain:
+          process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
         maxAge: 14 * 24 * 60 * 60 * 1000,
       }
     );

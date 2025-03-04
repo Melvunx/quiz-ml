@@ -14,8 +14,6 @@ export async function authenticate(
   try {
     console.log(colors.info("Authentification in progress ..."));
 
-    console.log("Cookies : ", req.cookies);
-
     const token: string | undefined = req.cookies.refreshJwt;
 
     const user: UserCookie | undefined = req.cookies.info
@@ -25,8 +23,6 @@ export async function authenticate(
     if (!user) return handleError(res, "UNAUTHORIZED", "User not found");
 
     if (!token) return handleError(res, "UNAUTHORIZED", "Token not found");
-
-    console.log({ token, user });
 
     const isVerified = await verifyRefreshToken(token);
     if (!isVerified)

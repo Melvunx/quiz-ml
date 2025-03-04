@@ -8,15 +8,13 @@ const app = express();
 
 const { PORT, FRONTEND_URL } = process.env;
 
-console.log(FRONTEND_URL);
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 
 app.use(
   cors({
-    origin: ["https://quiz-ml-1qui.vercel.app", "http://localhost:5173"],
+    origin: [FRONTEND_URL, "http://localhost:5173"],
     credentials: true,
   })
 );

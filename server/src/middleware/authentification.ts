@@ -17,7 +17,10 @@ export async function authenticate(
     console.log("Cookies : ", req.cookies);
 
     const token: string | undefined = req.cookies.refreshJwt;
-    const user: UserCookie | undefined = req.cookies.info;
+
+    const user: UserCookie | undefined = req.cookies.info
+      ? JSON.parse(req.cookies.info)
+      : undefined;
 
     if (!user) return handleError(res, "UNAUTHORIZED", "User not found");
 

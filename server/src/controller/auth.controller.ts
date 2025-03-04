@@ -116,7 +116,8 @@ export const login: RequestHandler<
     res.cookie("refreshJwt", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
+      partitioned: true,
       domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
       maxAge: 14 * 24 * 60 * 60 * 1000,
     });
@@ -132,7 +133,8 @@ export const login: RequestHandler<
       {
         httpOnly: false,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
+        partitioned: true,
         domain:
           process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
         maxAge: 14 * 24 * 60 * 60 * 1000,

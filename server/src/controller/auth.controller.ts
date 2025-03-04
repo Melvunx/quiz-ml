@@ -122,9 +122,15 @@ export const login: RequestHandler<
 
     res.cookie(
       "info",
-      { id: user.id, username: user.username, email, role: user.role },
+      JSON.stringify({
+        id: user.id,
+        username: user.username,
+        email,
+        role: user.role,
+      }),
       {
         httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "none",
         maxAge: 14 * 24 * 60 * 60 * 1000,
       }

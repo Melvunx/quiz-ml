@@ -1,5 +1,6 @@
 import { User } from "@/schema/user";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type AuthStore = {
   accessToken: string | null;
@@ -13,22 +14,36 @@ type AuthStore = {
   clearAuth: () => void;
 };
 
-const useAuthStore = create<AuthStore>((set) => ({
-  accessToken: null,
-  user: null,
-  isAuthenticated: false,
-  isAdmin: false,
-  setAccessToken: (token) => set({ accessToken: token }),
-  setUser: (user) => set({ user }),
-  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
-  setIsAdmin: (isAdmin) => set({ isAdmin }),
-  clearAuth: () =>
-    set({
+const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
       accessToken: null,
       user: null,
       isAuthenticated: false,
       isAdmin: false,
+      setAccessToken: (token) => set({ accessToken: token }),
+      setUser: (user) => set({ user }),
+      setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+      setIsAdmin: (isAdmin) => set({ isAdmin }),
+      clearAuth: () =>
+        set({
+          accessToken: null,
+          user: null,
+          isAuthenticated: false,
+          isAdmin: false,
+        }),
     }),
-}));
+    {
+      name: "auth-storage", // unique name
+      storage: createJSONStorage(() => localStorage), // ou sessionStorage
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+        isAdmin: state.isAdmin,
+      }),
+    }
+  )
+);
 
 export default useAuthStore;

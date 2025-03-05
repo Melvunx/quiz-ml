@@ -78,6 +78,8 @@ const fetchApi = async <T>(
 ): Promise<T> => {
   method = method || (payload ? "POST" : "GET");
 
+  console.log({ accessToken });
+
   if (requiresToken && accessToken) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -135,7 +137,9 @@ const fetchApi = async <T>(
 
   console.log("The json after fetching ", json);
 
-  return json.success && json.data ? (JSON.parse(json.data) as T) : (json.message as T);
+  return json.success && json.data
+    ? (JSON.parse(json.data) as T)
+    : (json.message as T);
 };
 
 export default fetchApi;

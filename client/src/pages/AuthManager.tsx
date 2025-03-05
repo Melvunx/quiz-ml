@@ -36,5 +36,7 @@ export default function AuthManager() {
   if (isAuthenticated && location.pathname === "/")
     return <Navigate to="/quiz-dashboard" replace />;
 
+  console.log("isAuthenticated", isAuthenticated);
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
 }

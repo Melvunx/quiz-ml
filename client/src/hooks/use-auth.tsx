@@ -12,8 +12,6 @@ export default function useAuth() {
     setUser,
     setIsAuthenticated,
     setIsAdmin,
-    isAdmin,
-    isAuthenticated,
     clearAuth,
     accessToken,
     setAccessToken,
@@ -35,20 +33,10 @@ export default function useAuth() {
 
       setUser(user);
 
-      console.log("User from use auth", user);
+      if (user.role === "ADMIN") setIsAdmin(true);
+      else setIsAdmin(false);
 
-      console.log("Is admin from use auth", isAdmin);
-
-      if (user.role === "ADMIN") {
-        setIsAdmin(true);
-        console.log("Is admin from use auth if admin", isAdmin);
-      } else setIsAdmin(false);
-
-      console.log("Is admin from use auth if not admin", isAdmin);
-
-      console.log("Is authenticated from use auth", isAuthenticated);
       setIsAuthenticated(true);
-      console.log("Is authenticated from use auth after", isAuthenticated);
 
       console.log("Check successfull");
     } catch (error) {
@@ -60,9 +48,7 @@ export default function useAuth() {
     accessToken,
     setAccessToken,
     setUser,
-    isAdmin,
     setIsAdmin,
-    isAuthenticated,
     setIsAuthenticated,
   ]);
 
@@ -78,6 +64,7 @@ export default function useAuth() {
       const user = UserSchema.parse(response);
 
       setUser(user);
+
       setIsAdmin(true);
 
       console.log("Admin check successfull");
@@ -140,12 +127,16 @@ export default function useAuth() {
       });
 
       clearAuth();
+      clearError();
 
       console.log("Logout successful");
+      navigate("/auth");
     } catch (error) {
+      clearAuth();
+      clearError();
       console.error(error);
     }
-  }, [accessToken, clearAuth, navigate, setAccessToken]);
+  }, [accessToken, clearAuth, clearError, navigate, setAccessToken]);
 
   return {
     register,

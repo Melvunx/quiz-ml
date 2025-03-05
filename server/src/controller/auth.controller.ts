@@ -190,8 +190,11 @@ export const adminAuth: RequestHandler = async (req, res) => {
     const user: UserCookie | undefined = req.cookies.info;
     if (!user) return handleError(res, "UNAUTHORIZED", "User not found");
 
-    if (user.role !== "ADMIN")
+    console.log({ user });
+
+    if (user.role !== "ADMIN") {
       return handleError(res, "FORBIDDEN", "You don't have the rights");
+    }
 
     return apiResponse.success(
       res,

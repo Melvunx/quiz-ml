@@ -44,6 +44,8 @@ function roleBasedAuth(allowedRoles: Role[]): RequestHandler {
 
     if (!user) return handleError(res, "NOT_FOUND", "User not found");
 
+    console.log({ user });
+
     allowedRoles.map((role) =>
       console.log(colors.info(`${role.toLowerCase()} verification...`))
     );

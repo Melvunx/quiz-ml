@@ -20,6 +20,8 @@ const refreshToken = async (): Promise<string | null> => {
     }
 
     const { accessToken } = await response.json();
+    console.log("The access token after refreshing ", accessToken);
+
     return accessToken;
   } catch (error) {
     console.error(error);
@@ -103,6 +105,8 @@ const fetchApi = async <T>(
         throw new ApiError(r.status, await r.json(), "Failed to refresh token");
       }
 
+      console.log("The new access token ", newAccessToken);
+
       if (setAccessToken) setAccessToken(newAccessToken);
 
       requestOptions.headers = {
@@ -131,7 +135,7 @@ const fetchApi = async <T>(
 
   console.log("The json after fetching ", json);
 
-  return json.success && json.data ? (json.data as T) : (json.message as T);
+  return json.success && json.data ? (JSON.parse(json.data) as T) : (json.message as T);
 };
 
 export default fetchApi;

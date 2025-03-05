@@ -12,6 +12,8 @@ export default function useAuth() {
     setUser,
     setIsAuthenticated,
     setIsAdmin,
+    isAdmin,
+    isAuthenticated,
     clearAuth,
     accessToken,
     setAccessToken,
@@ -33,22 +35,34 @@ export default function useAuth() {
 
       setUser(user);
 
-      if (user.role === "ADMIN") setIsAdmin(true);
-      else setIsAdmin(false);
+      console.log("User from use auth", user);
 
+      console.log("Is admin from use auth", isAdmin);
+
+      if (user.role === "ADMIN") {
+        setIsAdmin(true);
+        console.log("Is admin from use auth if admin", isAdmin);
+      } else setIsAdmin(false);
+
+      console.log("Is admin from use auth if not admin", isAdmin);
+
+      console.log("Is authenticated from use auth", isAuthenticated);
       setIsAuthenticated(true);
-      if (process.env.NODE_ENV === "development")
-        console.log("Check successfull");
+      console.log("Is authenticated from use auth after", isAuthenticated);
+
+      console.log("Check successfull");
     } catch (error) {
       setIsAuthenticated(false);
-      if (process.env.NODE_ENV === "development") console.error(error);
+      console.error("Error occured", error);
     }
   }, [
     navigate,
     accessToken,
     setAccessToken,
     setUser,
+    isAdmin,
     setIsAdmin,
+    isAuthenticated,
     setIsAuthenticated,
   ]);
 
@@ -65,11 +79,11 @@ export default function useAuth() {
 
       setUser(user);
       setIsAdmin(true);
-      if (process.env.NODE_ENV === "development")
-        console.log("Admin check successfull");
+
+      console.log("Admin check successfull");
     } catch (error) {
       setIsAdmin(false);
-      if (process.env.NODE_ENV === "development") console.error(error);
+      console.error(error);
     }
   }, [accessToken, navigate, setAccessToken, setIsAdmin, setUser]);
 
@@ -103,8 +117,8 @@ export default function useAuth() {
         setUser(user);
         setIsAuthenticated(true);
         clearError();
-        if (process.env.NODE_ENV === "development")
-          console.log("Login successful");
+
+        console.log("Login successful");
       } catch (error) {
         setIsAuthenticated(false);
         setUser(null);
@@ -126,10 +140,10 @@ export default function useAuth() {
       });
 
       clearAuth();
-      if (process.env.NODE_ENV === "development")
-        console.log("Logout successful");
+
+      console.log("Logout successful");
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error(error);
+      console.error(error);
     }
   }, [accessToken, clearAuth, navigate, setAccessToken]);
 

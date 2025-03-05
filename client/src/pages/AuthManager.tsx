@@ -33,10 +33,10 @@ export default function AuthManager() {
 
   if (isLoading) return <LoadingString />;
 
-  if (isAuthenticated && location.pathname === "/")
+  if (!isAuthenticated && location.pathname === "/")
     return <Navigate to="/quiz-dashboard" replace />;
 
   console.log("isAuthenticated", isAuthenticated);
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
+  return !isAuthenticated ? <Outlet /> : <Navigate to="/auth" replace />;
 }

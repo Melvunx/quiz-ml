@@ -124,12 +124,12 @@ export const login: RequestHandler<
 
     res.cookie(
       "info",
-      JSON.stringify({
+      {
         id: user.id,
         username: user.username,
         email,
         role: user.role,
-      }),
+      },
       {
         httpOnly: false,
         secure: true,
